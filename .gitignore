@@ -1,0 +1,7 @@
+# Basic ones
+/coverage
+/coverage-ts
+/node_modules
+/.env
+/.nyc_output
+/junit-report.xml

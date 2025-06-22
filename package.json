@@ -19,6 +19,10 @@
     "dev": "browser-sync"
   },
   "devDependencies": {
-    "browser-sync": "^3.0.4"
+    "@voxpelli/eslint-config": "^23.0.0",
+    "@voxpelli/tsconfig": "^15.1.2",
+    "browser-sync": "^3.0.4",
+    "eslint": "^9.29.0",
+    "typescript": "~5.8.3"
   }
 }
