@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<!--
+  HUG Principle: Humane
+  - lang="en" attribute is set for accessibility.
+  - The entire document structure is semantic (<header>, <main>, <footer>)
+    to be easily understood by screen readers and developers.
+-->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -28,7 +34,7 @@
     }
     </script>
 
-    <!-- UPDATED: Added meta tag for View Transitions -->
+    <!-- View Transitions -->
     <meta name="view-transition" content="same-origin" />
 
     <!-- Dependencies -->
@@ -39,7 +45,6 @@
     <script type="module" src="./components/kinetic-background.js"></script>
     <script type="module" src="/components/code-block.js"></script>
 
-    <!-- UPDATED: Linking to the shared stylesheet -->
     <link rel="stylesheet" href="./styles/vibe.css">
 
     <style>
@@ -80,6 +85,9 @@
             color: #d1d5db; /* gray-300 */
             line-height: 1.7;
         }
+        .disclaimer-box { border: 2px solid var(--pop-pink); box-shadow: 0 0 20px var(--glow-color); }
+        .usage-docs code { color: var(--pop-pink); text-decoration: underline; text-decoration-color: rgba(255, 0, 169, 0.5); transition: text-decoration-color 0.3s ease;}
+        .usage-docs code:hover { text-decoration-color: var(--pop-pink); }
     </style>
 </head>
 <body>
@@ -127,7 +135,7 @@
                 <h2 class="font-headline text-4xl md:text-5xl font-bold">Stories & Slides</h2>
             </header>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bento-grid">
-                 <a href="./stories/jsdoc-types.html" class="bento-item md:col-span-2 rounded-2xl p-8 flex flex-col justify-center group">
+                 <a href="./jsdoc-types/" class="bento-item md:col-span-2 rounded-2xl p-8 flex flex-col justify-center group">
                     <div>
                         <h3 class="bento-headline font-headline text-3xl font-bold">JSDoc Type Safety</h3>
                         <p class="mt-2 text-gray-300 max-w-md">An interactive story exploring a modern, robust framework for type-safe JavaScript without transpilation.</p>
@@ -223,37 +231,18 @@
         <section id="faq" class="py-24 max-w-3xl mx-auto">
             <h2 class="font-headline text-4xl md:text-5xl font-bold text-center">The Why &amp; The Vibe</h2>
             <div id="accordion-container" class="mt-12 space-y-4">
-
                 <details class="accordion-item">
-                    <summary class="accordion-summary">
-                        <span>What is "vibe coding"?</span>
-                        <span class="accordion-icon" aria-hidden="true">+</span>
-                    </summary>
-                    <div class="accordion-content">
-                        <p>It's a spin on the developer joke <a href="https://www.urbandictionary.com/define.php?term=Vibe-driven%20development" target="_blank" rel="noopener noreferrer">"vibe-driven development."</a> It means building things based on intuition, aesthetics, and the joy of creation, rather than strict metrics. The only KPI is "how cool is this?".</p>
-                    </div>
+                    <summary class="accordion-summary"><span>What is "vibe coding"?</span><span class="accordion-icon" aria-hidden="true">+</span></summary>
+                    <div class="accordion-content"><p>It's a spin on the developer joke <a href="https://www.urbandictionary.com/define.php?term=Vibe-driven%20development" target="_blank" rel="noopener noreferrer" class="accent-link">"vibe-driven development."</a> It means building things based on intuition, aesthetics, and the joy of creation, rather than strict metrics. The only KPI is "how cool is this?".</p></div>
                 </details>
-
                 <details class="accordion-item">
-                    <summary class="accordion-summary">
-                        <span>Who builds these projects?</span>
-                        <span class="accordion-icon" aria-hidden="true">+</span>
-                    </summary>
-                    <div class="accordion-content">
-                        <p>These projects are almost exclusively developed in collaboration with AI assistants, guided by me (Pelle Wessman). The AI handles the bulk of the boilerplate and implementation, which allows us to rapidly prototype and explore ideas that would otherwise take too long to build from scratch.</p>
-                    </div>
+                    <summary class="accordion-summary"><span>Who builds these projects?</span><span class="accordion-icon" aria-hidden="true">+</span></summary>
+                    <div class="accordion-content"><p>These projects are almost exclusively developed in collaboration with AI assistants, guided by me (Pelle Wessman). The AI handles the bulk of the boilerplate and implementation, which allows us to rapidly prototype and explore ideas that would otherwise take too long to build from scratch.</p></div>
                 </details>
-
                 <details class="accordion-item">
-                    <summary class="accordion-summary">
-                        <span>But isn't using AI... complicated?</span>
-                        <span class="accordion-icon" aria-hidden="true">+</span>
-                    </summary>
-                    <div class="accordion-content">
-                        <p>It is. We're aware of the valid concerns around AI—its impact on the planet, on creative fields, and on developer jobs. This exploration isn't about blindly accepting a new technology. It's about a professional responsibility to understand it. You can't critique a tool, or use it effectively, without knowing its strengths and its limits. It’s about learning and evaluating, not just adopting. Know the tool, not just the trend.</p>
-                    </div>
+                    <summary class="accordion-summary"><span>But isn't using AI... complicated?</span><span class="accordion-icon" aria-hidden="true">+</span></summary>
+                    <div class="accordion-content"><p>It is. We're aware of the valid concerns around AI—its impact on the planet, on creative fields, and on developer jobs. This exploration isn't about blindly accepting a new technology. It's about a professional responsibility to understand it. You can't critique a tool, or use it effectively, without knowing its strengths and its limits. It’s about learning and evaluating, not just adopting. Know the tool, not just the trend.</p></div>
                 </details>
-
             </div>
         </section>
 
@@ -266,8 +255,7 @@
     </div>
 
     <script type="module">
-        // Page-specific JS, like the accordion logic
-        const accordionItems = document.querySelectorAll('#accordion-container details, #components details');
+        const accordionItems = document.querySelectorAll('.accordion-item');
         accordionItems.forEach(item => {
             item.addEventListener('toggle', event => {
                 if (item.open) {
