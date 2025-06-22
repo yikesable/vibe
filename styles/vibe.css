@@ -175,6 +175,7 @@ body {
     }
 }
 
+.disclaimer-box { border: 2px solid var(--pop-pink); box-shadow: 0 0 20px var(--glow-color); }
 
 /* 5. View Transitions
 ------------------------------------------------------------------- */

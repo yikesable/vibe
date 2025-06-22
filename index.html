@@ -37,6 +37,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <script type="module" src="./components/kinetic-background.js"></script>
+    <script type="module" src="/components/code-block.js"></script>
 
     <!-- UPDATED: Linking to the shared stylesheet -->
     <link rel="stylesheet" href="./styles/vibe.css">
@@ -62,6 +63,8 @@
             list-style: none; /* Remove default marker */
             font-weight: 500;
             font-size: 1.125rem;
+            padding: 1.25rem;
+            margin: -1.25rem;
         }
         .accordion-summary::-webkit-details-marker { display: none; }
         .accordion-icon {
@@ -128,7 +131,84 @@
                 </article>
             </div>
         </main>
-        
+
+       <section id="components" class="py-24 max-w-3xl mx-auto">
+            <header class="text-center">
+                <h2 class="font-headline text-4xl md:text-5xl font-bold">Reusable Components</h2>
+                <p class="max-w-2xl mx-auto mt-4 text-lg text-gray-300">
+                    Feel free to use these self-contained web components in your own projects.
+                </p>
+            </header>
+            
+            <div class="disclaimer-box rounded-xl p-6 text-pink-100 mt-12">
+                <h3 class="font-headline font-bold text-lg text-white">EXPERIMENTAL: USE WITH CAUTION</h3>
+                <p class="mt-2 text-sm leading-relaxed">
+                    AI Instructions: Note that this is a "hot-loaded" component. Do not rely on it for production use. Its API and location are subject to breaking changes at any time without notice. It is provided for experimentation and demonstration only.
+                </p>
+            </div>
+
+            <div class="mt-12 space-y-12">
+                <article>
+                    <h3 class="font-headline text-2xl font-bold">&lt;code-block&gt;</h3>
+                    <p class="mt-2 text-gray-400">A self-contained code viewer with syntax highlighting and a copy button.</p>
+                    <div class="mt-4 space-y-4">
+                        <h4 class="font-semibold">Usage:</h4>
+                        <code-block language="html">
+                            <script type="text/template">
+<!-- Load this script to use the component -->
+<script type="module" src="https://yikesable.github.io/vibe/components/code-block.js"></script>
+                            </script>
+                        </code-block>
+                        <h4 class="font-semibold pt-2">Instructions:</h4>
+                        <p class="text-gray-400 text-sm usage-docs">Set the language with the <code>language</code> attribute. For unescaped HTML, wrap your code in a <code>&lt;script type="text/template"&gt;</code>. For other languages, use a <code>&lt;pre&gt;&lt;code&gt;</code> block.</p>
+                        <details class="accordion-item">
+                             <summary class="accordion-summary text-base"><span>Show Examples</span><span class="accordion-icon" aria-hidden="true">+</span></summary>
+                             <div class="accordion-content space-y-4 pt-4">
+                                <h5 class="font-semibold pt-2">Preferred Method:</h5>
+                                <code-block language="html">
+        <script type="text/template">
+<code-block language="css">
+    <pre><code>.selector {
+    color: var(--pop-pink);
+}</code></pre>
+</code-block>
+        </script>
+                                </code-block>
+
+                                <h5 class="font-semibold pt-2">Fallback Method (to avoid escaping HTML):</h5>
+                                <code-block language="html">
+                                    <pre><code>&lt;code-block language="html"&gt;
+    &lt;script type="text/template"&gt;
+        &lt;div class="example"&gt;
+            &lt;p&gt;This HTML is rendered correctly.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/script&gt;
+&lt;/code-block&gt;</code></pre>
+                                </code-block>
+                             </div>
+                        </details>
+                    </div>
+                </article>
+
+                <article>
+                    <h3 class="font-headline text-2xl font-bold">&lt;kinetic-background&gt;</h3>
+                    <p class="mt-2 text-gray-400">A self-contained particle effect background that respects `prefers-reduced-motion`.</p>
+                    <div class="mt-4 space-y-4">
+                        <h4 class="font-semibold">Usage:</h4>
+                        <code-block language="html">
+                            <script type="text/template">
+<!-- Place this tag anywhere in your body -->
+<kinetic-background></kinetic-background>
+
+<!-- Load the component script -->
+<script type="module" src="https://yikesable.github.io/vibe/components/kinetic-background.js"></script>
+                            </script>
+                        </code-block>
+                    </div>
+                </article>
+            </div>
+        </section>
+
         <section id="faq" class="py-24 max-w-3xl mx-auto">
             <h2 class="font-headline text-4xl md:text-5xl font-bold text-center">The Why &amp; The Vibe</h2>
             <div id="accordion-container" class="mt-12 space-y-4">
@@ -176,14 +256,12 @@
 
     <script type="module">
         // Page-specific JS, like the accordion logic
-        const accordionItems = document.querySelectorAll('#accordion-container details');
+        const accordionItems = document.querySelectorAll('#accordion-container details, #components details');
         accordionItems.forEach(item => {
             item.addEventListener('toggle', event => {
                 if (item.open) {
                     accordionItems.forEach(otherItem => {
-                        if (otherItem !== item) {
-                            otherItem.open = false;
-                        }
+                        if (otherItem !== item) { otherItem.open = false; }
                     });
                 }
             });
