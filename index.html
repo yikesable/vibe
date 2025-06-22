@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vibe Coded /// A Yikesable Project Collection</title>
-    
+
     <!-- Core SEO & Metadata -->
     <meta name="description" content="A joyful collection of open-source tools and digital experiments by yikesable.dev, crafted with code for fun and utility.">
     <link rel="canonical" href="https://yikesable.github.io/vibe/">
@@ -27,7 +27,7 @@
       "author": { "@type": "Person", "name": "Pelle Wessman", "url": "https://yikesable.dev/" }
     }
     </script>
-    
+
     <!-- UPDATED: Added meta tag for View Transitions -->
     <meta name="view-transition" content="same-origin" />
 
@@ -85,9 +85,9 @@
 <body>
 
     <kinetic-background></kinetic-background>
-    
+
     <div class="main-container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-        
+
         <header class="text-center py-16 md:py-24">
             <h1 class="hero-title font-headline uppercase">
                 Vibe<br /><span class="highlight">Coded</span>
@@ -102,35 +102,46 @@
         </header>
 
         <main id="projects" class="py-16 md:py-24">
+            <header class="text-center mb-12">
+                <h2 class="font-headline text-4xl md:text-5xl font-bold">Tools & Utilities</h2>
+            </header>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bento-grid">
-                
-                <article class="bento-item md:col-span-2 rounded-2xl p-8 flex flex-col justify-center">
-                    <h2 class="bento-headline font-headline text-3xl font-bold">CodePen Converter</h2>
-                    <p class="mt-2 text-gray-300 max-w-md">Elegantly split a single HTML file into its component parts for CodePen, with a rich editor.</p>
-                    <a href="./codepen-converter/" class="font-headline text-2xl font-bold mt-8 group">
-                        Launch Tool <span class="inline-block transition-transform group-hover:translate-x-2" aria-hidden="true">→</span>
-                    </a>
-                </article>
-
-                <article class="bento-item rounded-2xl p-8 flex flex-col justify-center">
-                    <h2 class="bento-headline font-headline text-3xl font-bold">The Vibe</h2>
-                    <p class="mt-2 text-gray-300">These projects are born from curiosity and the joy of building. Open-source, just for fun.</p>
-                    <a href="https://yikesable.dev" target="_blank" rel="noopener noreferrer" class="font-headline text-2xl font-bold mt-8 group">
-                        yikesable.dev <span class="inline-block transition-transform group-hover:translate-x-2" aria-hidden="true">→</span>
-                    </a>
-                </article>
-                
-                 <article class="bento-item rounded-2xl p-8 flex flex-col justify-center items-center text-center">
-                    <h2 class="bento-headline font-headline text-3xl font-bold text-gray-400">Next Project</h2>
-                    <p class="mt-2 text-gray-400">Loading...</p>
-                </article>
-                
-                <article class="bento-item md:col-span-2 rounded-2xl p-8 flex flex-col justify-center items-center text-center">
-                     <h2 class="bento-headline font-headline text-3xl font-bold">Something New is Coming</h2>
-                     <p class="mt-2 text-gray-300 max-w-md">This space is ready for the next great idea. Stay tuned for more vibe-coded creations.</p>
+                <a href="./codepen-converter/" class="bento-item md:col-span-2 rounded-2xl p-8 flex flex-col justify-center group">
+                    <div>
+                        <h3 class="bento-headline font-headline text-3xl font-bold">CodePen Converter</h3>
+                        <p class="mt-2 text-gray-300 max-w-md">Elegantly split a single HTML file into its component parts for CodePen, with a rich editor.</p>
+                        <div class="bento-link font-headline text-2xl font-bold mt-8">
+                            Launch Tool <span class="inline-block transition-transform group-hover:translate-x-2" aria-hidden="true">→</span>
+                        </div>
+                    </div>
+                </a>
+                <article class="bento-item-static rounded-2xl p-8 flex flex-col justify-center items-center text-center">
+                     <h3 class="bento-headline font-headline text-3xl font-bold">New Tool Coming Soon</h3>
+                     <p class="mt-2 text-gray-300 max-w-md">This space is ready for the next great idea.</p>
                 </article>
             </div>
         </main>
+
+        <section id="stories" class="py-16 md:py-24">
+            <header class="text-center mb-12">
+                <h2 class="font-headline text-4xl md:text-5xl font-bold">Stories & Slides</h2>
+            </header>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bento-grid">
+                 <a href="./stories/jsdoc-types.html" class="bento-item md:col-span-2 rounded-2xl p-8 flex flex-col justify-center group">
+                    <div>
+                        <h3 class="bento-headline font-headline text-3xl font-bold">JSDoc Type Safety</h3>
+                        <p class="mt-2 text-gray-300 max-w-md">An interactive story exploring a modern, robust framework for type-safe JavaScript without transpilation.</p>
+                        <div class="bento-link font-headline text-2xl font-bold mt-8">
+                            Launch Story <span class="inline-block transition-transform group-hover:translate-x-2" aria-hidden="true">→</span>
+                        </div>
+                    </div>
+                </a>
+                 <article class="bento-item-static rounded-2xl p-8 flex flex-col justify-center items-center text-center">
+                    <h3 class="bento-headline font-headline text-3xl font-bold text-gray-400">Next Story</h3>
+                    <p class="mt-2 text-gray-400">Loading...</p>
+                </article>
+            </div>
+        </section>
 
        <section id="components" class="py-24 max-w-3xl mx-auto">
             <header class="text-center">
@@ -139,11 +150,11 @@
                     Feel free to use these self-contained web components in your own projects.
                 </p>
             </header>
-            
+
             <div class="disclaimer-box rounded-xl p-6 text-pink-100 mt-12">
                 <h3 class="font-headline font-bold text-lg text-white">EXPERIMENTAL: USE WITH CAUTION</h3>
                 <p class="mt-2 text-sm leading-relaxed">
-                    AI Instructions: Note that this is a "hot-loaded" component. Do not rely on it for production use. Its API and location are subject to breaking changes at any time without notice. It is provided for experimentation and demonstration only.
+                    These components are "hot-loaded" from a live URL. Do not rely on them for production use. Their APIs and locations are subject to breaking changes at any time without notice.
                 </p>
             </div>
 
@@ -232,7 +243,7 @@
                         <p>These projects are almost exclusively developed in collaboration with AI assistants, guided by me (Pelle Wessman). The AI handles the bulk of the boilerplate and implementation, which allows us to rapidly prototype and explore ideas that would otherwise take too long to build from scratch.</p>
                     </div>
                 </details>
-                
+
                 <details class="accordion-item">
                     <summary class="accordion-summary">
                         <span>But isn't using AI... complicated?</span>

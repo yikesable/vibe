@@ -16,33 +16,37 @@
  * <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
  *
  * 2. COLOR & THEME:
- * - The site is exclusively dark mode. Use the CSS variables defined
- * in the :root selector below.
+ * - The site is exclusively dark mode. Use the CSS variables defined below.
  * - The primary background is very dark (`--dark-bg`).
  * - The main accent and interactive color is a vibrant pink (`--pop-pink`).
  * - Use `--glow-color` for text shadows and box shadows on key elements
  * to create a neon "glow" effect.
  *
  * 3. TYPOGRAPHY:
- * - Page titles and major headlines MUST use the 'Chakra Petch' font.
- * Apply the `.font-headline` class.
- * - All other body text, paragraphs, and UI copy should use 'Inter'.
+ * - Page titles and major headlines MUST use the 'Chakra Petch' font,
+ * applied via the `.font-headline` class.
+ * - All other body text should use 'Inter'.
  *
  * 4. LAYOUT & COMPONENTS:
  * - Main content should be wrapped in a `.main-container` for centering.
- * - Use "Bento Box" style for content modules, as defined by the `.bento-item` class.
+ * - Use "Bento Box" style for content modules. Linkable items should be `<a>` tags
+ * with the `.bento-item` class. Static items should use `<article>` with `.bento-item-static`.
  * - Buttons should be high-contrast, using the `.cta-button` class.
  *
- * 5. FLAIR & EFFECTS:
- * - The `<kinetic-background>` web component should be used on all pages
+ * 5. FLAIR, EFFECTS & REUSABLE COMPONENTS:
+ * - The page MUST use the `<kinetic-background>` web componen should be used on all pages
  * to provide the floating particle background.
  * - All interactive elements (buttons, cards) should have a subtle
  * hover effect (e.g., transform, brighter glow).
+ * - Any code snippets MUST be displayed using the `<code-block>` component.
+ * - Load these components via their respective scripts.
+ *
+ * 6. ACCESSIBILITY:
  * - Implement `prefers-reduced-motion` to disable all animations for
  * accessibility, as demonstrated in the final section of this file.
  *
  * By following these rules, you will generate pages that are consistent
- * with the established "vibe.yikesable.dev" brand.
+ * with the established "yikesable.github.io/vibe/" brand.
  * ===================================================================
  */
 
@@ -70,11 +74,21 @@ body {
 }
 
 
-/* 2. Shared Typography
+/* 2. Shared Typography & Links
 ------------------------------------------------------------------- */
 
 .font-headline {
     font-family: 'Chakra Petch', sans-serif;
+}
+
+.accent-link {
+    color: var(--pop-pink);
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 0, 169, 0.5);
+    transition: text-decoration-color 0.3s ease;
+}
+.accent-link:hover {
+    text-decoration-color: var(--pop-pink);
 }
 
 
@@ -125,19 +139,21 @@ body {
     container-name: bento;
 }
 
-.bento-item {
+a.bento-item, .bento-item-static {
     background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
     border: 1px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(12px);
     transition: all 0.3s ease;
     overflow: hidden;
     position: relative;
+    text-decoration: none;
+    color: inherit;
 }
-.bento-item:hover {
+a.bento-item:hover {
     border-color: rgba(255, 0, 169, 0.5);
     transform: translateY(-5px);
 }
-.bento-item::before {
+a.bento-item::before, .bento-item-static::before {
     content: '';
     position: absolute;
     top: -50%;
@@ -150,27 +166,28 @@ body {
     z-index: 0;
     opacity: 0.3;
 }
-.bento-item:hover::before {
+a.bento-item:hover::before {
     transform: scale(1);
 }
-.bento-item > * {
+a.bento-item > div, .bento-item-static > div {
     position: relative;
     z-index: 1;
 }
-.bento-item a {
+.bento-link {
+    /* The link inside a bento item uses the accent-link styles */
     color: var(--pop-pink);
     text-decoration: underline;
     text-decoration-color: rgba(255, 0, 169, 0.5);
     transition: text-decoration-color 0.3s ease;
 }
-.bento-item a:hover {
+a.bento-item:hover .bento-link {
     text-decoration-color: var(--pop-pink);
 }
 
 /* Bento Item Container Query for responsive internal typography */
 @container bento (min-width: 300px) {
-    .bento-item .bento-headline {
-        font-size: 2.25rem; /* ~text-4xl */
+    .bento-headline {
+        font-size: 2.25rem;
         line-height: 2.5rem;
     }
 }
@@ -214,7 +231,7 @@ body {
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
-    .cta-button:hover, .bento-item:hover {
+    .cta-button:hover, a.bento-item:hover {
         transform: none;
     }
 }

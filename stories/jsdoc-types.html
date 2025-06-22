@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSDoc Type Safety: The Story</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- THEME DEFINITION --- */
+        /* Theme: "Cyber-Noir" */
+        /* Tone: Developer & Techy, Professional */
+        /* Background: Dark Navy (#0D1117) */
+        /* Text: Light Gray (#C9D1D9) */
+        /* Accent: Neon Green (#39D353) */
+        /* Fonts: 'Inter' for body, 'Roboto Mono' for code/headings */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0D1117;
+            color: #C9D1D9;
+            margin: 0;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .aurora-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150%;
+            height: 150%;
+            background-image: radial-gradient(ellipse at center, hsla(130, 67%, 51%, 0.1), transparent 60%);
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: -1;
+            animation: pulse-glow 10s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulse-glow {
+            from { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+            to   { opacity: 1; transform: translate(-50%, -45%) scale(1.1); }
+        }
+
+        .story-slide-content {
+            z-index: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            width: 100%;
+            max-width: 1200px;
+            height: 100%;
+        }
+
+        .slide-title {
+            font-size: clamp(2.5rem, 7vw, 6rem);
+            font-weight: 900;
+            font-family: 'Roboto Mono', monospace;
+            color: #FFFFFF;
+            line-height: 1.1;
+            text-shadow: 0 0 15px hsla(130, 67%, 51%, 0.2);
+            margin-bottom: 0.5rem;
+        }
+
+        .slide-subtitle {
+            font-size: clamp(1.25rem, 3.5vw, 2.5rem);
+            color: #39D353;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .slide-text {
+            font-size: clamp(1.125rem, 2.5vw, 1.75rem);
+            color: #C9D1D9;
+            max-width: 45em;
+            line-height: 1.6;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .slide-text strong, .slide-list strong {
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        .slide-text em, .slide-list em {
+            color: #39D353;
+            font-style: normal;
+        }
+
+        .slide-text code, .slide-list code, .ratings-grid code {
+            background-color: hsla(130, 67%, 51%, 0.1);
+            color: #39D353;
+            padding: 0.2em 0.4em;
+            border-radius: 0.3em;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+        }
+
+        .pill {
+            display: inline-block;
+            background-color: hsla(130, 67%, 51%, 0.1);
+            color: #39D353;
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            font-weight: 700;
+            padding: 0.5em 1em;
+            border-radius: 9999px;
+            margin-bottom: 1rem;
+            font-family: 'Roboto Mono', monospace;
+            border: 1px solid hsla(130, 67%, 51%, 0.2);
+        }
+        
+        blockquote {
+            background-color: hsla(130, 67%, 51%, 0.05);
+            border-left: 4px solid #39D353;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            text-align: left;
+        }
+
+        .code-block {
+            font-family: 'Roboto Mono', monospace;
+            font-size: clamp(1rem, 1.8vw, 1.3rem);
+            background-color: #272822; 
+            color: #f8f8f2; 
+            padding: 2rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 900px;
+            text-align: left;
+            line-height: 1.7;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-height: 65vh;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+        
+        .code-block .token.operator, .code-block .token.entity, .code-block .token.url, .language-css .token.string, .style .token.string {
+            background: none;
+        }
+
+
+        .slide-list {
+            font-size: clamp(1.125rem, 2.5vw, 1.75rem);
+            list-style-type: none;
+            padding: 0;
+            margin: 1.5rem 0;
+            text-align: left;
+            max-width: 45em;
+            width: 100%;
+        }
+
+        .slide-list li {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .slide-list li > span {
+            position: absolute;
+            left: 0;
+            top: 0.2em;
+            color: #39D353;
+            font-size: 1.2em;
+        }
+
+        ol.slide-list {
+            counter-reset: step-counter;
+            padding-left: 0;
+        }
+        
+        ol.slide-list li {
+            padding-left: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        ol.slide-list li::before {
+            position: absolute;
+            left: 0;
+            top: 0.1em;
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            color: #0D1117;
+            background-color: #39D353;
+            border-radius: 50%;
+            width: 1.75em;
+            height: 1.75em;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-family: 'Roboto Mono', monospace;
+            flex-shrink: 0;
+            font-size: 0.9em;
+            line-height: 1;
+        }
+
+        .ratings-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 50em;
+        }
+
+        .rating-item { text-align: left; }
+
+        .rating-label {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-bar-bg {
+            width: 100%;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .rating-bar-fg {
+            height: 100%;
+            background-color: #39D353;
+            border-radius: 10px;
+            width: 0%; /* Start at 0 for animation */
+            transition: width 1s ease-out;
+        }
+        
+        #presentation-mode-toggle {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 1000;
+            background-color: rgba(30, 30, 30, 0.5);
+            backdrop-filter: blur(5px);
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        #presentation-mode-toggle:hover {
+            background-color: rgba(50, 50, 50, 0.7);
+            transform: scale(1.1);
+        }
+        .hidden { display: none; }
+        
+        @media (orientation: portrait) {
+            .slide-title { font-size: clamp(2rem, min(10vw, 10vh), 3.5rem); margin-bottom: 0.25rem; }
+            .slide-subtitle { font-size: clamp(1rem, min(5vw, 4vh), 1.5rem); margin-bottom: 1rem; }
+            .slide-text { 
+                font-size: clamp(1rem, min(4vw, 3vh), 1.25rem);
+                margin-top: 1rem;
+                margin-bottom: 1rem;
+            }
+            .pill { font-size: clamp(0.8rem, min(3.5vw, 3vh), 1rem); padding: 0.4em 0.8em; margin-bottom: 0.5rem; }
+            .code-block { font-size: clamp(0.75rem, min(3.5vw, 2.5vh), 1rem); padding: 1rem; max-height: 45vh; }
+            .slide-list { font-size: clamp(1rem, min(4vw, 3vh), 1.25rem); max-height: 50vh; overflow-y: auto; }
+            ol.slide-list li, .slide-list li { margin-bottom: 0.75rem; }
+            .ratings-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="aurora-glow"></div>
+    <particle-field color="#39D353" size="0.008" count="8000"></particle-field>
+    
+    <button id="presentation-mode-toggle" title="Toggle Presentation Mode">
+        <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-play-fill hidden" viewBox="0 0 16 16">
+          <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+        </svg>
+        <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-pause-fill" viewBox="0 0 16 16">
+          <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5m5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5"/>
+        </svg>
+    </button>
+
+    <story-viewer>
+        <!-- Slide 1: Intro -->
+        <story-slide data-duration="8000">
+            <div class="story-slide-content">
+                <h1 class="slide-title">
+                    <dos-typewriter speed="50">JSDoc Type Safety</dos-typewriter>
+                </h1>
+                <p class="slide-subtitle">A Modern Framework for Maintainable Code</p>
+                <p class="slide-text">An interactive story exploring a modern approach to type-safe JavaScript without transpilation.</p>
+            </div>
+        </story-slide>
+
+        <!-- Slide 2: Core Philosophy -->
+        <story-slide data-duration="12000">
+            <div class="story-slide-content">
+                <div class="pill">Core Philosophy</div>
+                <h2 class="slide-title">Ship Standard JS</h2>
+                <p class="slide-text">The goal isn't to <em>avoid</em> TypeScript, but to <strong>ship standard, transpilation-free JavaScript</strong>. We use JSDoc and TSC as a powerful static analysis layer, not a compiler.</p>
+            </div>
+        </story-slide>
+
+        <!-- Slide 3: The "Library-First" Rationale -->
+        <story-slide data-duration="15000">
+             <div class="story-slide-content">
+                <div class="pill">The "Why"</div>
+                <h2 class="slide-title">The Library-First Rationale</h2>
+                <ul class="slide-list">
+                    <li><span>✓</span><div>Inspired by projects like <strong>Svelte</strong> and <strong>Fastify</strong>, this approach excels for libraries.</div></li>
+                    <li><span>✓</span><div>It <strong>eliminates the mandatory build step</strong>, leading to a faster, lower-friction developer experience.</div></li>
+                </ul>
+                <blockquote>For applications, which will have a build step anyway, the benefits are less pronounced. For libraries, I strongly urge you to use JSDoc instead.
+                <cite class="block text-right not-italic mt-2 text-gray-400">— Rich Harris, Creator of Svelte</cite>
+                </blockquote>
+            </div>
+        </story-slide>
+        
+        <!-- Slide 4: Hybrid Imperative -->
+        <story-slide data-duration="12000">
+            <div class="story-slide-content">
+                <div class="pill">Core Concept</div>
+                <h2 class="slide-title">The Hybrid Imperative</h2>
+                <p class="slide-text">A pragmatic, two-tiered system for type definitions that balances co-location with maintainability.</p>
+            </div>
+        </story-slide>
+
+        <!-- Slide 5: Hybrid Step 1 -->
+        <story-slide data-duration="10000">
+            <div class="story-slide-content">
+                <div class="pill">Tier 1</div>
+                <h2 class="slide-title">Local &amp; Ephemeral Types</h2>
+                <p class="slide-text">For types specific to a single function's implementation and not reused elsewhere, use inline JSDoc.</p>
+            </div>
+        </story-slide>
+        
+        <!-- Slide 6: Hybrid Step 1 Code -->
+        <story-slide data-linger-duration="4000">
+            <div class="story-slide-content">
+                 <div class="code-block">
+                    <dos-typewriter speed="25" manual-start highlight="javascript">
+/**
+ * @param {{ name: string, id: number }} user - The user object.
+ * @returns {string} A greeting for the user.
+ */
+function greet(user) {
+  return `Hello, ${user.name}!`;
+}
+                    </dos-typewriter>
+                </div>
+            </div>
+        </story-slide>
+
+        <!-- Slide 7: Hybrid Step 2 -->
+        <story-slide data-duration="12000">
+            <div class="story-slide-content">
+                <div class="pill">Tier 2</div>
+                <h2 class="slide-title">Shared &amp; Public Types</h2>
+                <p class="slide-text">For complex objects and shared data structures, define them in a dedicated <code>-types.d.ts</code> file. This creates a canonical, single source of truth.</p>
+            </div>
+        </story-slide>
+        
+        <!-- Slide 8: Hybrid Step 2 Code -->
+        <story-slide data-linger-duration="4000">
+            <div class="story-slide-content">
+                 <div class="code-block">
+                    <dos-typewriter speed="25" manual-start highlight="typescript">
+// In user-types.d.ts
+export type User = {
+  name: string;
+  id: number;
+  email?: string;
+};
+
+// In main.js
+/**
+ * @param {import('./user-types.d.ts').User} user
+ * @returns {string}
+ */
+function getEmail(user) {
+  return user.email || 'No email provided';
+}
+                    </dos-typewriter>
+                </div>
+            </div>
+        </story-slide>
+
+        <!-- Slide 9: Advanced Tips Intro -->
+        <story-slide data-duration="10000">
+            <div class="story-slide-content">
+                <div class="pill">Going Further</div>
+                <h2 class="slide-title">Advanced Techniques</h2>
+                <p class="slide-text">Let's explore some powerful JSDoc patterns that unlock the full potential of TypeScript's type inference engine.</p>
+            </div>
+        </story-slide>
+
+        <!-- Slide 10: The .d.ts Escape Hatch -->
+        <story-slide data-linger-duration="5000">
+            <div class="story-slide-content">
+                <div class="pill">The .d.ts Escape Hatch</div>
+                <h2 class="slide-title">Syntax in Declaration Files</h2>
+                <p class="slide-text">Some TypeScript features, like <code>interface</code> or <code>enum</code>, are syntax-only and cannot be used in JSDoc. This is a feature, not a bug! It encourages defining complex types in <code>.d.ts</code> files, cleanly separating type definitions from runtime logic.</p>
+                 <div class="code-block">
+                    <dos-typewriter speed="25" manual-start highlight="typescript">
+// In user-types.d.ts
+export interface User {
+  id: number;
+  name: string;
+}
+export enum Role {
+  Admin = 'ADMIN',
+  User = 'USER'
+}
+                    </dos-typewriter>
+                </div>
+            </div>
+        </story-slide>
+
+        <!-- Slide 11: Advanced Type Guards -->
+        <story-slide data-linger-duration="5000">
+            <div class="story-slide-content">
+                 <div class="pill">Advanced Tip</div>
+                <h2 class="slide-title">Type Predicates</h2>
+                <p class="slide-text">Use the <code>@returns {x is Type}</code> syntax to create type guard functions that narrow types within conditional blocks.</p>
+                 <div class="code-block">
+                    <dos-typewriter speed="25" manual-start highlight="javascript">
+/**
+ * @param {unknown} value
+ * @returns {value is string}
+ */
+function isString(value) {
+  return typeof value === 'string';
+}
+
+function example(input) {
+  if (isString(input)) {
+    // TS now knows `input` is a string here
+    console.log(input.toUpperCase());
+  }
+}
+                    </dos-typewriter>
+                </div>
+            </div>
+        </story-slide>
+
+        <!-- Slide 12: Assertion Functions -->
+        <story-slide data-linger-duration="5000">
+            <div class="story-slide-content">
+                 <div class="pill">Advanced Tip</div>
+                <h2 class="slide-title">Assertion Functions</h2>
+                <p class="slide-text">Use <code>@returns {asserts x is Type}</code> to create functions that throw an error if a type assumption is wrong, narrowing the type for all subsequent code.</p>
+                 <div class="code-block">
+                    <dos-typewriter speed="25" manual-start highlight="javascript">
+/**
+ * @param {unknown} value
+ * @returns {asserts value is string}
+ */
+function assertIsString(value) {
+  if (typeof value !== 'string') {
+    throw new Error('Not a string!');
+  }
+}
+
+function example(input) {
+  assertIsString(input);
+  // TS now knows `input` is a string here
+  console.log(input.toUpperCase());
+}
+                    </dos-typewriter>
+                </div>
+            </div>
+        </story-slide>
+
+        <!-- Slide 13: Const Assertions -->
+        <story-slide data-linger-duration="5000">
+            <div class="story-slide-content">
+                 <div class="pill">Advanced Tip</div>
+                <h2 class="slide-title">Const Assertions</h2>
+                <p class="slide-text">Apply <code>/** @type {const} */</code> to an object or array literal to treat it as deeply readonly, inferring the most specific types possible.</p>
+                 <div class="code-block">
+                    <dos-typewriter speed="25" manual-start highlight="javascript">
+const config = /** @type {const} */ ({
+  env: 'production',
+  retries: 3,
+});
+
+// config.env is now type 'production', not string
+// All properties are readonly.
+// config.retries = 4; // TypeError!
+                    </dos-typewriter>
+                </div>
+            </div>
+        </story-slide>
+
+        <!-- Slide 14: Satisfies Operator -->
+        <story-slide data-linger-duration="5000">
+            <div class="story-slide-content">
+                 <div class="pill">Advanced Tip</div>
+                <h2 class="slide-title">Satisfies Operator</h2>
+                <p class="slide-text">Use <code>/** @satisfies {Type} */</code> to validate that an expression conforms to a type without changing the expression's own, more specific type.</p>
+                 <div class="code-block">
+                    <dos-typewriter speed="25" manual-start highlight="javascript">
+/** @typedef {'light' | 'dark'} Theme */
+
+const myTheme = /** @satisfies {Theme} */ ('dark');
+// `myTheme` has the specific type 'dark'
+
+const palette = /** @satisfies {Record<Theme, string[]>} */ ({
+  light: ['#fff', '#eee'],
+  dark: ['#000', '#111'],
+});
+// `palette.dark` is known to exist
+                    </dos-typewriter>
+                </div>
+            </div>
+        </story-slide>
+
+        <!-- Slide 15: Project Setup -->
+        <story-slide data-duration="10000">
+            <div class="story-slide-content">
+                <div class="pill">Getting Started</div>
+                <h2 class="slide-title">Project Setup</h2>
+                <p class="slide-text">Let's look at the essential configuration files needed to enable this workflow for a new library or application.</p>
+            </div>
+        </story-slide>
+
+        <!-- Slide 16: package.json -->
+        <story-slide data-linger-duration="5000">
+            <div class="story-slide-content">
+                <div class="pill">Project Setup</div>
+                <h2 class="slide-title"><code>package.json</code></h2>
+                <p class="slide-text">Define scripts for cleaning, building declarations, and running multiple checks in parallel.</p>
+                <div class="code-block">
+                    <dos-typewriter speed="20" manual-start highlight="json">
+{
+  "scripts": {
+    "build:0": "run-s clean",
+    "build:1-declaration": "tsc -p declaration.tsconfig.json",
+    "build": "run-s build:*",
+    "check:tsc": "tsc",
+    "check:type-coverage": "type-coverage --detail --strict",
+    "check": "run-s clean && run-p check:*",
+    "clean:declarations-top": "rm -rf $(find . -maxdepth 1 -type f -name '*.d.ts*' ! -name 'index.d.ts')",
+    "clean:declarations-lib": "rm -rf $(find lib -type f -name '*.d.ts*' ! -name '*-types.d.ts')",
+    "clean": "run-p clean:*"
+  },
+  "devDependencies": {
+    "npm-run-all2": "^8.0.1",
+    "type-coverage": "^2.29.7",
+    "typescript": "~5.8.3"
+  }
+}
+                    </dos-typewriter>
+                </div>
+            </div>
+        </story-slide>
+
+        <!-- Slide 17: tsconfig.json -->
+        <story-slide data-linger-duration="5000">
+            <div class="story-slide-content">
+                <div class="pill">Project Setup</div>
+                <h2 class="slide-title"><code>tsconfig.json</code></h2>
+                <p class="slide-text">This file activates TypeScript's checking engine for your JavaScript project. Here are the key options:</p>
+                <ul class="slide-list">
+                    <li><span>✓</span><code>"strict": true</code> enables all of TypeScript's strict type-checking options. This is essential for catching errors.</li>
+                    <li><span>✓</span><code>"checkJs": true</code> tells the compiler to process and report errors in <code>.js</code> files.</li>
+                    <li><span>✓</span><code>"noEmit": true</code> ensures that running <code>tsc</code> only performs checks and does not create any output files.</li>
+                    <li><span>✓</span><code>"moduleResolution": "node16"</code> ensures TypeScript resolves modules the same way older versions of Node.js do.</li>
+                </ul>
+            </div>
+        </story-slide>
+
+        <!-- Slide 18: declaration.tsconfig.json -->
+        <story-slide data-linger-duration="5000">
+            <div class="story-slide-content">
+                <div class="pill">Project Setup</div>
+                <h2 class="slide-title"><code>declaration.tsconfig.json</code></h2>
+                <p class="slide-text">A separate config for publishing. It inherits from the main config and emits <code>.d.ts</code> files. <strong>(For libraries only)</strong></p>
+                 <div class="code-block">
+                    <dos-typewriter speed="20" manual-start highlight="json">
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "noEmit": false
+  }
+}
+                    </dos-typewriter>
+                </div>
+            </div>
+        </story-slide>
+
+        <!-- Slide 19: .gitignore -->
+        <story-slide data-linger-duration="5000">
+            <div class="story-slide-content">
+                <div class="pill">Project Setup</div>
+                <h2 class="slide-title"><code>.gitignore</code></h2>
+                <p class="slide-text">Ignore generated declaration files, but make an exception for hand-authored type definitions (like <code>*-types.d.ts</code>).</p>
+                 <div class="code-block">
+                    <dos-typewriter speed="20" manual-start highlight="bash">
+# Generated types
+*.d.ts
+*.d.ts.map
+
+# But NOT our hand-authored type definitions
+!lib/**/*-types.d.ts
+!index.d.ts
+                    </dos-typewriter>
+                </div>
+            </div>
+        </story-slide>
+        
+        <!-- Slide 20: Tooling Balance Intro -->
+        <story-slide data-duration="10000">
+            <div class="story-slide-content">
+                <div class="pill">Ecosystem</div>
+                <h2 class="slide-title">Division of Labor</h2>
+                <p class="slide-text">For a harmonious workflow, it's crucial to assign clear roles to our tools. TypeScript handles type correctness, while linters manage style and documentation quality.</p>
+            </div>
+        </story-slide>
+
+        <!-- Slide 21: Ratings Example -->
+        <story-slide data-duration="15000" data-init-ratings>
+            <div class="story-slide-content">
+                <div class="pill">Comparative Analysis</div>
+                <h2 class="slide-title">Rule Configuration Balance</h2>
+                 <p class="slide-text mb-8">Balancing the roles of <code>tsc</code> and ESLint for a harmonious workflow.</p>
+                <div class="ratings-grid">
+                    <div class="rating-item">
+                        <div class="rating-label">Type Correctness &amp; Logic</div>
+                        <div class="rating-bar-bg"><div class="rating-bar-fg" data-value="100"></div></div>
+                        <small class="text-gray-400">Handled 100% by <code>tsc</code>.</small>
+                    </div>
+                    <div class="rating-item">
+                        <div class="rating-label">Documentation Presence &amp; Quality</div>
+                        <div class="rating-bar-bg"><div class="rating-bar-fg" data-value="90"></div></div>
+                         <small class="text-gray-400">Handled 90% by ESLint, 10% by manual review.</small>
+                    </div>
+                     <div class="rating-item">
+                        <div class="rating-label">Code &amp; JSDoc Style Consistency</div>
+                        <div class="rating-bar-bg"><div class="rating-bar-fg" data-value="100"></div></div>
+                         <small class="text-gray-400">Handled 100% by ESLint &amp; Prettier.</small>
+                    </div>
+                </div>
+            </div>
+        </story-slide>
+
+        <!-- Slide 22: Conclusion -->
+        <story-slide data-duration="12000">
+            <div class="story-slide-content">
+                 <h2 class="slide-title">A Unified Vision</h2>
+                <p class="slide-text">By combining a clear philosophy, strategic tooling, and advanced JSDoc patterns, we can create JavaScript ecosystems that are <strong>robust, maintainable, and a joy to work in</strong>—all without leaving the world of standard JavaScript.</p>
+                 <p class="slide-subtitle mt-8">Thank You.</p>
+            </div>
+        </story-slide>
+
+    </story-viewer>
+    
+    <!-- Prism.js for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+<script type="module">
+    // --- WEB COMPONENTS (Self-contained, Refactored June 2025) ---
+    class StorySlide extends HTMLElement {
+        constructor() { super(); this.attachShadow({mode: 'open'}); const style = document.createElement('style'); style.textContent = `:host { position: absolute; inset: 0; display: none; flex-direction: column; justify-content: center; align-items: center; opacity: 0; } :host([active]) { display: flex; animation: fade-in 0.5s ease-out forwards; } @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`; const slot = document.createElement('slot'); this.shadowRoot.append(style, slot); }
+    }
+    class StoryViewer extends HTMLElement {
+        constructor() { super(); this.attachShadow({ mode: 'open' }); this._slides = []; this._currentSlideIndex = 0; this._slideTimer = null; this._isPaused = false; this._isInitialized = false; }
+        connectedCallback() { this._renderBaseLayout(); this._setupEventListeners(); const slot = this.shadowRoot.querySelector('slot'); if (slot) { slot.addEventListener('slotchange', () => this.init()); } }
+        init() { if (this._isInitialized) return; this._slides = Array.from(this.querySelectorAll('story-slide')); if (this._slides.length > 0) { this._renderProgressBars(); this.reset(); this._isInitialized = true; } }
+        _renderBaseLayout() { const style = document.createElement('style'); style.textContent = `@keyframes fill-progress { from { width: 0%; } to { width: 100%; } } :host { display: block; width: 100vw; height: 100vh; } .story-container { position: relative; width: 100%; height: 100%; overflow: hidden; } .progress-bars { position: absolute; top: 1rem; left: 1rem; right: 1rem; display: grid; gap: 4px; z-index: 20; } .progress-bar-bg { height: 3px; background-color: rgba(255, 255, 255, 0.2); border-radius: 3px; overflow: hidden; } .progress-bar-fg { height: 100%; background-color: #39D353; border-radius: 3px; width: 0%; } .nav-zone { position: absolute; top: 0; bottom: 0; width: 30%; z-index: 10; cursor: pointer; } .nav-zone.left { left: 0; } .nav-zone.right { right: 0; }`; const container = document.createElement('div'); container.className = 'story-container'; const progressContainer = document.createElement('div'); progressContainer.id = 'progress-container'; progressContainer.className = 'progress-bars'; const slot = document.createElement('slot'); const navPrev = document.createElement('div'); navPrev.id = 'nav-prev'; navPrev.className = 'nav-zone left'; const navNext = document.createElement('div'); navNext.id = 'nav-next'; navNext.className = 'nav-zone right'; container.append(progressContainer, slot, navPrev, navNext); this.shadowRoot.append(style, container); }
+        _renderProgressBars() { const progressContainer = this.shadowRoot.getElementById('progress-container'); while (progressContainer.firstChild) { progressContainer.removeChild(progressContainer.firstChild); } progressContainer.style.gridTemplateColumns = `repeat(${this._slides.length}, 1fr)`; this._slides.forEach((_, i) => { const barBg = document.createElement('div'); barBg.className = 'progress-bar-bg'; const barFg = document.createElement('div'); barFg.className = 'progress-bar-fg'; barFg.id = `progress-bar-${i}`; barBg.appendChild(barFg); progressContainer.appendChild(barBg); }); }
+        _showSlide(index) { clearTimeout(this._slideTimer); if (index >= this._slides.length) { index = 0; } if (index < 0) { index = this._slides.length - 1; } this._currentSlideIndex = index; this._slides.forEach((slide, i) => { const isActive = i === this._currentSlideIndex; slide.toggleAttribute('active', isActive); if (isActive) { this.dispatchEvent(new CustomEvent('slide-changed', { detail: { slide: slide, index: i }})); const typewriter = slide.querySelector('dos-typewriter[manual-start]'); if (typewriter && typeof typewriter.start === 'function') { typewriter.start(); } } }); this.shadowRoot.querySelectorAll('.progress-bar-fg').forEach((bar, i) => { bar.style.animation = 'none'; bar.style.width = i < this._currentSlideIndex ? '100%' : '0%'; }); this._startTimer(); }
+        _getSlideDuration(slide) {
+            const typewriter = slide.querySelector('dos-typewriter[manual-start]');
+            if (typewriter && slide.hasAttribute('data-linger-duration')) {
+                const textLength = typewriter.initialText.length;
+                const typeSpeed = typewriter.speed || 30;
+                const lingerTime = parseInt(slide.dataset.lingerDuration, 10) || 4000;
+                return (textLength * typeSpeed) + lingerTime;
+            }
+            return parseInt(slide.dataset.duration, 10) || 10000;
+        }
+        _startTimer() { 
+            if (this._isPaused || !this._slides.length) return; 
+            const currentSlide = this._slides[this._currentSlideIndex]; 
+            const duration = this._getSlideDuration(currentSlide); 
+            const currentBar = this.shadowRoot.getElementById(`progress-bar-${this._currentSlideIndex}`); 
+            if(currentBar) { 
+                void currentBar.offsetWidth; 
+                currentBar.style.animation = `fill-progress ${duration / 1000}s linear forwards`; 
+            } 
+            this._slideTimer = setTimeout(() => this._showSlide(this._currentSlideIndex + 1), duration); 
+        }
+        pause() { 
+            if (this._isPaused) return; 
+            this._isPaused = true; 
+            clearTimeout(this._slideTimer); 
+            const bar = this.shadowRoot.getElementById(`progress-bar-${this._currentSlideIndex}`); 
+            if(bar) bar.style.animationPlayState = 'paused'; 
+            this.dispatchEvent(new CustomEvent('pause')); 
+        }
+        play() { 
+            if (!this._isInitialized) { this.init(); return; } 
+            if (!this._isPaused) return; 
+            this._isPaused = false; 
+            const bar = this.shadowRoot.getElementById(`progress-bar-${this._currentSlideIndex}`); 
+            if(bar) { 
+                const currentSlide = this._slides[this._currentSlideIndex]; 
+                const duration = this._getSlideDuration(currentSlide); 
+                const computedStyle = window.getComputedStyle(bar); 
+                const parentWidth = bar.parentElement.offsetWidth; 
+                const width = parseFloat(computedStyle.getPropertyValue('width')); 
+                const remainingTime = duration * (1 - (width / parentWidth)); 
+                bar.style.animationPlayState = 'running'; 
+                this._slideTimer = setTimeout(() => this._showSlide(this._currentSlideIndex + 1), remainingTime); 
+            } else { 
+                this._startTimer(); 
+            } 
+            this.dispatchEvent(new CustomEvent('play'));
+        }
+        reset() { this._isPaused = false; this._showSlide(0); this.dispatchEvent(new CustomEvent('play')); }
+        _setupEventListeners() {
+            const prev = this.shadowRoot.getElementById('nav-prev');
+            const next = this.shadowRoot.getElementById('nav-next');
+            prev.addEventListener('click', () => this._showSlide(this._currentSlideIndex - 1));
+            next.addEventListener('click', () => {
+                const currentSlide = this._slides[this._currentSlideIndex];
+                const typewriter = currentSlide.querySelector('dos-typewriter');
+                if (typewriter && typewriter.isTyping) {
+                    typewriter.complete();
+                } else {
+                    this._showSlide(this._currentSlideIndex + 1);
+                }
+            });
+        }
+    }
+    customElements.define('story-slide', StorySlide);
+    customElements.define('story-viewer', StoryViewer);
+
+    class DosTypewriter extends HTMLElement {
+        constructor() {
+            super();
+            this.attachShadow({ mode: 'open' });
+            this.isTyping = false;
+        }
+
+        connectedCallback() {
+            const rawText = this.textContent || '';
+            const lines = rawText.split('\n');
+            let firstLine = -1;
+            let lastLine = -1;
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].trim() !== '') {
+                    if (firstLine === -1) firstLine = i;
+                    lastLine = i;
+                }
+            }
+            const textBlock = (firstLine !== -1) ? lines.slice(firstLine, lastLine + 1) : [];
+            const minIndent = textBlock.reduce((min, line) => {
+                if (line.trim() === '') return min;
+                const indent = line.match(/^\s*/)[0].length;
+                return Math.min(min, indent);
+            }, Infinity);
+
+            this.initialText = (textBlock.length > 0 && minIndent !== Infinity)
+                ? textBlock.map(line => line.substring(minIndent)).join('\n')
+                : '';
+
+            this.speed = parseInt(this.getAttribute('speed'), 10) || 30;
+            this.highlight = this.getAttribute('highlight');
+
+            const style = document.createElement('style');
+            style.textContent = `:host { display: inline-block; font: inherit; color: inherit; white-space: pre-wrap; } .container { display: inline-block; } slot { display: none; } .cursor { display: inline-block; width: 0.6em; height: 1.2em; background-color: currentColor; animation: blink 1s step-end infinite; vertical-align: bottom; margin-left: 2px; } @keyframes blink { from, to { background-color: transparent; } 50% { background-color: currentColor; } }`;
+            
+            this.container = document.createElement('div');
+            this.container.className = 'container';
+            
+            this.cursor = document.createElement('span');
+            this.cursor.classList.add('cursor');
+            const slot = document.createElement('slot');
+            
+            this.shadowRoot.append(style, this.container, slot);
+
+            if (this.highlight) {
+                const prismTheme = document.createElement('link');
+                prismTheme.setAttribute('rel', 'stylesheet');
+                prismTheme.setAttribute('href', 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css');
+                this.shadowRoot.appendChild(prismTheme);
+            }
+
+            if (!this.hasAttribute('manual-start')) this.start();
+        }
+
+        start() {
+            if (this.isTyping) return;
+            if (this.timeoutId) clearTimeout(this.timeoutId);
+            this.isTyping = true;
+            this.container.innerHTML = '';
+            
+            if (this.highlight && window.Prism && window.Prism.plugins && window.Prism.plugins.autoloader) {
+                this._typeHighlightedText();
+            } else {
+                this._typePlainText(this.initialText);
+            }
+        }
+        
+        complete() {
+            if (!this.isTyping) return;
+            clearTimeout(this.timeoutId);
+            this.isTyping = false;
+            this.animationJobs.forEach(({ node, text }) => node.textContent = text);
+            this.dispatchEvent(new CustomEvent('type-finished'));
+            this.cursor.style.display = 'none';
+        }
+
+        _typeHighlightedText() {
+            window.Prism.plugins.autoloader.loadLanguages(
+                [this.highlight],
+                () => {
+                    const grammar = window.Prism.languages[this.highlight];
+                    if (!grammar) {
+                        this._typePlainText(this.initialText);
+                        return;
+                    }
+                    this.animationJobs = [];
+                    const fragment = document.createDocumentFragment();
+                    this._buildTokenDOM(fragment, window.Prism.tokenize(this.initialText, grammar), this.animationJobs);
+                    this.container.appendChild(fragment);
+                    this.container.appendChild(this.cursor);
+                    this.cursor.style.display = 'inline-block';
+                    this._animateTyping(this.animationJobs);
+                },
+                () => {
+                    console.warn(`Prism autoloader could not load language: ${this.highlight}. Falling back to plain text.`);
+                    this._typePlainText(this.initialText);
+                }
+            );
+        }
+
+        _typePlainText(text) {
+            const textNode = document.createTextNode('');
+            this.container.appendChild(textNode);
+            this.container.appendChild(this.cursor);
+            this.cursor.style.display = 'inline-block';
+            this.animationJobs = [{ node: textNode, text: text }];
+            this._animateTyping(this.animationJobs);
+        }
+
+        _buildTokenDOM(parent, tokens, jobs) {
+            tokens.forEach(token => {
+                if (typeof token === 'string') {
+                    const textNode = document.createTextNode('');
+                    parent.appendChild(textNode);
+                    jobs.push({ node: textNode, text: token });
+                } else {
+                    const span = document.createElement('span');
+                    span.className = `token ${token.type}`;
+                    if (Array.isArray(token.alias)) {
+                        span.classList.add(...token.alias);
+                    } else if (token.alias) {
+                        span.classList.add(token.alias);
+                    }
+                    parent.appendChild(span);
+                    if (Array.isArray(token.content)) {
+                        this._buildTokenDOM(span, token.content, jobs);
+                    } else if (typeof token.content === 'string') {
+                        const textNode = document.createTextNode('');
+                        span.appendChild(textNode);
+                        jobs.push({ node: textNode, text: token.content });
+                    }
+                }
+            });
+        }
+
+        _animateTyping(jobs) {
+            let jobIndex = 0;
+            let charIndex = 0;
+            const typeChar = () => {
+                if (jobIndex >= jobs.length) {
+                    this.isTyping = false;
+                    this.dispatchEvent(new CustomEvent('type-finished'));
+                    this.cursor.style.display = 'none';
+                    return;
+                }
+                const { node, text } = jobs[jobIndex];
+                if (charIndex < text.length) {
+                    node.textContent += text[charIndex];
+                    charIndex++;
+                } else {
+                    jobIndex++;
+                    charIndex = 0;
+                    typeChar(); // Move to the next job immediately without delay
+                    return;
+                }
+                if (this.parentElement) this.parentElement.scrollTop = this.parentElement.scrollHeight;
+                this.timeoutId = setTimeout(typeChar, this.speed);
+            };
+            typeChar();
+        }
+    }
+    customElements.define('dos-typewriter', DosTypewriter);
+
+    if (typeof THREE !== 'undefined') {
+        class ParticleField extends HTMLElement {
+            constructor() { super(); this.attachShadow({ mode: 'open' }); this.animationFrameId = null; }
+            connectedCallback() { const particleColor = this.getAttribute('color') || '#8A2BE2'; const particleSize = parseFloat(this.getAttribute('size')) || 0.015; const particleCount = parseInt(this.getAttribute('count'), 10) || 5000; const style = document.createElement('style'); style.textContent = `:host { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; } canvas { display: block; width: 100%; height: 100%; }`; const canvas = document.createElement('canvas'); this.shadowRoot.append(style, canvas); this.init(canvas, particleColor, particleSize, particleCount); }
+            disconnectedCallback() { cancelAnimationFrame(this.animationFrameId); if (this.resizeObserver) this.resizeObserver.disconnect(); }
+            init(canvas, color, size, count) { this.scene = new THREE.Scene(); this.camera = new THREE.PerspectiveCamera(75, this.clientWidth / this.clientHeight, 0.1, 1000); this.renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true }); this.onResize(); this.camera.position.z = 5; const geometry = new THREE.BufferGeometry(); const positions = new Float32Array(count * 3); for (let i = 0; i < count * 3; i++) { positions[i] = (Math.random() - 0.5) * 10; } geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3)); const material = new THREE.PointsMaterial({ color: new THREE.Color(color), size: size, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, }); this.particles = new THREE.Points(geometry, material); this.scene.add(this.particles); this.resizeObserver = new ResizeObserver(() => this.onResize()); this.resizeObserver.observe(this); this.animate(); }
+            onResize() { if (!this.isConnected) return; this.camera.aspect = this.clientWidth / this.clientHeight; this.camera.updateProjectionMatrix(); this.renderer.setSize(this.clientWidth, this.clientHeight); }
+            animate() { this.animationFrameId = requestAnimationFrame(() => this.animate()); const time = Date.now() * 0.00005; if (this.particles) { this.particles.rotation.y = time * 0.2; this.particles.rotation.x = time * 0.1; } this.renderer.render(this.scene, this.camera); }
+        }
+        customElements.define('particle-field', ParticleField);
+    }
+    
+    // --- PAGE LOGIC ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const storyViewer = document.querySelector('story-viewer');
+        const presentationToggle = document.getElementById('presentation-mode-toggle');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+        
+        const updatePlayPauseButton = (isPlaying) => {
+             playIcon.classList.toggle('hidden', isPlaying);
+             pauseIcon.classList.toggle('hidden', !isPlaying);
+        };
+        
+        storyViewer.addEventListener('play', () => updatePlayPauseButton(true));
+        storyViewer.addEventListener('pause', () => updatePlayPauseButton(false));
+
+        storyViewer.addEventListener('slide-changed', (event) => {
+            const slide = event.detail.slide;
+            if (slide.hasAttribute('data-init-ratings')) {
+                setTimeout(() => {
+                    const ratingBars = slide.querySelectorAll('.rating-bar-fg');
+                    ratingBars.forEach((bar, index) => {
+                        bar.style.transitionDelay = `${index * 150}ms`;
+                        bar.style.width = bar.dataset.value + '%';
+                    });
+                }, 100);
+            } else {
+                document.querySelectorAll('.rating-bar-fg').forEach(bar => {
+                    bar.style.width = '0%';
+                    bar.style.transitionDelay = '0ms';
+                });
+            }
+        });
+
+        presentationToggle.addEventListener('click', () => {
+            const isPlaying = playIcon.classList.contains('hidden');
+            if (isPlaying) {
+                storyViewer.pause();
+            } else {
+                storyViewer.play();
+            }
+        });
+        
+        function preloadSyntaxHighlighting() {
+            if (!window.Prism || !window.Prism.plugins.autoloader) return;
+            const languages = new Set();
+            document.querySelectorAll('dos-typewriter[highlight]').forEach(el => {
+                languages.add(el.getAttribute('highlight'));
+            });
+            if (languages.size > 0) {
+                 window.Prism.plugins.autoloader.loadLanguages(Array.from(languages));
+            }
+        }
+        
+        preloadSyntaxHighlighting();
+    });
+</script>
+
+</body>
+</html>
