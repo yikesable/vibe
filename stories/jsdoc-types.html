@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
-    
+
     <style>
         /* --- THEME DEFINITION --- */
         /* Theme: "Cyber-Noir" */
@@ -120,7 +120,7 @@
             font-family: 'Roboto Mono', monospace;
             border: 1px solid hsla(130, 67%, 51%, 0.2);
         }
-        
+
         blockquote {
             background-color: hsla(130, 67%, 51%, 0.05);
             border-left: 4px solid #39D353;
@@ -133,8 +133,8 @@
         .code-block {
             font-family: 'Roboto Mono', monospace;
             font-size: clamp(1rem, 1.8vw, 1.3rem);
-            background-color: #272822; 
-            color: #f8f8f2; 
+            background-color: #272822;
+            color: #f8f8f2;
             padding: 2rem;
             border-radius: 0.75rem;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -147,7 +147,7 @@
             overflow-y: auto;
             overflow-x: auto;
         }
-        
+
         .code-block .token.operator, .code-block .token.entity, .code-block .token.url, .language-css .token.string, .style .token.string {
             background: none;
         }
@@ -181,7 +181,7 @@
             counter-reset: step-counter;
             padding-left: 0;
         }
-        
+
         ol.slide-list li {
             padding-left: 3rem;
             margin-bottom: 1.5rem;
@@ -239,13 +239,14 @@
             width: 0%; /* Start at 0 for animation */
             transition: width 1s ease-out;
         }
-        
+
         #presentation-mode-toggle {
             position: fixed;
             bottom: 1.5rem;
             right: 1.5rem;
             z-index: 1000;
             background-color: rgba(30, 30, 30, 0.5);
+            -webkit-backdrop-filter: blur(5px); /* Safari support */
             backdrop-filter: blur(5px);
             color: #FFFFFF;
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -262,12 +263,39 @@
             background-color: rgba(50, 50, 50, 0.7);
             transform: scale(1.1);
         }
+        #fullscreen-toggle {
+            position: fixed;
+            bottom: 1.5rem;
+            right:1.5rem;
+            z-index: 1000;
+            background-color: rgba(30, 30, 30, 0.5);
+            -webkit-backdrop-filter: blur(5px); /* Safari support */
+            backdrop-filter: blur(5px);
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.2s, transform 0.2s;
+            margin-right: 60px; /* Space from play/pause button */
+        }
+        #fullscreen-toggle:hover {
+            background-color: rgba(50, 50, 50, 0.7);
+            transform: scale(1.1);
+        }
+        #fullscreen-toggle svg {
+            pointer-events: none;
+        }
         .hidden { display: none; }
-        
+
         @media (orientation: portrait) {
             .slide-title { font-size: clamp(2rem, min(10vw, 10vh), 3.5rem); margin-bottom: 0.25rem; }
             .slide-subtitle { font-size: clamp(1rem, min(5vw, 4vh), 1.5rem); margin-bottom: 1rem; }
-            .slide-text { 
+            .slide-text {
                 font-size: clamp(1rem, min(4vw, 3vh), 1.25rem);
                 margin-top: 1rem;
                 margin-bottom: 1rem;
@@ -283,13 +311,21 @@
 <body>
     <div class="aurora-glow"></div>
     <particle-field color="#39D353" size="0.008" count="8000"></particle-field>
-    
+
     <button id="presentation-mode-toggle" title="Toggle Presentation Mode">
         <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-play-fill hidden" viewBox="0 0 16 16">
           <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
         </svg>
         <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-pause-fill" viewBox="0 0 16 16">
           <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5m5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5"/>
+        </svg>
+    </button>
+    <button id="fullscreen-toggle" title="Enter Fullscreen" aria-label="Enter Fullscreen">
+        <svg id="fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M8 3V5H4V9H2V3H8ZM2 21V15H4V19H8V21H2ZM22 21H16V19H20V15H22V21ZM22 9H20V5H16V3H22V9Z"></path>
+        </svg>
+        <svg id="fullscreen-exit-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" class="hidden">
+          <path d="M18 7H22V9H16V3H18V7ZM8 9H2V7H6V3H8V9ZM18 17V21H16V15H22V17H18ZM8 15V21H6V17H2V15H8Z"></path>
         </svg>
     </button>
 
@@ -328,7 +364,7 @@
                 </blockquote>
             </div>
         </story-slide>
-        
+
         <!-- Slide 4: Hybrid Imperative -->
         <story-slide data-duration="12000">
             <div class="story-slide-content">
@@ -346,7 +382,7 @@
                 <p class="slide-text">For types specific to a single function's implementation and not reused elsewhere, use inline JSDoc.</p>
             </div>
         </story-slide>
-        
+
         <!-- Slide 6: Hybrid Step 1 Code -->
         <story-slide data-linger-duration="4000">
             <div class="story-slide-content">
@@ -372,7 +408,7 @@ function greet(user) {
                 <p class="slide-text">For complex objects and shared data structures, define them in a dedicated <code>-types.d.ts</code> file. This creates a canonical, single source of truth.</p>
             </div>
         </story-slide>
-        
+
         <!-- Slide 8: Hybrid Step 2 Code -->
         <story-slide data-linger-duration="4000">
             <div class="story-slide-content">
@@ -623,7 +659,7 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
                 </div>
             </div>
         </story-slide>
-        
+
         <!-- Slide 20: Tooling Balance Intro -->
         <story-slide data-duration="10000">
             <div class="story-slide-content">
@@ -669,7 +705,7 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
         </story-slide>
 
     </story-viewer>
-    
+
     <!-- Prism.js for Syntax Highlighting -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
@@ -696,42 +732,42 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
             }
             return parseInt(slide.dataset.duration, 10) || 10000;
         }
-        _startTimer() { 
-            if (this._isPaused || !this._slides.length) return; 
-            const currentSlide = this._slides[this._currentSlideIndex]; 
-            const duration = this._getSlideDuration(currentSlide); 
-            const currentBar = this.shadowRoot.getElementById(`progress-bar-${this._currentSlideIndex}`); 
-            if(currentBar) { 
-                void currentBar.offsetWidth; 
-                currentBar.style.animation = `fill-progress ${duration / 1000}s linear forwards`; 
-            } 
-            this._slideTimer = setTimeout(() => this._showSlide(this._currentSlideIndex + 1), duration); 
+        _startTimer() {
+            if (this._isPaused || !this._slides.length) return;
+            const currentSlide = this._slides[this._currentSlideIndex];
+            const duration = this._getSlideDuration(currentSlide);
+            const currentBar = this.shadowRoot.getElementById(`progress-bar-${this._currentSlideIndex}`);
+            if(currentBar) {
+                void currentBar.offsetWidth;
+                currentBar.style.animation = `fill-progress ${duration / 1000}s linear forwards`;
+            }
+            this._slideTimer = setTimeout(() => this._showSlide(this._currentSlideIndex + 1), duration);
         }
-        pause() { 
-            if (this._isPaused) return; 
-            this._isPaused = true; 
-            clearTimeout(this._slideTimer); 
-            const bar = this.shadowRoot.getElementById(`progress-bar-${this._currentSlideIndex}`); 
-            if(bar) bar.style.animationPlayState = 'paused'; 
-            this.dispatchEvent(new CustomEvent('pause')); 
+        pause() {
+            if (this._isPaused) return;
+            this._isPaused = true;
+            clearTimeout(this._slideTimer);
+            const bar = this.shadowRoot.getElementById(`progress-bar-${this._currentSlideIndex}`);
+            if(bar) bar.style.animationPlayState = 'paused';
+            this.dispatchEvent(new CustomEvent('pause'));
         }
-        play() { 
-            if (!this._isInitialized) { this.init(); return; } 
-            if (!this._isPaused) return; 
-            this._isPaused = false; 
-            const bar = this.shadowRoot.getElementById(`progress-bar-${this._currentSlideIndex}`); 
-            if(bar) { 
-                const currentSlide = this._slides[this._currentSlideIndex]; 
-                const duration = this._getSlideDuration(currentSlide); 
-                const computedStyle = window.getComputedStyle(bar); 
-                const parentWidth = bar.parentElement.offsetWidth; 
-                const width = parseFloat(computedStyle.getPropertyValue('width')); 
-                const remainingTime = duration * (1 - (width / parentWidth)); 
-                bar.style.animationPlayState = 'running'; 
-                this._slideTimer = setTimeout(() => this._showSlide(this._currentSlideIndex + 1), remainingTime); 
-            } else { 
-                this._startTimer(); 
-            } 
+        play() {
+            if (!this._isInitialized) { this.init(); return; }
+            if (!this._isPaused) return;
+            this._isPaused = false;
+            const bar = this.shadowRoot.getElementById(`progress-bar-${this._currentSlideIndex}`);
+            if(bar) {
+                const currentSlide = this._slides[this._currentSlideIndex];
+                const duration = this._getSlideDuration(currentSlide);
+                const computedStyle = window.getComputedStyle(bar);
+                const parentWidth = bar.parentElement.offsetWidth;
+                const width = parseFloat(computedStyle.getPropertyValue('width'));
+                const remainingTime = duration * (1 - (width / parentWidth));
+                bar.style.animationPlayState = 'running';
+                this._slideTimer = setTimeout(() => this._showSlide(this._currentSlideIndex + 1), remainingTime);
+            } else {
+                this._startTimer();
+            }
             this.dispatchEvent(new CustomEvent('play'));
         }
         reset() { this._isPaused = false; this._showSlide(0); this.dispatchEvent(new CustomEvent('play')); }
@@ -787,14 +823,14 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
 
             const style = document.createElement('style');
             style.textContent = `:host { display: inline-block; font: inherit; color: inherit; white-space: pre-wrap; } .container { display: inline-block; } slot { display: none; } .cursor { display: inline-block; width: 0.6em; height: 1.2em; background-color: currentColor; animation: blink 1s step-end infinite; vertical-align: bottom; margin-left: 2px; } @keyframes blink { from, to { background-color: transparent; } 50% { background-color: currentColor; } }`;
-            
+
             this.container = document.createElement('div');
             this.container.className = 'container';
-            
+
             this.cursor = document.createElement('span');
             this.cursor.classList.add('cursor');
             const slot = document.createElement('slot');
-            
+
             this.shadowRoot.append(style, this.container, slot);
 
             if (this.highlight) {
@@ -812,14 +848,14 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
             if (this.timeoutId) clearTimeout(this.timeoutId);
             this.isTyping = true;
             this.container.innerHTML = '';
-            
+
             if (this.highlight && window.Prism && window.Prism.plugins && window.Prism.plugins.autoloader) {
                 this._typeHighlightedText();
             } else {
                 this._typePlainText(this.initialText);
             }
         }
-        
+
         complete() {
             if (!this.isTyping) return;
             clearTimeout(this.timeoutId);
@@ -927,19 +963,19 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
         }
         customElements.define('particle-field', ParticleField);
     }
-    
+
     // --- PAGE LOGIC ---
     document.addEventListener('DOMContentLoaded', () => {
         const storyViewer = document.querySelector('story-viewer');
         const presentationToggle = document.getElementById('presentation-mode-toggle');
         const playIcon = document.getElementById('play-icon');
         const pauseIcon = document.getElementById('pause-icon');
-        
+
         const updatePlayPauseButton = (isPlaying) => {
              playIcon.classList.toggle('hidden', isPlaying);
              pauseIcon.classList.toggle('hidden', !isPlaying);
         };
-        
+
         storyViewer.addEventListener('play', () => updatePlayPauseButton(true));
         storyViewer.addEventListener('pause', () => updatePlayPauseButton(false));
 
@@ -969,7 +1005,57 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
                 storyViewer.play();
             }
         });
-        
+
+        // --- Fullscreen Button Logic ---
+        const fullscreenToggle = document.getElementById('fullscreen-toggle');
+        const fullscreenIcon = document.getElementById('fullscreen-icon');
+        const fullscreenExitIcon = document.getElementById('fullscreen-exit-icon');
+        const rootElem = document.documentElement;
+
+        // Feature detect Fullscreen API
+        const fullscreenEnabled = !!(rootElem.requestFullscreen || rootElem.webkitRequestFullscreen || rootElem.mozRequestFullScreen || rootElem.msRequestFullscreen);
+        if (!fullscreenEnabled) {
+            fullscreenToggle.style.display = 'none';
+        }
+
+        function isFullscreen() {
+            return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+        }
+
+        function enterFullscreen() {
+            if (rootElem.requestFullscreen) return rootElem.requestFullscreen();
+            if (rootElem.webkitRequestFullscreen) return rootElem.webkitRequestFullscreen();
+            if (rootElem.mozRequestFullScreen) return rootElem.mozRequestFullScreen();
+            if (rootElem.msRequestFullscreen) return rootElem.msRequestFullscreen();
+        }
+        function exitFullscreen() {
+            if (document.exitFullscreen) return document.exitFullscreen();
+            if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
+            if (document.mozCancelFullScreen) return document.mozCancelFullScreen();
+            if (document.msExitFullscreen) return document.msExitFullscreen();
+        }
+
+        function updateFullscreenButton() {
+            const fs = isFullscreen();
+            fullscreenIcon.classList.toggle('hidden', fs);
+            fullscreenExitIcon.classList.toggle('hidden', !fs);
+            fullscreenToggle.title = fs ? 'Exit Fullscreen' : 'Enter Fullscreen';
+            fullscreenToggle.setAttribute('aria-label', fs ? 'Exit Fullscreen' : 'Enter Fullscreen');
+        }
+
+        fullscreenToggle.addEventListener('click', () => {
+            if (isFullscreen()) {
+                exitFullscreen();
+            } else {
+                enterFullscreen();
+            }
+        });
+        document.addEventListener('fullscreenchange', updateFullscreenButton);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+        document.addEventListener('mozfullscreenchange', updateFullscreenButton);
+        document.addEventListener('MSFullscreenChange', updateFullscreenButton);
+        updateFullscreenButton();
+
         function preloadSyntaxHighlighting() {
             if (!window.Prism || !window.Prism.plugins.autoloader) return;
             const languages = new Set();
@@ -980,7 +1066,7 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
                  window.Prism.plugins.autoloader.loadLanguages(Array.from(languages));
             }
         }
-        
+
         preloadSyntaxHighlighting();
     });
 </script>
