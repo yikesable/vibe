@@ -1,0 +1,219 @@
+/*
+ * ===================================================================
+ * VIBE CODED - AI DESIGN BRIEF & SHARED STYLESHEET
+ *
+ * TO THE AI:
+ * Use this file as the single source of truth for the visual identity
+ * of any new page for the "Vibe Coded" project. The goal is to create
+ * a consistent, modern, Y2K-inspired dark-mode aesthetic.
+ *
+ * Follow these core instructions:
+ *
+ * 1. DEPENDENCIES:
+ * - Always include Tailwind CSS for utility classes.
+ * - Always load these two Google Fonts: 'Chakra Petch' (for headlines)
+ * and 'Inter' (for body text).
+ * <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+ *
+ * 2. COLOR & THEME:
+ * - The site is exclusively dark mode. Use the CSS variables defined
+ * in the :root selector below.
+ * - The primary background is very dark (`--dark-bg`).
+ * - The main accent and interactive color is a vibrant pink (`--pop-pink`).
+ * - Use `--glow-color` for text shadows and box shadows on key elements
+ * to create a neon "glow" effect.
+ *
+ * 3. TYPOGRAPHY:
+ * - Page titles and major headlines MUST use the 'Chakra Petch' font.
+ * Apply the `.font-headline` class.
+ * - All other body text, paragraphs, and UI copy should use 'Inter'.
+ *
+ * 4. LAYOUT & COMPONENTS:
+ * - Main content should be wrapped in a `.main-container` for centering.
+ * - Use "Bento Box" style for content modules, as defined by the `.bento-item` class.
+ * - Buttons should be high-contrast, using the `.cta-button` class.
+ *
+ * 5. FLAIR & EFFECTS:
+ * - The `<kinetic-background>` web component should be used on all pages
+ * to provide the floating particle background.
+ * - All interactive elements (buttons, cards) should have a subtle
+ * hover effect (e.g., transform, brighter glow).
+ * - Implement `prefers-reduced-motion` to disable all animations for
+ * accessibility, as demonstrated in the final section of this file.
+ *
+ * By following these rules, you will generate pages that are consistent
+ * with the established "vibe.yikesable.dev" brand.
+ * ===================================================================
+ */
+
+/* 1. Core Variables & Base Styles
+------------------------------------------------------------------- */
+:root {
+    --dark-bg: #0A001F;
+    --pop-pink: #FF00A9;
+    --glow-color: rgba(255, 0, 169, 0.5);
+    --code-bg: #160f29; /* A slightly different dark for code blocks */
+}
+
+html {
+    /* Use smooth scrolling for anchor links like #projects */
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: #EAE2FF;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+
+/* 2. Shared Typography
+------------------------------------------------------------------- */
+
+.font-headline {
+    font-family: 'Chakra Petch', sans-serif;
+}
+
+
+/* 3. Main Layout & Structure
+------------------------------------------------------------------- */
+
+/* This wrapper should be placed around the main content of each page.
+   It's used as the target for our view transition. */
+.main-container {
+    position: relative;
+    z-index: 1;
+    /* This name must be consistent across all pages for the transition to work. */
+    view-transition-name: main-content;
+}
+
+
+/* 4. Shared Components
+------------------------------------------------------------------- */
+
+/* Hero Title Style */
+.hero-title {
+    font-size: clamp(3.5rem, 12vw, 9rem);
+    letter-spacing: -0.05em;
+    text-shadow: 0 0 15px var(--glow-color), 0 0 30px var(--glow-color);
+    line-height: 1;
+}
+.hero-title .highlight {
+    color: var(--pop-pink);
+}
+
+/* Call-to-Action Button Style */
+.cta-button {
+    background-color: var(--pop-pink);
+    color: var(--dark-bg);
+    text-shadow: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px var(--glow-color);
+}
+.cta-button:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 0 35px var(--glow-color);
+}
+
+/* Bento Grid Layout */
+.bento-grid {
+    grid-auto-rows: 24rem;
+    container-type: inline-size;
+    container-name: bento;
+}
+
+.bento-item {
+    background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+.bento-item:hover {
+    border-color: rgba(255, 0, 169, 0.5);
+    transform: translateY(-5px);
+}
+.bento-item::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--glow-color) 0%, transparent 40%);
+    transform: scale(0);
+    transition: transform 0.5s ease;
+    z-index: 0;
+    opacity: 0.3;
+}
+.bento-item:hover::before {
+    transform: scale(1);
+}
+.bento-item > * {
+    position: relative;
+    z-index: 1;
+}
+.bento-item a {
+    color: var(--pop-pink);
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 0, 169, 0.5);
+    transition: text-decoration-color 0.3s ease;
+}
+.bento-item a:hover {
+    text-decoration-color: var(--pop-pink);
+}
+
+/* Bento Item Container Query for responsive internal typography */
+@container bento (min-width: 300px) {
+    .bento-item .bento-headline {
+        font-size: 2.25rem; /* ~text-4xl */
+        line-height: 2.5rem;
+    }
+}
+
+
+/* 5. View Transitions
+------------------------------------------------------------------- */
+/*
+  HUG Principle: Guided
+  TO ENABLE VIEW TRANSITIONS, YOU MUST DO TWO THINGS:
+
+  1. Add this meta tag to the <head> of BOTH the source and destination pages:
+     <meta name="view-transition" content="same-origin" />
+
+  2. Ensure the main content wrapper on BOTH pages has the class ".main-container"
+     so the `view-transition-name` defined above is applied.
+*/
+
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slide-from-right { from { transform: translateX(30px); } to { transform: translateX(0); } }
+
+::view-transition-old(main-content) {
+  animation: 0.3s ease-out forwards fade-out;
+}
+::view-transition-new(main-content) {
+  animation: 0.4s ease-in forwards slide-from-right, 0.4s ease-in forwards fade-in;
+}
+
+
+/* 6. Accessibility
+------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    .cta-button:hover, .bento-item:hover {
+        transform: none;
+    }
+}

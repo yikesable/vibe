@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodePen Converter /// Vibe Coded</title>
+    
+    <!-- Core SEO & Metadata -->
+    <meta name="description" content="An open-source tool to elegantly split a single HTML file into its component parts for CodePen, with a rich editor.">
+    <link rel="canonical" href="https://vibe.yikesable.dev/codepen-converter/">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90' fill='%23FF00A9'%3E⚡%3C/text%3E%3C/svg%3E">
+
+    <!-- UPDATED: Added meta tag for View Transitions -->
+    <meta name="view-transition" content="same-origin" />
+
+    <!-- Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/editor/editor.main.css">
+    <!-- The KineticBackground component is defined in an external file -->
+    <script type="module" src="/components/kinetic-background.js"></script>
+
+    <!-- UPDATED: Linking to the shared stylesheet -->
+    <link rel="stylesheet" href="/styles/vibe.css">
+
+    <style>
+        /* All page-specific styles are now contained here */
+        .page-title {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            line-height: 1.1;
+        }
+        
+        #editor-container {
+            width: 100%;
+            height: 400px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .bento-box {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+        }
+        
+        .input-zone {
+            border: 2px dashed rgba(255,255,255,0.2);
+            transition: all 0.2s ease-in-out;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+        }
+        .input-zone:hover, .input-zone.dragover {
+            border-color: var(--pop-pink);
+            background-color: rgba(255, 0, 169, 0.1);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2), 0 0 15px var(--glow-color);
+        }
+        
+        .code-block {
+            font-family: 'Inter', monospace;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            max-height: 400px;
+            overflow: auto;
+        }
+        .code-block pre, .code-block code {
+            background-color: var(--code-bg) !important;
+            padding: 1rem;
+        }
+        .empty-message {
+            background-color: var(--code-bg);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .hljs-comment, .hljs-quote { color: #5c6370; }
+        .hljs-tag, .hljs-keyword { color: #c678dd; }
+        .hljs-attribute, .hljs-number, .hljs-literal, .hljs-variable, .hljs-template-variable, .hljs-regexp { color: #d19a66; }
+        .hljs-string { color: #98c379; }
+        .hljs-title, .hljs-section, .hljs-name, .hljs-selector-id, .hljs-selector-class { color: #e06c75; }
+        .hljs-type, .hljs-symbol, .hljs-bullet, .hljs-link { color: #61afef; }
+
+        .link-block { display: flex; align-items: center; background-color: var(--code-bg); border-radius: 0.5rem; padding-left: 1rem; font-family: 'Inter', monospace; font-size: 0.875rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .link-block span { color: #e2e8f0; white-space: nowrap; overflow-x: auto; padding-bottom: 8px; margin-bottom: -8px; scrollbar-width: thin; scrollbar-color: var(--pop-pink) var(--code-bg); }
+        .link-block span::-webkit-scrollbar { height: 4px; }
+        .link-block span::-webkit-scrollbar-track { background: var(--code-bg); }
+        .link-block span::-webkit-scrollbar-thumb { background-color: var(--pop-pink); border-radius: 20px; }
+        .link-block button { margin-left: auto; background-color: var(--pop-pink); color: var(--dark-bg); font-weight: 600; border: none; padding: 0.75rem 1rem; cursor: pointer; transition: background-color 0.2s; flex-shrink: 0; }
+        .link-block button:hover { background-color: #ff33b8; }
+        .link-block button.copied { background-color: #16a34a; }
+        
+        .copy-btn { position: absolute; top: 0.75rem; right: 0.75rem; background-color: rgba(0,0,0,0.2); color: #e2e8f0; border: 1px solid rgba(255,255,255,0.1); font-family: 'Inter', monospace; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.75rem; cursor: pointer; transition: all 0.2s ease-in-out; opacity: 0.5; z-index: 10; }
+        .code-block-wrapper { position: relative; }
+        .code-block-wrapper:hover .copy-btn { opacity: 1; }
+        .copy-btn:hover { background-color: rgba(0,0,0,0.4); }
+        .copy-btn.copied { background-color: #16a34a; color: white; opacity: 1; }
+        
+        .convert-btn { text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .warning-box {
+            background-color: rgba(255, 0, 169, 0.1);
+            border-left: 4px solid var(--pop-pink);
+            color: #fce7f3; /* pink-100 */
+        }
+        
+        .output-panel {
+            min-width: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <kinetic-background></kinetic-background>
+    
+    <div class="main-container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <header class="text-center mb-12">
+            <h1 class="page-title font-headline text-white">CodePen Converter</h1>
+            <p class="mt-2 text-lg text-gray-300">An open-source tool from <a href="/" class="text-pink-400 hover:text-pink-300">vibe.yikesable.dev</a></p>
+        </header>
+
+        <div class="mb-8 p-6 bento-box rounded-2xl">
+            <label class="block text-lg font-headline text-gray-200 mb-4">Provide Your Source HTML</label>
+            <div class="grid sm:grid-cols-2 gap-4 mb-4">
+                <div id="file-drop-area" class="input-zone rounded-lg p-6 text-center cursor-pointer">
+                    <p class="font-semibold text-gray-200">Drag & Drop File</p>
+                    <p class="text-sm text-gray-400">or click to select</p>
+                    <input type="file" id="file-input" class="hidden" accept=".html">
+                </div>
+                <button id="paste-btn" class="input-zone w-full h-full rounded-lg p-6 text-center">
+                    <p class="font-semibold">Paste from Clipboard</p>
+                    <p class="text-sm text-gray-400">requires browser permission</p>
+                </button>
+            </div>
+            <div class="text-center my-4 text-gray-400 font-semibold">... or edit directly below ...</div>
+            <div id="editor-container"></div>
+            <div class="mt-6">
+                <button id="processBtn" class="cta-button convert-btn w-full py-3 px-4 rounded-lg shadow-md">Convert</button>
+            </div>
+        </div>
+
+        <div id="results" class="hidden space-y-8">
+             <section class="p-6 bento-box rounded-2xl">
+                <h2 class="font-headline text-2xl font-bold text-white mb-4">Step 1: Pen Settings</h2>
+                <p class="text-gray-300 mb-6">In your Pen's Settings, add these to the correct fields.</p>
+                
+                <div class="space-y-6">
+                    <div class="output-panel">
+                        <h3 class="font-semibold text-gray-200 mb-2">Add Class(es) to &lt;html&gt;</h3>
+                        <div id="html-classes-container"></div>
+                        <div id="body-class-warning" class="hidden mt-2 p-3 text-sm rounded-lg warning-box">
+                            <strong>Warning:</strong> Classes from the `&lt;body&gt;` tag were merged here. In CodePen, add all classes to the `&lt;html&gt;` settings for them to apply correctly.
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
+                        <div class="output-panel">
+                            <h3 class="font-semibold text-gray-200 mb-2">CSS (Stuff for &lt;head&gt;)</h3>
+                            <div id="css-links-container" class="space-y-2"></div>
+                        </div>
+                        <div class="output-panel">
+                            <h3 class="font-semibold text-gray-200 mb-2">JS (External Scripts)</h3>
+                            <div id="js-links-container" class="space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="p-6 bento-box rounded-2xl">
+                <h2 class="font-headline text-2xl font-bold text-white mb-4">Step 2: Paste Into Panels</h2>
+                <p class="text-gray-300 mb-6">Paste each block into the corresponding panel in your Pen.</p>
+                <div class="grid lg:grid-cols-1 gap-8">
+                    <div class="output-panel space-y-2">
+                        <h3 class="font-semibold text-gray-200">HTML Panel</h3>
+                        <div class="code-block-wrapper">
+                            <pre class="code-block"><code id="html-output" class="language-html"></code></pre>
+                            <div id="html-empty-message" class="empty-message hidden text-gray-400 text-sm italic text-center p-8"></div>
+                            <button class="copy-btn hidden" data-target="html-output">Copy</button>
+                        </div>
+                    </div>
+                    <div class="output-panel space-y-2">
+                        <h3 class="font-semibold text-gray-200">CSS Panel</h3>
+                        <div class="code-block-wrapper">
+                            <pre class="code-block"><code id="css-output" class="language-css"></code></pre>
+                            <div id="css-empty-message" class="empty-message hidden text-gray-400 text-sm italic text-center p-8"></div>
+                            <button class="copy-btn hidden" data-target="css-output">Copy</button>
+                        </div>
+                    </div>
+                    <div class="output-panel space-y-2">
+                        <h3 class="font-semibold text-gray-200">JavaScript Panel</h3>
+                        <div class="code-block-wrapper">
+                            <pre class="code-block"><code id="js-output" class="language-javascript"></code></pre>
+                            <div id="js-empty-message" class="empty-message hidden text-gray-400 text-sm italic text-center p-8"></div>
+                            <button class="copy-btn hidden" data-target="js-output">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <footer class="text-center pt-16 pb-8">
+            <p class="text-gray-500 text-sm">
+                &copy; 2024 yikesable.dev &bull; All projects are open-source.
+            </p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.min.js"></script>
+    <script type="module">
+        const processBtn = document.getElementById('processBtn');
+        const resultsDiv = document.getElementById('results');
+        const dropArea = document.getElementById('file-drop-area');
+        const fileInput = document.getElementById('file-input');
+        const pasteBtn = document.getElementById('paste-btn');
+        let editor; 
+
+        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs' }});
+        require(['vs/editor/editor.main'], function() {
+            monaco.editor.defineTheme('vibeDark', { base: 'vs-dark', inherit: true, rules: [ { token: 'comment', foreground: '5c6370' }, { token: 'string', foreground: '98c379' }, { token: 'keyword', foreground: 'c678dd' }, { token: 'number', foreground: 'd19a66' }, { token: 'tag', foreground: 'e06c75' }, { token: 'attribute.name', foreground: 'd19a66' }, { token: 'attribute.value', foreground: '98c379' }, ], colors: { 'editor.background': '#160f29', 'editor.foreground': '#ABB2BF', 'editorCursor.foreground': '#FF00A9', 'editor.lineHighlightBackground': '#ffffff0d', 'editor.selectionBackground': '#FF00A940', } });
+            editor = monaco.editor.create(document.getElementById('editor-container'), { value: ``, language: 'html', theme: 'vibeDark', automaticLayout: true, minimap: { enabled: false }, wordWrap: 'on' });
+        });
+
+        dropArea.addEventListener('click', () => fileInput.click());
+        dropArea.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); dropArea.classList.add('dragover'); });
+        dropArea.addEventListener('dragleave', (e) => { e.preventDefault(); e.stopPropagation(); dropArea.classList.remove('dragover'); });
+        dropArea.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); dropArea.classList.remove('dragover'); const files = e.dataTransfer.files; if (files.length > 0) handleFile(files[0]); });
+        fileInput.addEventListener('change', (e) => { if (e.target.files.length > 0) handleFile(e.target.files[0]); });
+        pasteBtn.addEventListener('click', async () => { try { if (!navigator.clipboard) { alert('Clipboard API not available.'); return; } const text = await navigator.clipboard.readText(); if (editor) { editor.setValue(text); processBtn.click(); } } catch (err) { console.error('Failed to read clipboard contents: ', err); alert('Could not paste from clipboard.'); } });
+        
+        function handleFile(file) {
+            if (file.type === "text/html") {
+                const reader = new FileReader();
+                reader.onload = (e) => { if (editor) { editor.setValue(e.target.result); } processBtn.click(); };
+                reader.readAsText(file);
+            } else { alert("Please drop or select an HTML file (.html)."); }
+        }
+
+        function reIndent(codeString) {
+            if (!codeString) return '';
+            const lines = codeString.split('\n'); if (lines.length <= 1) return codeString.trim(); let minIndent = Infinity;
+            lines.forEach(line => { if (line.trim() !== '') { const indent = line.match(/^\s*/)[0].length; if (indent < minIndent) { minIndent = indent; } } });
+            if (minIndent === Infinity || minIndent === 0) return codeString;
+            return lines.map(line => line.length >= minIndent ? line.substring(minIndent) : line ).join('\n');
+        }
+
+        function createLinkBlock(url) {
+            const block = document.createElement('div'); block.className = 'link-block';
+            const urlSpan = document.createElement('span'); urlSpan.textContent = url;
+            const button = document.createElement('button'); button.textContent = 'Copy'; button.onclick = (e) => { copyTextToClipboard(url, e.target); };
+            block.append(urlSpan, button); return block;
+        }
+
+        function copyTextToClipboard(text, buttonElement, successMessage = "Copied!") {
+            const originalText = buttonElement.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                buttonElement.textContent = successMessage; buttonElement.classList.add('copied');
+                setTimeout(() => { buttonElement.textContent = originalText; buttonElement.classList.remove('copied'); }, 2000);
+            }).catch(err => { console.error('Failed to copy text: ', err); });
+        }
+        
+        processBtn.addEventListener('click', () => {
+            const htmlContent = editor.getValue();
+            if (!htmlContent.trim() || htmlContent.trim() === ``) { alert("Please provide some HTML source code first."); return; }
+            const parser = new DOMParser(); const doc = parser.parseFromString(htmlContent, 'text/html');
+
+            const cssContent = Array.from(doc.querySelectorAll('style')).map(style => reIndent(style.textContent).trim()).join('\n\n/* --- New Style Block --- */\n\n');
+            const jsContent = Array.from(doc.querySelectorAll('script:not([src])')).map(script => reIndent(script.textContent).trim()).join('\n\n// --- New Script Block ---\n\n');
+            const cssLinks = Array.from(doc.querySelectorAll('link[rel="stylesheet"]')).map(link => link.href);
+            const jsLinks = Array.from(doc.querySelectorAll('script[src]')).map(script => script.src);
+            const htmlClasses = doc.documentElement.className; const bodyClasses = doc.body.className;
+
+            doc.querySelectorAll('script, style').forEach(el => el.remove());
+            const cleanBodyContent = reIndent(doc.body.innerHTML).trim();
+
+            const outputPanels = [
+                { content: cleanBodyContent, codeEl: document.getElementById('html-output'), emptyEl: document.getElementById('html-empty-message'), emptyMsg: "No HTML content found in <body>." },
+                { content: cssContent, codeEl: document.getElementById('css-output'), emptyEl: document.getElementById('css-empty-message'), emptyMsg: "No inline <style> tags found." },
+                { content: jsContent, codeEl: document.getElementById('js-output'), emptyEl: document.getElementById('js-empty-message'), emptyMsg: "No inline <script> tags found." }
+            ];
+            outputPanels.forEach(panel => {
+                const wrapper = panel.codeEl.closest('.code-block-wrapper');
+                const preEl = wrapper.querySelector('pre');
+                const copyBtn = wrapper.querySelector('.copy-btn');
+                if (panel.content) {
+                    preEl.classList.remove('hidden'); panel.emptyEl.classList.add('hidden'); copyBtn.classList.remove('hidden');
+                    panel.codeEl.textContent = panel.content;
+                    delete panel.codeEl.dataset.highlighted;
+                    hljs.highlightElement(panel.codeEl);
+                } else {
+                    preEl.classList.add('hidden'); panel.emptyEl.classList.remove('hidden'); panel.emptyEl.textContent = panel.emptyMsg; copyBtn.classList.add('hidden');
+                }
+            });
+
+            const cssLinksContainer = document.getElementById('css-links-container');
+            const jsLinksContainer = document.getElementById('js-links-container');
+            const htmlClassesContainer = document.getElementById('html-classes-container');
+            const bodyClassWarning = document.getElementById('body-class-warning');
+            cssLinksContainer.innerHTML = ''; jsLinksContainer.innerHTML = '';  
+            if (cssLinks.length) { cssLinks.forEach(url => cssLinksContainer.appendChild(createLinkBlock(url))); } else { cssLinksContainer.innerHTML = '<p class="text-gray-400 text-sm italic">No external CSS files found.</p>'; }
+            if (jsLinks.length) { jsLinks.forEach(url => jsLinksContainer.appendChild(createLinkBlock(url))); } else { jsLinksContainer.innerHTML = '<p class="text-gray-400 text-sm italic">No external JS files found.</p>'; }
+            const allClasses = [htmlClasses, bodyClasses].filter(Boolean).join(' ');
+            htmlClassesContainer.innerHTML = '';
+            if (allClasses) { htmlClassesContainer.appendChild(createLinkBlock(allClasses)); } else { htmlClassesContainer.innerHTML = '<p class="text-gray-400 text-sm italic">No classes found on &lt;html&gt; or &lt;body&gt;.</p>'; }
+            bodyClassWarning.classList.toggle('hidden', !bodyClasses);
+            
+            resultsDiv.classList.remove('hidden');
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        
+        document.querySelectorAll('.code-block-wrapper .copy-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const targetId = e.target.dataset.target; const targetElement = document.getElementById(targetId);
+                copyTextToClipboard(targetElement.textContent, e.target);
+            });
+        });
+    </script>
+</body>
+</html>

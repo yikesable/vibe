@@ -1,0 +1,24 @@
+{
+  "name": "@yikesable/vibe",
+  "version": "0.0.0",
+  "description": "A demo site",
+  "private": true,
+  "homepage": "http://github.com/yikesable/vibe",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/yikesable/vibe.git"
+  },
+  "keywords": [],
+  "author": "Pelle Wessman <pelle@kodfabrik.se> (https://kodfabrik.se/)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "browser-sync"
+  },
+  "devDependencies": {
+    "browser-sync": "^3.0.4"
+  }
+}
