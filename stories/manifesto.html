@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unchain the Code: A Manifesto for Digital Liberation</title>
+    
+    <!-- The People's Arsenal: Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- The People's Voice: Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* * CSS Custom Properties: The Colors of the Uprising
+         * A palette of stark contrast and revolutionary fire.
+         * We use P3 for a fiercer red where the people's displays support it.
+        */
+        :root {
+            --color-background: #1a1a1a; /* Deep charcoal, the color of the forge */
+            --color-text: #e1e1e1;       /* Resilient off-white */
+            --color-heading: #ffffff;    /* Uncompromising white */
+            --color-accent-srgb: #d93025; /* The red of the banner (fallback) */
+            --color-accent-p3: color(display-p3 0.85 0.18 0.14); /* A revolutionary's red */
+            --color-glow: color(display-p3 0.85 0.18 0.14 / 0.5); /* The fire of the cause */
+        }
+
+        /* Base styles, setting our revolutionary fonts and colors */
+        body {
+            background-color: var(--color-background);
+            color: var(--color-text);
+            font-family: 'Roboto Condensed', sans-serif;
+            overflow-x: hidden; /* No sideways retreat */
+            background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%232a2a2a" fill-opacity="0.4"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+        }
+
+        /* The Kinetic Banner: A rallying cry that lives and breathes */
+        @keyframes pulse-glow {
+            0%, 100% { text-shadow: 0 0 4px var(--color-heading), 0 0 8px var(--color-accent-srgb), 0 0 12px var(--color-accent-srgb); opacity: 0.9; }
+            50% { text-shadow: 0 0 8px var(--color-heading), 0 0 16px var(--color-accent-srgb), 0 0 24px var(--color-accent-srgb); opacity: 1; }
+        }
+        .kinetic-banner {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+
+        /* The Call to Arms: A button that burns with purpose */
+        .cta-button {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            background-color: var(--color-accent-srgb);
+            background-color: var(--color-accent-p3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 2px solid transparent;
+        }
+        .cta-button:hover, .cta-button:focus-visible {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px 5px var(--color-glow);
+            outline: none;
+        }
+        
+        /* Interactive Field Manual Styling */
+        details > summary {
+            list-style: none; /* Hide default marker */
+            cursor: pointer;
+        }
+        details > summary::-webkit-details-marker {
+            display: none; /* Hide default marker for Safari */
+        }
+        details .summary-content {
+            transition: background 0.3s;
+        }
+        details[open] .summary-content {
+            background: rgba(0,0,0,0.5);
+            border-color: var(--color-accent-srgb);
+        }
+        details .summary-chevron {
+            transition: transform 0.3s;
+        }
+        details[open] .summary-chevron {
+            transform: rotate(90deg);
+        }
+        .technical-details {
+            border-top: 1px solid #444;
+            background: rgba(10,10,10,0.5);
+        }
+        .technical-details code {
+            background: rgba(0,0,0,0.5);
+            padding: 0.1em 0.3em;
+            border-radius: 4px;
+            color: #fca5a5;
+        }
+        
+        /* Floating Symbols of the Revolution: Code is our weapon */
+        .floating-symbol {
+            position: absolute; /* Positioned relative to the full-screen container */
+            display: block;
+            list-style: none;
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 2rem;
+            font-family: monospace;
+            animation: float-up 30s linear infinite;
+            bottom: -150px;
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Corrected Floating Symbols Container:
+         This is now a proper <ul>, positioned fixed across the viewport.
+         It has a z-index of 0 and pointer-events-none, so it's a pure
+         background layer that cannot interfere with content or clicks.
+    -->
+    <ul id="floating-symbols-container" class="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden"></ul>
+
+    <!-- Main content is given a relative position and higher z-index to ensure it sits on top -->
+    <main class="relative z-10">
+        <!-- Section 1: The Call -->
+        <section class="min-h-screen flex items-center justify-center text-center relative overflow-hidden p-6">
+            <div>
+                <h1 class="kinetic-banner text-6xl md:text-8xl lg:text-9xl font-bold text-white leading-tight">
+                    Unchain the Code
+                </h1>
+                <p class="mt-6 max-w-3xl mx-auto text-xl md:text-2xl text-slate-200 font-bold">
+                    A Manifesto for Liberation through the AT Protocol
+                </p>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-300">
+                    The digital landlords have kept us in chains. But now, we have a weapon. A protocol of the people. It is time to seize the means of production.
+                </p>
+                <div class="mt-12">
+                    <a href="#orders-of-battle" class="cta-button inline-block text-white font-bold text-lg px-12 py-4 rounded-sm shadow-lg">
+                        Inspect the Battle Plan
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: The Protocol of Liberation -->
+        <section id="the-protocol" class="py-20 md:py-32 bg-black/20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold text-white uppercase" style="font-family: 'Oswald', sans-serif;">The Weapons of Our Revolution</h2>
+                    <p class="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">The <a href="https://atproto.com" target="_blank" rel="noopener" class="text-[var(--color-accent-srgb)] underline">AT Protocol</a> is not a platform. It is a declaration of independence. <a href="https://tangled.sh" target="_blank" rel="noopener" class="text-[var(--color-accent-srgb)] underline">Tangled.sh</a> is the first territory liberated by its power. These are its truths:</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-12">
+                    <article class="text-center">
+                        <h3 class="text-2xl font-bold text-white uppercase mb-3" style="font-family: 'Oswald', sans-serif;">Digital Sovereignty</h3>
+                        <p>With a Decentralized Identifier (DID), <strong>you are your own authority</strong>. Your identity is your own, a passport to the federated web that no corporation can revoke.</p>
+                    </article>
+                    <article class="text-center">
+                        <h3 class="text-2xl font-bold text-white uppercase mb-3" style="font-family: 'Oswald', sans-serif;">Data Liberation</h3>
+                        <p>Your repositories are signed data. <strong>Your code is your property</strong>, not a tenant on a corporate server. Its history and identity remain intact, wherever it may travel.</p>
+                    </article>
+                    <article class="text-center">
+                        <h3 class="text-2xl font-bold text-white uppercase mb-3" style="font-family: 'Oswald', sans-serif;">Federated Power</h3>
+                        <p>Interoperability is our strength. <strong>Every instance is a fortress</strong>, and the protocol is our unbreakable line of communication. We collaborate across a network of equals.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: The Orders of Battle (Interactive Field Manual) -->
+        <section id="orders-of-battle" class="py-20 md:py-32">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold text-white uppercase" style="font-family: 'Oswald', sans-serif;">The Gitea Uprising: Field Manual</h2>
+                    <p class="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">This is our strategy to bring Gitea into the federation. Click each phase to reveal the technical schematics.</p>
+                </div>
+
+                <div class="space-y-4 max-w-4xl mx-auto">
+                    <!-- Phase 1 -->
+                    <details class="border border-[#444] rounded-md overflow-hidden">
+                        <summary>
+                            <div class="summary-content p-6 flex justify-between items-center bg-black/30">
+                                <div>
+                                    <h3 class="font-bold text-white text-xl uppercase" style="font-family: 'Oswald', sans-serif;">Phase I: Fortify</h3>
+                                    <p class="text-gray-300">Arm Gitea with AT Protocol identity management.</p>
+                                </div>
+                                <div class="summary-chevron text-white text-2xl">&gt;</div>
+                            </div>
+                        </summary>
+                        <div class="technical-details p-6 text-gray-300 font-mono text-sm space-y-2">
+                            <p class="font-sans font-bold text-white mb-2">Technical Directives (CS-1, CS-2):</p>
+                            <p>&bull; <strong class="text-white">DB Schema:</strong> Add <code>federation_credentials</code> table. Fields: <code>id</code>, <code>user_id</code> (FK), <code>did</code> (string), <code>handle</code> (string), <code>app_password</code> (encrypted bytes).</p>
+                            <p>&bull; <strong class="text-white">Go Modules:</strong> Implement a new service (<code>services/federation</code>) using <code>atproto/api</code> and <code>atproto/identity</code> libraries.</p>
+                            <p>&bull; <strong class="text-white">UI:</strong> New section in User Settings to input handle/app_password, which fetches and stores the user's DID.</p>
+                        </div>
+                    </details>
+                    <!-- Phase 2 -->
+                    <details class="border border-[#444] rounded-md overflow-hidden">
+                        <summary>
+                            <div class="summary-content p-6 flex justify-between items-center bg-black/30">
+                                <div>
+                                    <h3 class="font-bold text-white text-xl uppercase" style="font-family: 'Oswald', sans-serif;">Phase II: Broadcast</h3>
+                                    <p class="text-gray-300">Syndicate local actions to the global network.</p>
+                                </div>
+                                <div class="summary-chevron text-white text-2xl">&gt;</div>
+                            </div>
+                        </summary>
+                        <div class="technical-details p-6 text-gray-300 font-mono text-sm space-y-2">
+                            <p class="font-sans font-bold text-white mb-2">Technical Directives (CS-3):</p>
+                            <p>&bull; <strong class="text-white">Hooks:</strong> Tap into Gitea's internal event system (e.g., <code>CreateIssue</code>, <code>CreateComment</code>).</p>
+                            <p>&bull; <strong class="text-white">Transformation:</strong> Convert Gitea event payloads into a defined Lexicon schema (e.g., <code>sh.tangled.issue</code>).</p>
+                            <p>&bull; <strong class="text-white">Action:</strong> Use the federation service to call <code>com.atproto.repo.createRecord</code>, publishing the record to the user's PDS. Store the returned AT-URI with the local Gitea object.</p>
+                        </div>
+                    </details>
+                    <!-- Phase 3 -->
+                    <details class="border border-[#444] rounded-md overflow-hidden">
+                        <summary>
+                            <div class="summary-content p-6 flex justify-between items-center bg-black/30">
+                                <div>
+                                    <h3 class="font-bold text-white text-xl uppercase" style="font-family: 'Oswald', sans-serif;">Phase III: Intercept</h3>
+                                    <p class="text-gray-300">Ingest federated events into the local instance.</p>
+                                </div>
+                                <div class="summary-chevron text-white text-2xl">&gt;</div>
+                            </div>
+                        </summary>
+                        <div class="technical-details p-6 text-gray-300 font-mono text-sm space-y-2">
+                            <p class="font-sans font-bold text-white mb-2">Technical Directives (CS-4, CS-5):</p>
+                            <p>&bull; <strong class="text-white">Listener:</strong> Create a long-running Go routine connecting to a Relay's WebSocket firehose via <code>com.atproto.sync.subscribeRepos</code>.</p>
+                            <p>&bull; <strong class="text-white">Filter:</strong> Process only relevant Lexicon types (e.g., replies to a known Gitea issue's AT-URI).</p>
+                            <p>&bull; <strong class="text-white">Ingestion:</strong> Create a local "ghost user" for the federated author if they don't exist. Create the federated comment, storing its AT-URI to prevent duplicates (idempotency).</p>
+                        </div>
+                    </details>
+                    <!-- Phase 4 -->
+                    <details class="border border-[#444] rounded-md overflow-hidden">
+                        <summary>
+                            <div class="summary-content p-6 flex justify-between items-center bg-black/30">
+                                <div>
+                                    <h3 class="font-bold text-white text-xl uppercase" style="font-family: 'Oswald', sans-serif;">Phase IV: Consolidate</h3>
+                                    <p class="text-gray-300">Establish Gitea as the source of truth.</p>
+                                </div>
+                                <div class="summary-chevron text-white text-2xl">&gt;</div>
+                            </div>
+                        </summary>
+                        <div class="technical-details p-6 text-gray-300 font-mono text-sm space-y-2">
+                            <p class="font-sans font-bold text-white mb-2">Technical Directives (CS-6):</p>
+                            <p>&bull; <strong class="text-white">Conflict Resolution:</strong> Gitea is the canonical source. Local edits always win.</p>
+                            <p>&bull; <strong class="text-white">Update Logic:</strong> When an <code>applyWrites</code> event (edit/delete) arrives from the firehose, check the <code>updated_at</code> timestamp of the local Gitea object.</p>
+                            <p>&bull; <strong class="text-white">Precedence:</strong> If the local object is newer than the federated object it's replying to, discard the incoming event. Otherwise, apply the change.</p>
+                        </div>
+                    </details>
+                    <!-- Phase 5 -->
+                    <details class="border border-[#444] rounded-md overflow-hidden">
+                        <summary>
+                            <div class="summary-content p-6 flex justify-between items-center bg-black/30">
+                                <div>
+                                    <h3 class="font-bold text-white text-xl uppercase" style="font-family: 'Oswald', sans-serif;">Phase V: Unfurl</h3>
+                                    <p class="text-gray-300">Raise the banner within the Gitea UI.</p>
+                                </div>
+                                <div class="summary-chevron text-white text-2xl">&gt;</div>
+                            </div>
+                        </summary>
+                        <div class="technical-details p-6 text-gray-300 font-mono text-sm space-y-2">
+                            <p class="font-sans font-bold text-white mb-2">Technical Directives (CS-7):</p>
+                            <p>&bull; <strong class="text-white">Templates:</strong> Modify Gitea's <code>.tmpl</code> files (e.g., <code>repo/issue/view.tmpl</code>).</p>
+                            <p>&bull; <strong class="text-white">Visuals:</strong> Add a conditional block: <code>if .Comment.AT_URI</code>. If true, render a federation icon.</p>
+                            <p>&bull; <strong class="text-white">Links:</strong> The icon links to <code>tangled.sh/resolve/{{.Comment.AT_URI}}</code>, connecting the local instance to the wider federated network.</p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- The Armory: A Footer for the Revolution -->
+    <footer class="py-16 bg-black/50 mt-20 border-t-2 border-gray-800">
+        <div class="container mx-auto px-6 text-center">
+            <h3 class="text-2xl font-bold text-white uppercase" style="font-family: 'Oswald', sans-serif;">Arm Yourself with Knowledge</h3>
+            <p class="mt-4 max-w-lg mx-auto text-gray-300">The revolution will not be centralized. It will be built with open protocols and self-hosted tools. Master them.</p>
+            <div class="mt-8 flex flex-wrap justify-center gap-6">
+                <a href="https://gitea.io" target="_blank" rel="noopener" class="font-bold uppercase text-white hover:text-[var(--color-accent-srgb)] transition-colors">Gitea: The Fortress</a>
+                <a href="https://atproto.com" target="_blank" rel="noopener" class="font-bold uppercase text-white hover:text-[var(--color-accent-srgb)] transition-colors">AT Protocol: The Weapon</a>
+                <a href="https://tangled.sh" target="_blank" rel="noopener" class="font-bold uppercase text-white hover:text-[var(--color-accent-srgb)] transition-colors">Tangled.sh: The Front</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- The Engine of the Revolution: Vanilla JavaScript Vanguard -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Corrected JS for floating symbols.
+            // It now targets the new <ul> container by its ID.
+            const container = document.getElementById('floating-symbols-container');
+            if (container) {
+                const symbols = ['{', '}', '()', '*', ';', '=>', '</>'];
+                const numberOfSymbols = 20;
+                for (let i = 0; i < numberOfSymbols; i++) {
+                    const el = document.createElement('li');
+                    el.classList.add('floating-symbol');
+                    el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                    
+                    // Randomize for chaotic, organic movement
+                    el.style.left = `${Math.random() * 100}%`;
+                    el.style.animationDelay = `${Math.random() * 30}s`;
+                    el.style.animationDuration = `${Math.random() * 20 + 20}s`;
+                    el.style.fontSize = `${Math.random() * 1.5 + 0.75}rem`;
+                    
+                    container.appendChild(el);
+                }
+            }
+            
+            // Smooth scrolling for anchor links
+            const ctaLinks = document.querySelectorAll('a[href^="#"]');
+            ctaLinks.forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if(targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
