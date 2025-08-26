@@ -331,8 +331,8 @@
                 css: cssContent,
                 js: jsContent,
                 html_classes: allClasses,
-                css_external: cssLinks.join(';'),
-                js_external: jsLinks.join(';')
+                css_external: cssLinks.map(link => link.replaceAll(';', '%3B')).join(';'),
+                js_external: jsLinks.map(link => link.replaceAll(';', '%3B')).join(';')
             };
         });
 
