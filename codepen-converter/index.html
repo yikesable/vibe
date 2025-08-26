@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CodePen Converter /// Vibe Coded</title>
-    
+
     <!-- Core SEO & Metadata -->
     <meta name="description" content="An open-source tool to elegantly split a single HTML file into its component parts for CodePen, with a rich editor.">
     <link rel="canonical" href="https://yikesable.github.io/vibe/codepen-converter/">
@@ -33,7 +33,7 @@
             font-size: clamp(2.5rem, 8vw, 4rem);
             line-height: 1.1;
         }
-        
+
         #editor-container {
             width: 100%;
             height: 400px;
@@ -47,7 +47,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(12px);
         }
-        
+
         .input-zone {
             border: 2px dashed rgba(255,255,255,0.2);
             transition: all 0.2s ease-in-out;
@@ -58,7 +58,7 @@
             background-color: rgba(255, 0, 169, 0.1);
             box-shadow: inset 0 0 20px rgba(0,0,0,0.2), 0 0 15px var(--glow-color);
         }
-        
+
         .code-block {
             font-family: 'Inter', monospace;
             border-radius: 0.75rem;
@@ -90,21 +90,21 @@
         .link-block button { margin-left: auto; background-color: var(--pop-pink); color: var(--dark-bg); font-weight: 600; border: none; padding: 0.75rem 1rem; cursor: pointer; transition: background-color 0.2s; flex-shrink: 0; }
         .link-block button:hover { background-color: #ff33b8; }
         .link-block button.copied { background-color: #16a34a; }
-        
+
         .copy-btn { position: absolute; top: 0.75rem; right: 0.75rem; background-color: rgba(0,0,0,0.2); color: #e2e8f0; border: 1px solid rgba(255,255,255,0.1); font-family: 'Inter', monospace; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.75rem; cursor: pointer; transition: all 0.2s ease-in-out; opacity: 0.5; z-index: 10; }
         .code-block-wrapper { position: relative; }
         .code-block-wrapper:hover .copy-btn { opacity: 1; }
         .copy-btn:hover { background-color: rgba(0,0,0,0.4); }
         .copy-btn.copied { background-color: #16a34a; color: white; opacity: 1; }
-        
+
         .convert-btn { text-transform: uppercase; letter-spacing: 0.05em; }
-        
+
         .warning-box {
             background-color: rgba(255, 0, 169, 0.1);
             border-left: 4px solid var(--pop-pink);
             color: #fce7f3; /* pink-100 */
         }
-        
+
         .output-panel {
             min-width: 0;
         }
@@ -114,7 +114,7 @@
 <body>
 
     <kinetic-background></kinetic-background>
-    
+
     <div class="main-container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 md:py-24">
         <header class="text-center mb-12">
             <h1 class="page-title font-headline text-white">CodePen Converter</h1>
@@ -145,7 +145,7 @@
              <section class="p-6 bento-box rounded-2xl">
                 <h2 class="font-headline text-2xl font-bold text-white mb-4">Step 1: Pen Settings</h2>
                 <p class="text-gray-300 mb-6">In your Pen's Settings, add these to the correct fields.</p>
-                
+
                 <div class="space-y-6">
                     <div class="output-panel">
                         <h3 class="font-semibold text-gray-200 mb-2">Add Class(es) to &lt;html&gt;</h3>
@@ -154,7 +154,7 @@
                             <strong>Warning:</strong> Classes from the `&lt;body&gt;` tag were merged here. In CodePen, add all classes to the `&lt;html&gt;` settings for them to apply correctly.
                         </div>
                     </div>
-                    
+
                     <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
                         <div class="output-panel">
                             <h3 class="font-semibold text-gray-200 mb-2">CSS (Stuff for &lt;head&gt;)</h3>
@@ -198,14 +198,26 @@
                     </div>
                 </div>
             </section>
+
+            <section id="codepen-action-section" class="p-6 bento-box rounded-2xl">
+                <h2 class="font-headline text-2xl font-bold text-white mb-4">Step 3: Open in CodePen</h2>
+                <p class="text-gray-300 mb-6">Or, skip the manual work and send everything to a new Pen automatically.</p>
+                <button id="open-in-codepen" class="cta-button convert-btn w-full py-3 px-4 rounded-lg shadow-md">
+                    Open in CodePen
+                </button>
+            </section>
         </div>
-        
+
         <footer class="text-center pt-16 pb-8">
             <p class="text-gray-500 text-sm">
                 &copy; 2025 yikesable.dev &bull; All projects are open-source.
             </p>
         </footer>
     </div>
+
+    <form id="codepen-form" action="https://codepen.io/pen/define" method="POST" target="_blank" class="hidden">
+       <input type="hidden" name="data" id="codepen-data">
+    </form>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.min.js"></script>
     <script type="module">
@@ -214,7 +226,11 @@
         const dropArea = document.getElementById('file-drop-area');
         const fileInput = document.getElementById('file-input');
         const pasteBtn = document.getElementById('paste-btn');
-        let editor; 
+        const openInCodepenBtn = document.getElementById('open-in-codepen');
+        const codepenForm = document.getElementById('codepen-form');
+        const codepenDataInput = document.getElementById('codepen-data');
+        let editor;
+        let penData = {}; // Object to hold the processed data for CodePen
 
         require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs' }});
         require(['vs/editor/editor.main'], function() {
@@ -228,7 +244,7 @@
         dropArea.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); dropArea.classList.remove('dragover'); const files = e.dataTransfer.files; if (files.length > 0) handleFile(files[0]); });
         fileInput.addEventListener('change', (e) => { if (e.target.files.length > 0) handleFile(e.target.files[0]); });
         pasteBtn.addEventListener('click', async () => { try { if (!navigator.clipboard) { alert('Clipboard API not available.'); return; } const text = await navigator.clipboard.readText(); if (editor) { editor.setValue(text); processBtn.click(); } } catch (err) { console.error('Failed to read clipboard contents: ', err); alert('Could not paste from clipboard.'); } });
-        
+
         function handleFile(file) {
             if (file.type === "text/html") {
                 const reader = new FileReader();
@@ -259,7 +275,7 @@
                 setTimeout(() => { buttonElement.textContent = originalText; buttonElement.classList.remove('copied'); }, 2000);
             }).catch(err => { console.error('Failed to copy text: ', err); });
         }
-        
+
         processBtn.addEventListener('click', () => {
             const htmlContent = editor.getValue();
             if (!htmlContent.trim() || htmlContent.trim() === ``) { alert("Please provide some HTML source code first."); return; }
@@ -297,18 +313,40 @@
             const jsLinksContainer = document.getElementById('js-links-container');
             const htmlClassesContainer = document.getElementById('html-classes-container');
             const bodyClassWarning = document.getElementById('body-class-warning');
-            cssLinksContainer.innerHTML = ''; jsLinksContainer.innerHTML = '';  
+            cssLinksContainer.innerHTML = ''; jsLinksContainer.innerHTML = '';
             if (cssLinks.length) { cssLinks.forEach(url => cssLinksContainer.appendChild(createLinkBlock(url))); } else { cssLinksContainer.innerHTML = '<p class="text-gray-400 text-sm italic">No external CSS files found.</p>'; }
             if (jsLinks.length) { jsLinks.forEach(url => jsLinksContainer.appendChild(createLinkBlock(url))); } else { jsLinksContainer.innerHTML = '<p class="text-gray-400 text-sm italic">No external JS files found.</p>'; }
             const allClasses = [htmlClasses, bodyClasses].filter(Boolean).join(' ');
             htmlClassesContainer.innerHTML = '';
             if (allClasses) { htmlClassesContainer.appendChild(createLinkBlock(allClasses)); } else { htmlClassesContainer.innerHTML = '<p class="text-gray-400 text-sm italic">No classes found on &lt;html&gt; or &lt;body&gt;.</p>'; }
             bodyClassWarning.classList.toggle('hidden', !bodyClasses);
-            
+
             resultsDiv.classList.remove('hidden');
             resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // Inside the processBtn 'click' event listener, after extracting the content:
+            penData = {
+                title: doc.title || 'New Pen',
+                html: cleanBodyContent,
+                css: cssContent,
+                js: jsContent,
+                html_classes: allHtmlClasses,
+                css_external: cssLinks.join(';'),
+                js_external: jsLinks.join(';')
+            };
         });
-        
+
+        openInCodepenBtn.addEventListener('click', () => {
+            // Convert the penData object to a JSON string
+            const jsonString = JSON.stringify(penData);
+
+            // Set the value of the hidden input
+            codepenDataInput.value = jsonString;
+
+            // Submit the form, which opens CodePen in a new tab
+            codepenForm.submit();
+        });
+
         document.querySelectorAll('.code-block-wrapper .copy-btn').forEach(button => {
             button.addEventListener('click', (e) => {
                 const targetId = e.target.dataset.target; const targetElement = document.getElementById(targetId);
