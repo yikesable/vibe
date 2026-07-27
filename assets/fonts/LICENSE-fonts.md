@@ -1,14 +1,15 @@
 # Font Licenses & Attribution
 
-Font files in this directory are self-hosted copies of fonts from Google Fonts.
-Each font is used under its respective open-source license.
+Font files in this directory are self-hosted copies obtained from each font's
+canonical distribution point. Each font is used under its respective
+open-source license.
 
 ---
 
 ## Inter (Variable)
 
 - **Designer**: Rasmus Andersson
-- **Source**: https://rsms.me/inter/
+- **Canonical source**: https://rsms.me/inter/ (GitHub: github.com/rsms/inter)
 - **License**: SIL Open Font License 1.1
 - **Copyright**: Copyright © 2016-2024 The Inter Project Authors (github.com/rsms/inter)
 
