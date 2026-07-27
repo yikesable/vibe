@@ -57,7 +57,8 @@ CSS methodology — **zero build step, hand-written only**:
 
 Core visual conventions:
 
-- **Google Fonts:** *Chakra Petch* for headlines, *Inter* for body.
+- **Google Fonts:** *Chakra Petch* for headlines, *Inter* for body (self-hosted
+  from `assets/fonts/` via `@font-face`).
 - **Color:** dark background (`--dark-bg`) with a vibrant `--pop-pink` accent and
   `--glow-color` for neon effects.
 - **Layout:** `o-wrapper` / `o-grid` for structure; `c-bento` components for the
@@ -114,14 +115,18 @@ The site is entirely static. You can open any HTML file directly in a browser,
 or run the included dev server for live-reload:
 
 ```bash
-npm install      # installs browser-sync and the dev tooling
-npm run dev      # starts browser-sync and opens the site
+npm install          # installs dependencies + vendor build tooling
+npm run build:vendor # bundles third-party libraries into vendor/ (esbuild)
+npm run dev          # starts browser-sync and opens the site
 ```
 
 Requirements: **Node.js ≥ 22** (see `engines` in `package.json`).
 
-There is no build, compile, or transpile step — the `dev` script just runs
-`browser-sync`. Everything ships as authored.
+The `build:vendor` step runs [esbuild](https://esbuild.github.io/) to bundle
+CDN-free copies of highlight.js, Prism.js, and Three.js from their npm packages,
+tree-shaken to only the languages and features each page needs. This is the
+**only** build step — the project's own HTML, CSS, and JS are served as authored
+without any compilation, transpilation, or bundling.
 
 ---
 

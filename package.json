@@ -16,13 +16,20 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "browser-sync"
+    "dev": "browser-sync",
+    "build:vendor": "node scripts/build-vendor.mjs"
   },
   "devDependencies": {
     "@voxpelli/eslint-config": "^23.0.0",
     "@voxpelli/tsconfig": "^15.1.2",
     "browser-sync": "^3.0.4",
+    "esbuild": "^0.28.1",
     "eslint": "^9.29.0",
     "typescript": "~5.8.3"
+  },
+  "dependencies": {
+    "highlight.js": "^11.9.0",
+    "prismjs": "^1.29.0",
+    "three": "^0.128.0"
   }
 }

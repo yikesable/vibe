@@ -1,7 +1,6 @@
-// HUG Principle: Guided - We import Three.js directly from a CDN.
-// This makes the dependency explicit and requires no build step.
-// This is the recommended approach for creating self-contained components.
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js';
+// HUG Principle: Guided - We import Three.js from a local vendor copy.
+// Built from node_modules via npm run build:vendor.
+import * as THREE from '../vendor/three.module.bundle.js';
 
 /**
  * @class KineticBackground
