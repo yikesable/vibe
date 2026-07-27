@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSDoc Type Safety: The Story</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/styles/vibe.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -290,7 +290,7 @@
         #fullscreen-toggle svg {
             pointer-events: none;
         }
-        .hidden { display: none; }
+
 
         @media (orientation: portrait) {
             .slide-title { font-size: clamp(2rem, min(10vw, 10vh), 3.5rem); margin-bottom: 0.25rem; }
@@ -313,7 +313,7 @@
     <particle-field color="#39D353" size="0.008" count="8000"></particle-field>
 
     <button id="presentation-mode-toggle" title="Toggle Presentation Mode">
-        <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-play-fill hidden" viewBox="0 0 16 16">
+        <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="is-hidden" viewBox="0 0 16 16">
           <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
         </svg>
         <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-pause-fill" viewBox="0 0 16 16">
@@ -324,7 +324,7 @@
         <svg id="fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
           <path d="M8 3V5H4V9H2V3H8ZM2 21V15H4V19H8V21H2ZM22 21H16V19H20V15H22V21ZM22 9H20V5H16V3H22V9Z"></path>
         </svg>
-        <svg id="fullscreen-exit-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" class="hidden">
+        <svg id="fullscreen-exit-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" class="is-hidden">
           <path d="M18 7H22V9H16V3H18V7ZM8 9H2V7H6V3H8V9ZM18 17V21H16V15H22V17H18ZM8 15V21H6V17H2V15H8Z"></path>
         </svg>
     </button>
@@ -360,7 +360,7 @@
                     <li><span>✓</span><div>It <strong>eliminates the mandatory build step</strong>, leading to a faster, lower-friction developer experience.</div></li>
                 </ul>
                 <blockquote>For applications, which will have a build step anyway, the benefits are less pronounced. For libraries, I strongly urge you to use JSDoc instead.
-                <cite class="block text-right not-italic mt-2 text-gray-400">— Rich Harris, Creator of Svelte</cite>
+                <cite style="display: block; text-align: right; font-style: normal; margin-top: 0.5rem; color: #9CA3AF;">— Rich Harris, Creator of Svelte</cite>
                 </blockquote>
             </div>
         </story-slide>
@@ -674,22 +674,22 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
             <div class="story-slide-content">
                 <div class="pill">Comparative Analysis</div>
                 <h2 class="slide-title">Rule Configuration Balance</h2>
-                 <p class="slide-text mb-8">Balancing the roles of <code>tsc</code> and ESLint for a harmonious workflow.</p>
+                 <p class="slide-text" style="margin-bottom: 2rem;">Balancing the roles of <code>tsc</code> and ESLint for a harmonious workflow.</p>
                 <div class="ratings-grid">
                     <div class="rating-item">
                         <div class="rating-label">Type Correctness &amp; Logic</div>
                         <div class="rating-bar-bg"><div class="rating-bar-fg" data-value="100"></div></div>
-                        <small class="text-gray-400">Handled 100% by <code>tsc</code>.</small>
+                        <small style="color: #9CA3AF;">Handled 100% by <code>tsc</code>.</small>
                     </div>
                     <div class="rating-item">
                         <div class="rating-label">Documentation Presence &amp; Quality</div>
                         <div class="rating-bar-bg"><div class="rating-bar-fg" data-value="90"></div></div>
-                         <small class="text-gray-400">Handled 90% by ESLint, 10% by manual review.</small>
+                         <small style="color: #9CA3AF;">Handled 90% by ESLint, 10% by manual review.</small>
                     </div>
                      <div class="rating-item">
                         <div class="rating-label">Code &amp; JSDoc Style Consistency</div>
                         <div class="rating-bar-bg"><div class="rating-bar-fg" data-value="100"></div></div>
-                         <small class="text-gray-400">Handled 100% by ESLint &amp; Prettier.</small>
+                         <small style="color: #9CA3AF;">Handled 100% by ESLint &amp; Prettier.</small>
                     </div>
                 </div>
             </div>
@@ -972,8 +972,8 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
         const pauseIcon = document.getElementById('pause-icon');
 
         const updatePlayPauseButton = (isPlaying) => {
-             playIcon.classList.toggle('hidden', isPlaying);
-             pauseIcon.classList.toggle('hidden', !isPlaying);
+             playIcon.classList.toggle('is-hidden', isPlaying);
+             pauseIcon.classList.toggle('is-hidden', !isPlaying);
         };
 
         storyViewer.addEventListener('play', () => updatePlayPauseButton(true));
@@ -998,7 +998,7 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
         });
 
         presentationToggle.addEventListener('click', () => {
-            const isPlaying = playIcon.classList.contains('hidden');
+            const isPlaying = playIcon.classList.contains('is-hidden');
             if (isPlaying) {
                 storyViewer.pause();
             } else {
@@ -1037,8 +1037,8 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
 
         function updateFullscreenButton() {
             const fs = isFullscreen();
-            fullscreenIcon.classList.toggle('hidden', fs);
-            fullscreenExitIcon.classList.toggle('hidden', !fs);
+            fullscreenIcon.classList.toggle('is-hidden', fs);
+            fullscreenExitIcon.classList.toggle('is-hidden', !fs);
             fullscreenToggle.title = fs ? 'Exit Fullscreen' : 'Enter Fullscreen';
             fullscreenToggle.setAttribute('aria-label', fs ? 'Exit Fullscreen' : 'Enter Fullscreen');
         }
