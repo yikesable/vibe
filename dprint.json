@@ -1,0 +1,19 @@
+{
+  "indentWidth": 2,
+  "useTabs": false,
+  "lineWidth": 120,
+  "malva": {
+    "singleLineBlockThreshold": 6,
+    "printWidth": 120,
+    "indentWidth": 2,
+    "quotes": "alwaysDouble",
+    "hexCase": "lower",
+    "omitNumberLeadingZero": false,
+    "lineBreak": "lf"
+  },
+  "includes": ["styles/**/*.css"],
+  "excludes": ["**/node_modules"],
+  "plugins": [
+    "https://plugins.dprint.dev/g-plane/malva-v0.16.0.wasm"
+  ]
+}

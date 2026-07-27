@@ -13,8 +13,8 @@ export default {
       },
     ],
 
-    // ── Allow compact single-line blocks (up to 4 declarations per line) ──
-    'declaration-block-single-line-max-declarations': 4,
+    // ── Allow compact single-line blocks (up to 6 declarations per line) ──
+    'declaration-block-single-line-max-declarations': 6,
 
     // ── We use `min-width:` / `max-width:` media query syntax (not range) ──
     'media-feature-range-notation': null,

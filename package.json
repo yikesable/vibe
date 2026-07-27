@@ -19,12 +19,15 @@
     "dev": "browser-sync",
     "build:vendor": "node scripts/build-vendor.mjs",
     "lint:css": "stylelint 'styles/**/*.css'",
-    "lint:css:fix": "stylelint 'styles/**/*.css' --fix"
+    "lint:css:fix": "stylelint 'styles/**/*.css' --fix",
+    "fmt": "dprint fmt",
+    "fmt:check": "dprint check"
   },
   "devDependencies": {
     "@voxpelli/eslint-config": "^23.0.0",
     "@voxpelli/tsconfig": "^15.1.2",
     "browser-sync": "^3.0.4",
+    "dprint": "^0.55.2",
     "esbuild": "^0.28.1",
     "eslint": "^9.29.0",
     "stylelint": "^17.14.1",
