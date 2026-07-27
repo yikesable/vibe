@@ -1,63 +1,277 @@
 /*
  * ===================================================================
- * VIBE CODED - AI DESIGN BRIEF & SHARED STYLESHEET
+ * VIBE CODED — SHARED STYLESHEET & AI DESIGN BRIEF
  *
- * TO THE AI:
- * Use this file as the single source of truth for the visual identity
- * of any new page for the "Vibe Coded" project. The goal is to create
- * a consistent, modern, Y2K-inspired dark-mode aesthetic.
+ * ARCHITECTURE: ITCSS-ordered, @layer-enforced, BEM + CUBE CSS.
+ *   The cascade layers below fix Harry Roberts' Inverted Triangle into
+ *   the cascade so the ordering is enforced, not merely hoped-for:
  *
- * Follow these core instructions:
+ *     @layer reset, tokens, elements, objects, components, themes, utilities;
  *
- * 1. DEPENDENCIES:
- * - Always include Tailwind CSS for utility classes.
- * - Always load these two Google Fonts: 'Chakra Petch' (for headlines)
- * and 'Inter' (for body text).
- * <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+ *   Order = generic→specific, low→high specificity, wide→narrow reach.
+ *   Utilities (u-) win over components WITHOUT !important because they
+ *   sit in the last layer.
  *
- * 2. COLOR & THEME:
- * - The site is exclusively dark mode. Use the CSS variables defined below.
- * - The primary background is very dark (`--dark-bg`).
- * - The main accent and interactive color is a vibrant pink (`--pop-pink`).
- * - Use `--glow-color` for text shadows and box shadows on key elements
- * to create a neon "glow" effect.
+ * NAMING (BEM + Harry Roberts' namespaces, csswizardry.com/2015/03/...):
+ *   o-   object         — content-agnostic layout primitive (o-wrapper, o-grid, o-stack)
+ *   c-   component      — discrete UI block (c-bento, c-hero, c-accordion)
+ *   u-   utility        — sparse, single-purpose, LAST RESORT (u-text-center)
+ *   t-   theme          — cosmetic variant layered over a component (t-uprising)
+ *   is-/has-  state     — transient, toggled by JS/interaction (appended)
+ *   js-  hook           — JS-only class, NEVER styled
+ *   _    hack           — temporary workaround (comment + expiry date)
  *
- * 3. TYPOGRAPHY:
- * - Page titles and major headlines MUST use the 'Chakra Petch' font,
- * applied via the `.font-headline` class.
- * - All other body text should use 'Inter'.
+ *   BEM applies within o-/c-:   c-bento__item--wide
+ *   State/JS namespaces are APPENDED, not substituted:  c-bento__item is-active
  *
- * 4. LAYOUT & COMPONENTS:
- * - Main content should be wrapped in a `.main-container` for centering.
- * - Use "Bento Box" style for content modules. Linkable items should be `<a>` tags
- * with the `.bento-item` class. Static items should use `<article>` with `.bento-item-static`.
- * - Buttons should be high-contrast, using the `.cta-button` class.
+ * AI AUTHORING RULES — read before generating any page:
+ *   1. Do NOT add Tailwind, or any CDN framework. Layout is hand-written
+ *      here. Reach for u- ONLY when an o- object or c- component cannot
+ *      express the need.
+ *   2. Always load this stylesheet and the two Google Fonts: Chakra Petch
+ *      (headlines) + Inter (body).
+ *      <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+ *   3. Dark mode only. Use the CSS variables in @layer tokens:
+ *      --dark-bg (background) · --pop-pink (accent) · --glow-color (neon glow).
+ *   4. Headlines use Chakra Petch via the c-*__title / c-*__headline classes.
+ *   5. Wrap main content in .o-wrapper — it centers, pads, and is the
+ *      view-transition anchor (view-transition-name: main-content).
+ *   6. Use the <kinetic-background> and <code-block> web components on
+ *      every page; load them via their scripts.
+ *   7. Respect prefers-reduced-motion (handled at the foot of this file).
  *
- * 5. FLAIR, EFFECTS & REUSABLE COMPONENTS:
- * - The page MUST use the `<kinetic-background>` web componen should be used on all pages
- * to provide the floating particle background.
- * - All interactive elements (buttons, cards) should have a subtle
- * hover effect (e.g., transform, brighter glow).
- * - Any code snippets MUST be displayed using the `<code-block>` component.
- * - Load these components via their respective scripts.
- *
- * 6. ACCESSIBILITY:
- * - Implement `prefers-reduced-motion` to disable all animations for
- * accessibility, as demonstrated in the final section of this file.
- *
- * By following these rules, you will generate pages that are consistent
- * with the established "yikesable.github.io/vibe/" brand.
+ * MIGRATION NOTE: Tailwind is being removed page-by-page. Until a page
+ * is migrated it still loads the Tailwind CDN plus the LEGACY UNLAYERED
+ * classes at the bottom of this file (.main-container, .hero-title,
+ * .cta-button, .bento-*, etc.). Those legacy classes are deliberately
+ * UNLAYERED so the not-yet-migrated pages keep working unchanged;
+ * migrated pages use only the layered o-/c-/u-/t- names. Once the last
+ * page is migrated, the legacy block can be deleted.
  * ===================================================================
  */
 
-/* 1. Core Variables & Base Styles
-------------------------------------------------------------------- */
-:root {
+@layer reset, tokens, elements, objects, components, themes, utilities;
+
+/* ── 1. Generic / Reset ─────────────────────────────────────────────
+ * A minimal modern reset, equivalent to the parts of Tailwind Preflight
+ * that migrated pages (which no longer load the CDN) rely on.           */
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; }
+  html { -webkit-text-size-adjust: 100%; tab-size: 4; }
+  body { min-height: 100vh; line-height: 1.5; }
+  img, picture, video, canvas, svg { display: block; max-width: 100%; }
+  input, button, textarea, select { font: inherit; color: inherit; }
+  p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
+}
+
+/* ── 2. Settings / Tokens ─────────────────────────────────────────── */
+@layer tokens {
+  :root {
+    /* palette */
     --dark-bg: #0A001F;
     --pop-pink: #FF00A9;
     --glow-color: rgba(255, 0, 169, 0.5);
-    --code-bg: #160f29; /* A slightly different dark for code blocks */
+    --code-bg: #160f29;
+    /* text scale */
+    --text-base:  #EAE2FF;
+    --text-muted: #d1d5db;   /* gray-300 */
+    --text-dim:   #9ca3af;   /* gray-400 */
+    --text-faint: #6b7280;   /* gray-500 */
+    --accent-soft: rgba(255, 0, 169, 0.5);
+    /* spacing scale */
+    --space-1: .25rem;  --space-2: .5rem;   --space-3: .75rem; --space-4: 1rem;
+    --space-5: 1.25rem; --space-6: 1.5rem;  --space-8: 2rem;   --space-10: 2.5rem;
+    --space-12: 3rem;   --space-16: 4rem;   --space-20: 5rem;  --space-24: 6rem;
+    /* breakpoints (reference values; used in min-width media queries) */
+    --bp-sm: 40rem; --bp-md: 48rem; --bp-lg: 64rem; --bp-xl: 80rem;
+    /* radii */
+    --radius-md: .375rem; --radius-lg: .5rem; --radius-xl: .75rem; --radius-2xl: 1rem;
+  }
 }
+
+/* ── 3. Elements ───────────────────────────────────────────────────
+ * Bare HTML element defaults for migrated pages (Preflight equivalents). */
+@layer elements {
+  body {
+    background-color: var(--dark-bg);
+    color: var(--text-base);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+  a { color: inherit; text-decoration: none; }
+  code, pre, kbd, samp { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 1em; }
+}
+
+/* ── 4. Objects (CUBE Composition) ──────────────────────────────────
+ * Content-agnostic layout primitives. They never carry appearance.    */
+@layer objects {
+  /* Page wrapper — centers, pads, and anchors the view transition. */
+  .o-wrapper {
+    position: relative;
+    z-index: 1;
+    max-inline-size: 80rem;          /* max-w-7xl */
+    margin-inline: auto;
+    padding-inline: var(--space-4);
+    padding-block: var(--space-16);
+    view-transition-name: main-content;
+  }
+  @media (min-width: 40rem) { .o-wrapper { padding-inline: var(--space-6); } }   /* sm:px-6 */
+  @media (min-width: 48rem) { .o-wrapper { padding-block: var(--space-24); } }   /* md:py-24 */
+  @media (min-width: 64rem) { .o-wrapper { padding-inline: var(--space-8); } }   /* lg:px-8 */
+
+  /* Responsive grid. Modifiers are sparse and audit-driven only. */
+  .o-grid { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
+  @media (min-width: 48rem) {
+    .o-grid--md-2 { grid-template-columns: repeat(2, 1fr); }
+    .o-grid--md-3 { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (min-width: 64rem) { .o-grid--lg-4 { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 80rem) { .o-grid--xl-5 { grid-template-columns: repeat(5, 1fr); } }
+
+  /* Stack = vertical rhythm via flex+gap; tune spacing with --stack-space. */
+  .o-stack { display: flex; flex-direction: column; gap: var(--stack-space, var(--space-6)); }
+  .o-stack--sm { --stack-space: var(--space-4); }
+  .o-stack--md { --stack-space: var(--space-6); }
+  .o-stack--lg { --stack-space: var(--space-8); }
+  .o-stack--xl { --stack-space: var(--space-12); }
+
+  /* Cluster = wrapping inline row. */
+  .o-cluster { display: flex; flex-wrap: wrap; gap: var(--cluster-space, var(--space-4)); align-items: center; }
+}
+
+/* ── 5. Components (CUBE Block) ─────────────────────────────────────
+ * Discrete, appearance-owning UI chunks. Blocks own internal layout;
+ * external geometry comes from o- objects via a BEM "mix" on the node.  */
+@layer components {
+
+  /* Section — a vertically-rhythmed page section. */
+  .c-section { padding-block: var(--space-16); }
+  @media (min-width: 48rem) { .c-section { padding-block: var(--space-24); } }
+  .c-section--narrow { max-width: 48rem; margin-inline: auto; padding-block: var(--space-24); }
+  .c-section__head { text-align: center; }
+  .c-section__head--gap { margin-bottom: var(--space-12); }
+  .c-section__title { font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 2.25rem; } /* text-4xl */
+  @media (min-width: 48rem) { .c-section__title { font-size: 3rem; } }                                    /* md:text-5xl */
+  .c-section__intro { max-width: 42rem; margin-inline: auto; margin-top: var(--space-4); font-size: 1.125rem; color: var(--text-muted); }
+
+  /* Hero — page header. */
+  .c-hero { text-align: center; padding-block: var(--space-16); }
+  @media (min-width: 48rem) { .c-hero { padding-block: var(--space-24); } }
+  .c-hero__title { font-family: 'Chakra Petch', sans-serif; text-transform: uppercase; font-size: clamp(3.5rem, 12vw, 9rem); letter-spacing: -.05em; line-height: 1; text-shadow: 0 0 15px var(--glow-color), 0 0 30px var(--glow-color); }
+  .c-hero__title .highlight { color: var(--pop-pink); }
+  .c-hero__tagline { max-width: 42rem; margin-inline: auto; margin-top: var(--space-6); font-size: 1.125rem; color: var(--text-muted); }
+  @media (min-width: 48rem) { .c-hero__tagline { font-size: 1.25rem; } }   /* md:text-xl */
+  .c-hero__actions { display: flex; align-items: center; justify-content: center; margin-top: var(--space-10); gap: var(--space-6); }
+  .c-hero__link { font-size: 1.125rem; font-weight: 600; line-height: 1.75rem; color: var(--text-muted); transition: color .3s ease; }
+  .c-hero__link:hover { color: #fff; }
+
+  /* CTA button — the high-contrast pink action. */
+  .c-cta { display: inline-block; background-color: var(--pop-pink); color: var(--dark-bg); text-shadow: none; border-radius: var(--radius-md); padding: var(--space-3) var(--space-6); font-size: 1.125rem; font-weight: 600; line-height: 1.75rem; box-shadow: 0 0 20px var(--glow-color); transition: all .3s ease; text-decoration: none; }
+  .c-cta:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 0 35px var(--glow-color); }
+
+  /* Bento — the card grid. Mix with o-grid for columns; the item is the
+     block owning its card appearance, o-grid owns the placement.        */
+  .c-bento { grid-auto-rows: 24rem; container-type: inline-size; container-name: bento; }
+  .c-bento__item { display: flex; flex-direction: column; justify-content: center; border-radius: var(--radius-2xl); padding: var(--space-8); background: linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,0)); border: 1px solid rgba(255,255,255,.1); backdrop-filter: blur(12px); transition: all .3s ease; overflow: hidden; position: relative; text-decoration: none; color: inherit; }
+  .c-bento__item:hover { border-color: var(--accent-soft); transform: translateY(-5px); }
+  a.c-bento__item::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, var(--glow-color) 0%, transparent 40%); transform: scale(0); transition: transform .5s ease; z-index: 0; opacity: .3; }
+  a.c-bento__item:hover::before { transform: scale(1); }
+  .c-bento__item > * { position: relative; z-index: 1; }
+  @media (min-width: 48rem) {
+    .c-bento__item--wide { grid-column: span 2; }   /* md:col-span-2 */
+    .c-bento__item--full { grid-column: 1 / -1; }    /* md:col-span-3 */
+  }
+  .c-bento__item--static { align-items: center; text-align: center; }
+  .c-bento__item--static:hover { transform: none; border-color: rgba(255,255,255,.1); }
+  .c-bento__headline { font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 1.875rem; } /* text-3xl */
+  @container bento (min-width: 300px) { .c-bento__headline { font-size: 2.25rem; line-height: 2.5rem; } }
+  .c-bento__desc { margin-top: var(--space-2); max-width: 28rem; color: var(--text-muted); }
+  .c-bento__link { display: block; margin-top: var(--space-8); font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 1.5rem; color: var(--pop-pink); text-decoration: underline; text-decoration-color: var(--accent-soft); transition: text-decoration-color .3s ease; }
+  .c-bento__link:hover { text-decoration-color: var(--pop-pink); }
+  .c-bento__item:hover .c-bento__link { text-decoration-color: var(--pop-pink); }
+  .c-bento__arrow { display: inline-block; transition: transform .3s ease; }
+  .c-bento__item:hover .c-bento__arrow { transform: translateX(.5rem); }
+
+  /* Banner — a full-width card. The "uprising" look is a t- theme. */
+  .c-banner { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; border-radius: var(--radius-2xl); padding: var(--space-8); overflow: hidden; position: relative; text-decoration: none; color: inherit; }
+  .c-banner--full { grid-column: 1 / -1; }
+  .c-banner__glitch { font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 2.25rem; color: #fff; margin-block: var(--space-4); }
+  .c-banner__meta { font-size: .875rem; }
+
+  /* Disclaimer — the experimental-components warning box. */
+  .c-disclaimer { margin-top: var(--space-12); border: 2px solid var(--pop-pink); border-radius: var(--radius-lg); padding: var(--space-6); box-shadow: 0 0 20px var(--glow-color); color: #fbcfe8; } /* text-pink-100 */
+  .c-disclaimer__title { font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 1.125rem; color: #fff; }
+  .c-disclaimer__text { margin-top: var(--space-2); font-size: .875rem; line-height: 1.625; }
+
+  /* Doc — the reusable-component documentation article. */
+  .c-doc__title { font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 1.5rem; } /* text-2xl */
+  .c-doc__desc { margin-top: var(--space-2); color: var(--text-dim); }
+  .c-doc__body { margin-top: var(--space-4); display: flex; flex-direction: column; gap: var(--space-4); }
+  .c-doc__label { font-weight: 600; }
+  .c-doc__label--spaced { padding-top: var(--space-2); }
+  .c-doc__note { color: var(--text-dim); font-size: .875rem; }
+  .c-doc__note code { color: var(--pop-pink); text-decoration: underline; text-decoration-color: var(--accent-soft); transition: text-decoration-color .3s ease; }
+  .c-doc__note code:hover { text-decoration-color: var(--pop-pink); }
+
+  /* Accordion — native <details>, styled via [open] (no is- state needed). */
+  .c-accordion { background: linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,0)); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius-xl); padding: var(--space-5); transition: background-color .3s ease; }
+  .c-accordion[open] { border-color: var(--accent-soft); }
+  .c-accordion__summary { display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none; font-weight: 500; font-size: 1.125rem; padding: var(--space-5); margin: calc(-1 * var(--space-5)); }
+  .c-accordion__summary--sm { font-size: 1rem; }   /* text-base */
+  .c-accordion__summary::-webkit-details-marker { display: none; }
+  .c-accordion__icon { color: var(--pop-pink); font-size: 1.5rem; transition: transform .3s ease-in-out; }
+  .c-accordion[open] .c-accordion__icon { transform: rotate(45deg); }
+  .c-accordion__content { margin-top: var(--space-4); color: #d1d5db; line-height: 1.7; }
+  .c-accordion__content--list { display: flex; flex-direction: column; gap: var(--space-4); padding-top: var(--space-4); }   /* space-y-4 pt-4 */
+
+  /* Footer. */
+  .c-footer { text-align: center; padding-block: var(--space-12); }
+  .c-footer__text { color: var(--text-faint); font-style: normal; font-size: .875rem; }
+}
+
+/* ── 6. Themes (CUBE Exception / cosmetic) ─────────────────────────
+ * Cosmetic variants layered over a component. Themes never carry
+ * structure; they only recolour / re-animate.                          */
+@layer themes {
+  .t-uprising { background: #000; border: 1px solid #d93025; box-shadow: inset 0 0 15px #d93025, 0 0 20px #d93025; color: #fff; font-family: 'Special Elite', monospace; animation: pulse-border 2s infinite; }
+  .t-uprising:hover { transform: none; }
+  .t-uprising .c-banner__meta { color: #fca5a5; }   /* text-red-300 */
+  .t-uprising .c-banner__glitch { text-transform: uppercase; animation: glitch 1.5s linear infinite; }
+  .t-uprising:hover .c-banner__glitch { animation: none; }
+
+  @keyframes pulse-border {
+    0%   { box-shadow: inset 0 0 10px #d93025, 0 0 15px #d93025; }
+    50%  { box-shadow: inset 0 0 20px #d93025, 0 0 30px #d93025; }
+    100% { box-shadow: inset 0 0 10px #d93025, 0 0 15px #d93025; }
+  }
+  @keyframes glitch {
+    2%, 64% { transform: translate(2px, 0) skew(0); }
+    4%, 60% { transform: translate(-2px, 0) skew(0); }
+    62%     { transform: translate(0, 0) skew(5deg); }
+  }
+}
+
+/* ── 7. Utilities (CUBE Utility — last resort) ─────────────────────
+ * Sparse, single-purpose, immutable. The default is NOT to use these;
+ * reach for an o- object or c- component first.                        */
+@layer utilities {
+  .u-text-center { text-align: center; }
+  .u-mt-12 { margin-top: var(--space-12); }
+  .u-link-accent { color: var(--pop-pink); text-decoration: underline; text-decoration-color: var(--accent-soft); transition: text-decoration-color .3s ease; }
+  .u-link-accent:hover { text-decoration-color: var(--pop-pink); }
+}
+
+
+/* ===================================================================
+ * LEGACY (UNLAYERED) — kept for not-yet-migrated pages still loading
+ * the Tailwind CDN. Unlayered so it beats the layered classes above
+ * for those pages' old class names. Delete this block once all pages
+ * are migrated. (The :root tokens have moved up into @layer tokens.)
+ * =================================================================== */
 
 html {
     /* Use smooth scrolling for anchor links like #projects */

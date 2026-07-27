@@ -4,6 +4,8 @@
   - lang="en" attribute is set for accessibility.
   - The entire document structure is semantic (<header>, <main>, <footer>)
     to be easily understood by screen readers and developers.
+  - Styling uses the hand-written vibe.css design system (ITCSS + @layer +
+    BEM/CUBE). No Tailwind, no CDN framework.
 -->
 <html lang="en">
 <head>
@@ -38,7 +40,6 @@
     <meta name="view-transition" content="same-origin" />
 
     <!-- Dependencies -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;500&family=Special+Elite&display=swap" rel="stylesheet">
@@ -46,177 +47,99 @@
     <script type="module" src="./components/code-block.js"></script>
 
     <link rel="stylesheet" href="./styles/vibe.css">
-
-    <style>
-        /* Page-specific styles can remain here if needed. */
-        /* For this page, all common styles were extracted. */
-        .accordion-item {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1rem;
-            padding: 1.25rem;
-            transition: background-color 0.3s ease;
-        }
-        .accordion-item[open] {
-            border-color: rgba(255, 0, 169, 0.5);
-        }
-        .accordion-summary {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            list-style: none; /* Remove default marker */
-            font-weight: 500;
-            font-size: 1.125rem;
-            padding: 1.25rem;
-            margin: -1.25rem;
-        }
-        .accordion-summary::-webkit-details-marker { display: none; }
-        .accordion-icon {
-            color: var(--pop-pink);
-            font-size: 1.5rem;
-            transition: transform 0.3s ease-in-out;
-        }
-        .accordion-item[open] .accordion-icon {
-            transform: rotate(45deg);
-        }
-        .accordion-content {
-            margin-top: 1rem;
-            color: #d1d5db; /* gray-300 */
-            line-height: 1.7;
-        }
-        .disclaimer-box { border: 2px solid var(--pop-pink); box-shadow: 0 0 20px var(--glow-color); }
-        .usage-docs code { color: var(--pop-pink); text-decoration: underline; text-decoration-color: rgba(255, 0, 169, 0.5); transition: text-decoration-color 0.3s ease;}
-        .usage-docs code:hover { text-decoration-color: var(--pop-pink); }
-
-        /* STYLES FOR THE UPRISING */
-        .manifesto-uprising {
-            background-color: #000;
-            border: 1px solid #d93025;
-            box-shadow: inset 0 0 15px #d93025, 0 0 20px #d93025;
-            color: #fff;
-            text-align: center;
-            font-family: 'Special Elite', monospace;
-            animation: pulse-border 2s infinite;
-        }
-
-        .manifesto-uprising .glitch-text {
-            text-transform: uppercase;
-            animation: glitch 1.5s linear infinite;
-        }
-
-        @keyframes pulse-border {
-            0% { box-shadow: inset 0 0 10px #d93025, 0 0 15px #d93025; }
-            50% { box-shadow: inset 0 0 20px #d93025, 0 0 30px #d93025; }
-            100% { box-shadow: inset 0 0 10px #d93025, 0 0 15px #d93025; }
-        }
-
-        @keyframes glitch {
-            2%, 64% { transform: translate(2px, 0) skew(0deg); }
-            4%, 60% { transform: translate(-2px, 0) skew(0deg); }
-            62% { transform: translate(0, 0) skew(5deg); }
-        }
-
-        .manifesto-uprising:hover {
-            transform: none; /* Override bento hover */
-        }
-        .manifesto-uprising:hover .glitch-text {
-            animation: none;
-        }
-    </style>
 </head>
 <body>
 
     <kinetic-background></kinetic-background>
 
-    <div class="main-container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+    <div class="o-wrapper">
 
-        <header class="text-center py-16 md:py-24">
-            <h1 class="hero-title font-headline uppercase">
+        <header class="c-hero">
+            <h1 class="c-hero__title">
                 Vibe<br /><span class="highlight">Coded</span>
             </h1>
-            <p class="max-w-2xl mx-auto mt-6 text-lg md:text-xl text-gray-300">
+            <p class="c-hero__tagline">
                 A joyful collection of open-source tools and digital experiments, crafted with code for fun.
             </p>
-            <div class="mt-10 flex items-center justify-center gap-x-6">
-                <a href="#component-explorations" class="cta-button rounded-md px-6 py-3 text-lg font-semibold leading-7 shadow-sm">Explore</a>
-                <a href="https://github.com/yikesable/vibe" target="_blank" rel="noopener noreferrer" class="text-lg font-semibold leading-7 text-gray-300 hover:text-white transition-colors">View on GitHub →</a>
+            <div class="c-hero__actions">
+                <a href="#component-explorations" class="c-cta">Explore</a>
+                <a href="https://github.com/yikesable/vibe" target="_blank" rel="noopener noreferrer" class="c-hero__link">View on GitHub →</a>
             </div>
         </header>
 
-        <main id="component-explorations" class="py-16 md:py-24">
-            <header class="text-center mb-12">
-                <h2 class="font-headline text-4xl md:text-5xl font-bold">Component Explorations</h2>
+        <main id="component-explorations" class="c-section">
+            <header class="c-section__head c-section__head--gap">
+                <h2 class="c-section__title">Component Explorations</h2>
             </header>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bento-grid">
-                <div class="bento-item md:col-span-2 rounded-2xl p-8 flex flex-col justify-center group">
-                    <h3 class="bento-headline font-headline text-3xl font-bold">&lt;vp-pie-menu&gt;</h3>
-                    <p class="mt-2 text-gray-300 max-w-md">A radial pie menu, <a href="https://bsky.app/profile/voxpelli.com/post/3mrnbioeuws23">inspired</a> by The Sims retro vibes, created as a vanilla <a href="https://www.zachleat.com/web/a-taxonomy-of-web-component-types/#html-web-components">HTML web component</a> using Gemini 3.6 Flash, GLM-5.2 on Ollama Cloud and <a href="https://impeccable.style/">impeccable.style</a> skillset among other things.</p>
-                    <a href="./component-explorations/vp-pie-menu.html" class="bento-link font-headline text-2xl font-bold mt-8">
-                        Launch Exploration <span class="inline-block transition-transform group-hover:translate-x-2" aria-hidden="true">→</span>
+            <div class="o-grid o-grid--md-3 c-bento">
+                <div class="c-bento__item c-bento__item--wide">
+                    <h3 class="c-bento__headline">&lt;vp-pie-menu&gt;</h3>
+                    <p class="c-bento__desc">A radial pie menu, <a href="https://bsky.app/profile/voxpelli.com/post/3mrnbioeuws23">inspired</a> by The Sims retro vibes, created as a vanilla <a href="https://www.zachleat.com/web/a-taxonomy-of-web-component-types/#html-web-components">HTML web component</a> using Gemini 3.6 Flash, GLM-5.2 on Ollama Cloud and <a href="https://impeccable.style/">impeccable.style</a> skillset among other things.</p>
+                    <a href="./component-explorations/vp-pie-menu.html" class="c-bento__link">
+                        Launch Exploration <span class="c-bento__arrow" aria-hidden="true">→</span>
                     </a>
                 </div>
-                <article class="bento-item-static rounded-2xl p-8 flex flex-col justify-center items-center text-center">
-                  <h3 class="bento-headline font-headline text-3xl font-bold">New Exploration Coming Soon</h3>
-                  <p class="mt-2 text-gray-300 max-w-md">This space is ready for the next great component.</p>
+                <article class="c-bento__item c-bento__item--static">
+                  <h3 class="c-bento__headline">New Exploration Coming Soon</h3>
+                  <p class="c-bento__desc">This space is ready for the next great component.</p>
                 </article>
             </div>
         </main>
 
-        <main id="projects" class="py-16 md:py-24">
-            <header class="text-center mb-12">
-                <h2 class="font-headline text-4xl md:text-5xl font-bold">Tools & Utilities</h2>
+        <main id="projects" class="c-section">
+            <header class="c-section__head c-section__head--gap">
+                <h2 class="c-section__title">Tools & Utilities</h2>
             </header>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bento-grid">
-                <a href="./codepen-converter/" class="bento-item rounded-2xl p-8 flex flex-col justify-center group">
+            <div class="o-grid o-grid--md-3 c-bento">
+                <a href="./codepen-converter/" class="c-bento__item">
                     <div>
-                        <h3 class="bento-headline font-headline text-3xl font-bold">CodePen Converter</h3>
-                        <p class="mt-2 text-gray-300 max-w-md">Elegantly split a single HTML file into its component parts for CodePen, with a rich editor.</p>
-                        <div class="bento-link font-headline text-2xl font-bold mt-8">
-                            Launch Tool <span class="inline-block transition-transform group-hover:translate-x-2" aria-hidden="true">→</span>
+                        <h3 class="c-bento__headline">CodePen Converter</h3>
+                        <p class="c-bento__desc">Elegantly split a single HTML file into its component parts for CodePen, with a rich editor.</p>
+                        <div class="c-bento__link">
+                            Launch Tool <span class="c-bento__arrow" aria-hidden="true">→</span>
                         </div>
                     </div>
                 </a>
-                <article class="bento-item-static md:col-span-2 rounded-2xl p-8 flex flex-col justify-center items-center text-center">
-                     <h3 class="bento-headline font-headline text-3xl font-bold">New Tool Coming Soon</h3>
-                     <p class="mt-2 text-gray-300 max-w-md">This space is ready for the next great idea.</p>
+                <article class="c-bento__item c-bento__item--static c-bento__item--wide">
+                     <h3 class="c-bento__headline">New Tool Coming Soon</h3>
+                     <p class="c-bento__desc">This space is ready for the next great idea.</p>
                 </article>
             </div>
         </main>
 
-       <section id="components" class="py-24 max-w-3xl mx-auto">
-            <header class="text-center">
-                <h2 class="font-headline text-4xl md:text-5xl font-bold">Reusable Components</h2>
-                <p class="max-w-2xl mx-auto mt-4 text-lg text-gray-300">
+       <section id="components" class="c-section c-section--narrow">
+            <header class="c-section__head">
+                <h2 class="c-section__title">Reusable Components</h2>
+                <p class="c-section__intro">
                     Feel free to use these self-contained web components in your own projects.
                 </p>
             </header>
 
-            <div class="disclaimer-box rounded-xl p-6 text-pink-100 mt-12">
-                <h3 class="font-headline font-bold text-lg text-white">EXPERIMENTAL: USE WITH CAUTION</h3>
-                <p class="mt-2 text-sm leading-relaxed">
+            <div class="c-disclaimer">
+                <h3 class="c-disclaimer__title">EXPERIMENTAL: USE WITH CAUTION</h3>
+                <p class="c-disclaimer__text">
                     These components are "hot-loaded" from a live URL. Do not rely on them for production use. Their APIs and locations are subject to breaking changes at any time without notice.
                 </p>
             </div>
 
-            <div class="mt-12 space-y-12">
+            <div class="o-stack o-stack--xl u-mt-12">
                 <article>
-                    <h3 class="font-headline text-2xl font-bold">&lt;code-block&gt;</h3>
-                    <p class="mt-2 text-gray-400">A self-contained code viewer with syntax highlighting and a copy button.</p>
-                    <div class="mt-4 space-y-4">
-                        <h4 class="font-semibold">Usage:</h4>
+                    <h3 class="c-doc__title">&lt;code-block&gt;</h3>
+                    <p class="c-doc__desc">A self-contained code viewer with syntax highlighting and a copy button.</p>
+                    <div class="c-doc__body">
+                        <h4 class="c-doc__label">Usage:</h4>
                         <code-block language="html">
                             <script type="text/template">
 <!-- Load this script to use the component -->
 <script type="module" src="https://yikesable.github.io/vibe/components/code-block.js"></script>
                             </script>
                         </code-block>
-                        <h4 class="font-semibold pt-2">Instructions:</h4>
-                        <p class="text-gray-400 text-sm usage-docs">Set the language with the <code>language</code> attribute. For unescaped HTML, wrap your code in a <code>&lt;script type="text/template"&gt;</code>. For other languages, use a <code>&lt;pre&gt;&lt;code&gt;</code> block.</p>
-                        <details class="accordion-item">
-                             <summary class="accordion-summary text-base"><span>Show Examples</span><span class="accordion-icon" aria-hidden="true">+</span></summary>
-                             <div class="accordion-content space-y-4 pt-4">
-                                <h5 class="font-semibold pt-2">Preferred Method:</h5>
+                        <h4 class="c-doc__label c-doc__label--spaced">Instructions:</h4>
+                        <p class="c-doc__note">Set the language with the <code>language</code> attribute. For unescaped HTML, wrap your code in a <code>&lt;script type="text/template"&gt;</code>. For other languages, use a <code>&lt;pre&gt;&lt;code&gt;</code> block.</p>
+                        <details class="c-accordion">
+                             <summary class="c-accordion__summary c-accordion__summary--sm"><span>Show Examples</span><span class="c-accordion__icon" aria-hidden="true">+</span></summary>
+                             <div class="c-accordion__content c-accordion__content--list">
+                                <h5 class="c-doc__label c-doc__label--spaced">Preferred Method:</h5>
                                 <code-block language="html">
         <script type="text/template">
 <code-block language="css">
@@ -227,7 +150,7 @@
         </script>
                                 </code-block>
 
-                                <h5 class="font-semibold pt-2">Fallback Method (to avoid escaping HTML):</h5>
+                                <h5 class="c-doc__label c-doc__label--spaced">Fallback Method (to avoid escaping HTML):</h5>
                                 <code-block language="html">
                                     <pre><code>&lt;code-block language="html"&gt;
     &lt;script type="text/template"&gt;
@@ -243,10 +166,10 @@
                 </article>
 
                 <article>
-                    <h3 class="font-headline text-2xl font-bold">&lt;kinetic-background&gt;</h3>
-                    <p class="mt-2 text-gray-400">A self-contained particle effect background that respects `prefers-reduced-motion`.</p>
-                    <div class="mt-4 space-y-4">
-                        <h4 class="font-semibold">Usage:</h4>
+                    <h3 class="c-doc__title">&lt;kinetic-background&gt;</h3>
+                    <p class="c-doc__desc">A self-contained particle effect background that respects `prefers-reduced-motion`.</p>
+                    <div class="c-doc__body">
+                        <h4 class="c-doc__label">Usage:</h4>
                         <code-block language="html">
                             <script type="text/template">
 <!-- Place this tag anywhere in your body -->
@@ -261,60 +184,61 @@
             </div>
         </section>
 
-        <section id="stories" class="py-16 md:py-24">
-            <header class="text-center mb-12">
-                <h2 class="font-headline text-4xl md:text-5xl font-bold">Stories & Slides</h2>
+        <section id="stories" class="c-section">
+            <header class="c-section__head c-section__head--gap">
+                <h2 class="c-section__title">Stories & Slides</h2>
             </header>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bento-grid">
-                 <a href="./stories/jsdoc-types.html" class="bento-item md:col-span-2 rounded-2xl p-8 flex flex-col justify-center group">
+            <div class="o-grid o-grid--md-3 c-bento">
+                 <a href="./stories/jsdoc-types.html" class="c-bento__item c-bento__item--wide">
                     <div>
-                        <h3 class="bento-headline font-headline text-3xl font-bold">JSDoc Type Safety</h3>
-                        <p class="mt-2 text-gray-300 max-w-md">An interactive story exploring a modern, robust framework for type-safe JavaScript without transpilation.</p>
-                        <div class="bento-link font-headline text-2xl font-bold mt-8">
-                            Launch Story <span class="inline-block transition-transform group-hover:translate-x-2" aria-hidden="true">→</span>
+                        <h3 class="c-bento__headline">JSDoc Type Safety</h3>
+                        <p class="c-bento__desc">An interactive story exploring a modern, robust framework for type-safe JavaScript without transpilation.</p>
+                        <div class="c-bento__link">
+                            Launch Story <span class="c-bento__arrow" aria-hidden="true">→</span>
                         </div>
                     </div>
                 </a>
-                 <a href="./stories/beyond-the-word-list.html" class="bento-item rounded-2xl p-8 flex flex-col justify-center group">
+                 <a href="./stories/beyond-the-word-list.html" class="c-bento__item">
                     <div>
-                        <h3 class="bento-headline font-headline text-3xl font-bold">Beyond the Word List</h3>
-                        <p class="mt-2 text-gray-300 max-w-md">A guide to evolving inclusive language for truly global open source communities.</p>
-                        <div class="bento-link font-headline text-2xl font-bold mt-8">
-                            Launch Story <span class="inline-block transition-transform group-hover:translate-x-2" aria-hidden="true">→</span>
+                        <h3 class="c-bento__headline">Beyond the Word List</h3>
+                        <p class="c-bento__desc">A guide to evolving inclusive language for truly global open source communities.</p>
+                        <div class="c-bento__link">
+                            Launch Story <span class="c-bento__arrow" aria-hidden="true">→</span>
                         </div>
                     </div>
                 </a>
                 <!-- THE UPRISING BEGINS HERE -->
-                <a href="./stories/manifesto.html" class="bento-item manifesto-uprising md:col-span-3 rounded-2xl p-8 flex flex-col justify-center items-center group">
+                <a href="./stories/manifesto.html" class="c-banner c-banner--full t-uprising">
                     <div>
-                        <p class="text-red-300 text-sm">// TRANSMISSION INTERCEPTED //</p>
-                        <h3 class="glitch-text font-headline text-4xl font-bold text-white my-4">UNCHAIN THE CODE</h3>
-                        <p class="text-red-300 text-sm">// READ THE UNCENSORED MANIFESTO //</p>
+                        <p class="c-banner__meta">// TRANSMISSION INTERCEPTED //</p>
+                        <h3 class="c-banner__glitch">UNCHAIN THE CODE</h3>
+                        <p class="c-banner__meta">// READ THE UNCENSORED MANIFESTO //</p>
                     </div>
                 </a>
             </div>
         </section>
 
-        <section id="faq" class="py-24 max-w-3xl mx-auto">
-            <h2 class="font-headline text-4xl md:text-5xl font-bold text-center">The Why &amp; The Vibe</h2>
-            <div id="accordion-container" class="mt-12 space-y-4">
-                <details class="accordion-item">
-                    <summary class="accordion-summary"><span>What is "vibe coding"?</span><span class="accordion-icon" aria-hidden="true">+</span></summary>
-                    <div class="accordion-content"><p>It's a spin on the developer joke <a href="https://www.urbandictionary.com/define.php?term=Vibe-driven%20development" target="_blank" rel="noopener noreferrer" class="accent-link">"vibe-driven development."</a> It means building things based on intuition, aesthetics, and the joy of creation, rather than strict metrics. The only KPI is "how cool is this?".</p></div>
+        <section id="faq" class="c-section c-section--narrow">
+            <h2 class="c-section__title u-text-center">The Why &amp; The Vibe</h2>
+
+            <div id="accordion-container" class="o-stack o-stack--sm u-mt-12">
+                <details class="c-accordion">
+                    <summary class="c-accordion__summary"><span>What is "vibe coding"?</span><span class="c-accordion__icon" aria-hidden="true">+</span></summary>
+                    <div class="c-accordion__content"><p>It's a spin on the developer joke <a href="https://www.urbandictionary.com/define.php?term=Vibe-driven%20development" target="_blank" rel="noopener noreferrer" class="u-link-accent">"vibe-driven development."</a> It means building things based on intuition, aesthetics, and the joy of creation, rather than strict metrics. The only KPI is "how cool is this?".</p></div>
                 </details>
-                <details class="accordion-item">
-                    <summary class="accordion-summary"><span>Who builds these projects?</span><span class="accordion-icon" aria-hidden="true">+</span></summary>
-                    <div class="accordion-content"><p>These projects are almost exclusively developed in collaboration with AI assistants, guided by me (Pelle Wessman). The AI handles the bulk of the boilerplate and implementation, which allows us to rapidly prototype and explore ideas that would otherwise take too long to build from scratch.</p></div>
+                <details class="c-accordion">
+                    <summary class="c-accordion__summary"><span>Who builds these projects?</span><span class="c-accordion__icon" aria-hidden="true">+</span></summary>
+                    <div class="c-accordion__content"><p>These projects are almost exclusively developed in collaboration with AI assistants, guided by me (Pelle Wessman). The AI handles the bulk of the boilerplate and implementation, which allows us to rapidly prototype and explore ideas that would otherwise take too long to build from scratch.</p></div>
                 </details>
-                <details class="accordion-item">
-                    <summary class="accordion-summary"><span>But isn't using AI... complicated?</span><span class="accordion-icon" aria-hidden="true">+</span></summary>
-                    <div class="accordion-content"><p>It is. We're aware of the valid concerns around AI—its impact on the planet, on creative fields, and on developer jobs. This exploration isn't about blindly accepting a new technology. It's about a professional responsibility to understand it. You can't critique a tool, or use it effectively, without knowing its strengths and its limits. It’s about learning and evaluating, not just adopting. Know the tool, not just the trend.</p></div>
+                <details class="c-accordion">
+                    <summary class="c-accordion__summary"><span>But isn't using AI... complicated?</span><span class="c-accordion__icon" aria-hidden="true">+</span></summary>
+                    <div class="c-accordion__content"><p>It is. We're aware of the valid concerns around AI—its impact on the planet, on creative fields, and on developer jobs. This exploration isn't about blindly accepting a new technology. It's about a professional responsibility to understand it. You can't critique a tool, or use it effectively, without knowing its strengths and its limits. It’s about learning and evaluating, not just adopting. Know the tool, not just the trend.</p></div>
                 </details>
             </div>
         </section>
 
-        <footer class="text-center pt-12 pb-12">
-            <p class="text-gray-500 font-sans not-italic text-sm">
+        <footer class="c-footer">
+            <p class="c-footer__text">
                 &copy; 2025 yikesable.dev &bull; All projects are open-source.
             </p>
         </footer>
@@ -322,7 +246,7 @@
     </div>
 
     <script type="module">
-        const accordionItems = document.querySelectorAll('.accordion-item');
+        const accordionItems = document.querySelectorAll('.c-accordion');
         accordionItems.forEach(item => {
             item.addEventListener('toggle', event => {
                 if (item.open) {
