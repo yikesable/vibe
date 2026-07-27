@@ -50,11 +50,7 @@
 
     @keyframes vp-pie-item-selected {
       0% { transform: translate(-50%, -50%) scale(1); }
-      40% {
-        transform: translate(-50%, -50%) scale(1.15);
-        border-color: var(--vp-accent);
-        box-shadow: 0 0 20px rgba(var(--vp-accent-rgb), 0.5);
-      }
+      40% { transform: translate(-50%, -50%) scale(1.15); border-color: var(--vp-accent); box-shadow: 0 0 20px rgba(var(--vp-accent-rgb), 0.5); }
       100% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
     }
 
@@ -71,10 +67,7 @@
 
     /* --- Component classes --- */
 
-    .vp-pie-item-anim {
-      animation: vp-pie-pop-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      animation-delay: var(--vp-pie-delay, 0ms);
-    }
+    .vp-pie-item-anim { animation: vp-pie-pop-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: var(--vp-pie-delay, 0ms); }
 
     .vp-pie-overlay-close { animation: vp-pie-fade-out 0.18s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 
@@ -82,11 +75,7 @@
 
     .vp-pie-stem-anim { opacity: 0; animation: vp-pie-stem-fade-in 0.2s ease-out forwards; }
 
-    .vp-pie-stem-active {
-      stroke: var(--vp-stem-active-color) !important;
-      stroke-width: 3 !important;
-      transition: stroke 0.15s ease, stroke-width 0.15s ease;
-    }
+    .vp-pie-stem-active { stroke: var(--vp-stem-active-color) !important; stroke-width: 3 !important; transition: stroke 0.15s ease, stroke-width 0.15s ease; }
 
     .vp-pie-item-selected { animation: vp-pie-item-selected 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important; }
 
@@ -175,30 +164,13 @@
 
     .hero-content { text-align: center; z-index: 1; pointer-events: none; padding: 0 1.5rem; }
 
-    .hero-title {
-      font-size: clamp(2.5rem, 7vw, 5rem);
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      line-height: 1;
-      color: var(--text);
-    }
+    .hero-title { font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: var(--text); }
 
     .hero-title .accent { color: var(--accent); }
 
-    .hero-tagline {
-      margin-top: 0.75rem;
-      font-size: clamp(0.95rem, 2vw, 1.15rem);
-      color: var(--text-2);
-      font-weight: 400;
-    }
+    .hero-tagline { margin-top: 0.75rem; font-size: clamp(0.95rem, 2vw, 1.15rem); color: var(--text-2); font-weight: 400; }
 
-    .hero-hint {
-      margin-top: 2rem;
-      font-size: 0.85rem;
-      color: var(--text-3);
-      font-family: var(--font-mono);
-      letter-spacing: 0.02em;
-    }
+    .hero-hint { margin-top: 2rem; font-size: 0.85rem; color: var(--text-3); font-family: var(--font-mono); letter-spacing: 0.02em; }
 
     .hero-hint::before { content: "→ "; color: var(--accent); }
 
@@ -241,14 +213,7 @@
     /* Hero trigger: transparent, covers full viewport */
     .hero vp-pie-menu { position: absolute; inset: 0; z-index: 2; }
 
-    .hero-trigger {
-      position: absolute;
-      inset: 0;
-      background: transparent;
-      border: none;
-      cursor: crosshair;
-      color: transparent;
-    }
+    .hero-trigger { position: absolute; inset: 0; background: transparent; border: none; cursor: crosshair; color: transparent; }
 
     /* --- Section layout --- */
 
@@ -263,13 +228,7 @@
       margin-bottom: 0.5rem;
     }
 
-    .section-title {
-      font-size: clamp(1.5rem, 4vw, 2.25rem);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
-      margin-bottom: 0.75rem;
-    }
+    .section-title { font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 0.75rem; }
 
     .section-desc { color: var(--text-2); max-width: 60ch; margin-bottom: 2.5rem; }
 
@@ -317,12 +276,7 @@
 
     .playground-controls { display: flex; flex-direction: column; gap: 1.25rem; }
 
-    .control-group {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.25rem;
-    }
+    .control-group { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
 
     .control-label {
       font-size: 0.75rem;
@@ -345,31 +299,11 @@
       outline: none;
     }
 
-    .slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 16px;
-      height: 16px;
-      background: var(--accent);
-      border-radius: 50%;
-      cursor: pointer;
-    }
+    .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; background: var(--accent); border-radius: 50%; cursor: pointer; }
 
-    .slider::-moz-range-thumb {
-      width: 16px;
-      height: 16px;
-      background: var(--accent);
-      border-radius: 50%;
-      cursor: pointer;
-      border: none;
-    }
+    .slider::-moz-range-thumb { width: 16px; height: 16px; background: var(--accent); border-radius: 50%; cursor: pointer; border: none; }
 
-    .slider-value {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      color: var(--text-2);
-      min-width: 3ch;
-      text-align: right;
-    }
+    .slider-value { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-2); min-width: 3ch; text-align: right; }
 
     .swatches { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 
@@ -450,13 +384,7 @@
       gap: 1rem;
     }
 
-    .use-case-title {
-      font-size: 0.85rem;
-      font-family: var(--font-mono);
-      color: var(--text-3);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
+    .use-case-title { font-size: 0.85rem; font-family: var(--font-mono); color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; }
 
     .use-case-feedback { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-2); min-height: 1.5em; }
 
@@ -470,13 +398,7 @@
 
     .api-tables .full-width { grid-column: 1 / -1; }
 
-    .api-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      min-width: 0;
-    }
+    .api-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; min-width: 0; }
 
     .api-card h3 {
       font-size: 0.85rem;
@@ -511,12 +433,7 @@
 
     .api-table tr:last-child td { border-bottom: none; }
 
-    .api-table code {
-      font-family: var(--font-mono);
-      color: var(--accent-light);
-      font-size: 0.85em;
-      overflow-wrap: anywhere;
-    }
+    .api-table code { font-family: var(--font-mono); color: var(--accent-light); font-size: 0.85em; overflow-wrap: anywhere; }
 
     .api-structure {
       background: var(--code-bg);
@@ -544,28 +461,11 @@
 
     .code-blocks .full-width { grid-column: 1 / -1; }
 
-    .code-card {
-      background: var(--code-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
+    .code-card { background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
 
-    .code-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.75rem 1.25rem;
-      border-bottom: 1px solid var(--border);
-    }
+    .code-header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border); }
 
-    .code-header span {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-3);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
+    .code-header span { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; }
 
     .copy-btn {
       background: transparent;
@@ -654,13 +554,7 @@
       align-items: center;
       gap: 1rem;
     }
-    .overdrive-label {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      color: var(--accent);
-      text-transform: uppercase;
-    }
+    .overdrive-label { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; }
     .overdrive-title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; color: var(--text); margin: 0; }
     .overdrive-desc { font-size: 0.9rem; color: var(--text-3); max-width: 400px; margin: 0; }
     .overdrive-menu-wrap { margin-top: 2rem; }
@@ -689,10 +583,7 @@
       border: 1px solid rgba(var(--accent-rgb), 0.2);
       animation: overdrive-pulse 2s ease-in-out infinite;
     }
-    @keyframes overdrive-pulse {
-      0%, 100% { transform: scale(1); opacity: 0.5; }
-      50% { transform: scale(1.15); opacity: 1; }
-    }
+    @keyframes overdrive-pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.15); opacity: 1; } }
     .overdrive-trigger:hover { border-color: var(--accent); box-shadow: 0 0 30px rgba(var(--accent-rgb), 0.3); }
     #overdrive-pie {
       --vp-panel-bg: rgba(var(--accent-rgb), 0.08);
@@ -701,14 +592,7 @@
       --vp-stem-color: rgba(var(--accent-rgb), 0.3);
       --vp-stem-active-color: rgba(var(--accent-rgb), 0.8);
     }
-    .overdrive-feedback {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      color: var(--accent);
-      min-height: 1.2em;
-      margin: 0;
-      transition: opacity 0.3s ease;
-    }
+    .overdrive-feedback { font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); min-height: 1.2em; margin: 0; transition: opacity 0.3s ease; }
     </style>
   </head>
   <body>
@@ -772,46 +656,11 @@
           <div class="control-group">
             <div class="control-label">Accent</div>
             <div class="swatches" id="swatches">
-              <button
-                class="swatch active"
-                data-color="#f97316"
-                data-rgb="249, 115, 22"
-                style="background: #f97316"
-                aria-label="Orange"
-              >
-              </button>
-              <button
-                class="swatch"
-                data-color="#3b82f6"
-                data-rgb="59, 130, 246"
-                style="background: #3b82f6"
-                aria-label="Blue"
-              >
-              </button>
-              <button
-                class="swatch"
-                data-color="#22c55e"
-                data-rgb="34, 197, 94"
-                style="background: #22c55e"
-                aria-label="Green"
-              >
-              </button>
-              <button
-                class="swatch"
-                data-color="#ec4899"
-                data-rgb="236, 72, 153"
-                style="background: #ec4899"
-                aria-label="Pink"
-              >
-              </button>
-              <button
-                class="swatch"
-                data-color="#a78bfa"
-                data-rgb="167, 139, 250"
-                style="background: #a78bfa"
-                aria-label="Violet"
-              >
-              </button>
+              <button class="swatch active" data-color="#f97316" data-rgb="249, 115, 22" style="background: #f97316" aria-label="Orange"></button>
+              <button class="swatch" data-color="#3b82f6" data-rgb="59, 130, 246" style="background: #3b82f6" aria-label="Blue"></button>
+              <button class="swatch" data-color="#22c55e" data-rgb="34, 197, 94" style="background: #22c55e" aria-label="Green"></button>
+              <button class="swatch" data-color="#ec4899" data-rgb="236, 72, 153" style="background: #ec4899" aria-label="Pink"></button>
+              <button class="swatch" data-color="#a78bfa" data-rgb="167, 139, 250" style="background: #a78bfa" aria-label="Violet"></button>
               <input type="color" class="color-input" id="color-picker" value="#f97316" aria-label="Custom color">
             </div>
           </div>
@@ -902,14 +751,7 @@
         <defs>
           <filter id="displacement-filter" color-interpolation-filters="sRGB">
             <feTurbulence id="turbulence" type="fractalNoise" baseFrequency="0.015" numOctaves="3" seed="1" />
-            <feDisplacementMap
-              id="displacement"
-              in="SourceGraphic"
-              in2="turbulence"
-              scale="0"
-              xChannelSelector="R"
-              yChannelSelector="G"
-            />
+            <feDisplacementMap id="displacement" in="SourceGraphic" in2="turbulence" scale="0" xChannelSelector="R" yChannelSelector="G" />
           </filter>
         </defs>
       </svg>
@@ -978,8 +820,7 @@
               <tr>
                 <td><code>vp-pie-select</code></td>
                 <td>
-                  <code>{ action, icon, ...dataAttrs, element }</code><br>Bubbles. Passes through all <code
-                  >data-*</code> attributes from the source button.
+                  <code>{ action, icon, ...dataAttrs, element }</code><br>Bubbles. Passes through all <code>data-*</code> attributes from the source button.
                 </td>
               </tr>
             </tbody>
@@ -1044,17 +885,13 @@
         <div class="api-card full-width">
           <h3>Light DOM Structure</h3>
           <div class="api-structure">
-            <span class="tag">&lt;vp-pie-menu</span> <span class="attr">radius</span>=<span class="str"
-            >"105"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;vp-pie-menu</span> <span class="attr">radius</span>=<span class="str">"105"</span><span class="tag">&gt;</span>
             <span class="tag">&lt;button&gt;</span>Trigger<span class="tag">&lt;/button&gt;</span>
-            <span class="tag">&lt;menu</span> <span class="attr">class</span>=<span class="str"
-            >"vp-pie-menu-items"</span><span class="tag">&gt;</span>
-            <span class="tag">&lt;li&gt;&lt;button</span> <span class="attr">data-action</span>=<span class="str"
-            >"Edit"</span> <span class="attr">data-icon</span>=<span class="str">"edit"</span><span class="tag"
-            >&gt;</span>Edit<span class="tag">&lt;/button&gt;&lt;/li&gt;</span>
-            <span class="tag">&lt;li&gt;&lt;button</span> <span class="attr">data-action</span>=<span class="str"
-            >"Delete"</span> <span class="attr">data-icon</span>=<span class="str">"delete"</span><span class="tag"
-            >&gt;</span>Delete<span class="tag">&lt;/button&gt;&lt;/li&gt;</span>
+            <span class="tag">&lt;menu</span> <span class="attr">class</span>=<span class="str">"vp-pie-menu-items"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;li&gt;&lt;button</span> <span class="attr">data-action</span>=<span class="str">"Edit"</span> <span class="attr"
+            >data-icon</span>=<span class="str">"edit"</span><span class="tag">&gt;</span>Edit<span class="tag">&lt;/button&gt;&lt;/li&gt;</span>
+            <span class="tag">&lt;li&gt;&lt;button</span> <span class="attr">data-action</span>=<span class="str">"Delete"</span> <span class="attr"
+            >data-icon</span>=<span class="str">"delete"</span><span class="tag">&gt;</span>Delete<span class="tag">&lt;/button&gt;&lt;/li&gt;</span>
             <span class="tag">&lt;/menu&gt;</span>
             <span class="tag">&lt;/vp-pie-menu&gt;</span>
           </div>

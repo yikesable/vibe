@@ -9,10 +9,7 @@
     <link rel="stylesheet" href="/styles/vibe.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;500;600;700;900&display=swap"
-      rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 
     <script type="module" src="../components/kinetic-background.js"></script>
 
@@ -44,12 +41,7 @@
       transition: all 0.3s ease;
     }
     .c-card:hover { border-color: rgba(255, 0, 169, 0.5); transform: translateY(-5px); }
-    .c-card__title {
-      font-family: "Chakra Petch", sans-serif;
-      font-weight: 700;
-      font-size: 1.5rem;
-      margin-bottom: var(--space-2);
-    }
+    .c-card__title { font-family: "Chakra Petch", sans-serif; font-weight: 700; font-size: 1.5rem; margin-bottom: var(--space-2); }
     .c-card__meta { font-size: 0.875rem; color: var(--text-dim); margin-bottom: var(--space-3); }
     .c-card__text { color: var(--text-muted); }
 
@@ -106,12 +98,7 @@
       border: 1px solid rgba(255, 0, 169, 0.2);
       box-shadow: 0 25px 50px -12px rgba(255, 0, 169, 0.1);
     }
-    .c-framework-box__title {
-      font-family: "Chakra Petch", sans-serif;
-      font-weight: 700;
-      font-size: 1.5rem;
-      margin-bottom: var(--space-3);
-    }
+    .c-framework-box__title { font-family: "Chakra Petch", sans-serif; font-weight: 700; font-size: 1.5rem; margin-bottom: var(--space-3); }
     .c-framework-box__text { color: var(--text-muted); }
 
     /* ── Footnote link ────────────────────────────────────────── */
@@ -125,12 +112,7 @@
 
     /* ── Sources list ─────────────────────────────────────────── */
     .c-sources-list { counter-reset: footnote; }
-    .c-sources-list__item {
-      color: var(--text-dim);
-      font-size: 0.875rem;
-      margin-bottom: var(--space-4);
-      padding-left: 0.5em;
-    }
+    .c-sources-list__item { color: var(--text-dim); font-size: 0.875rem; margin-bottom: var(--space-4); padding-left: 0.5em; }
     .c-sources-list__item::marker { color: var(--pop-pink); font-weight: 600; }
 
     /* ── Reduced motion ───────────────────────────────────────── */
@@ -164,18 +146,15 @@
           <h2 class="c-section__title c-section__title--glow">The Rise of the Prescriptive Word List</h2>
           <div class="c-section__intro">
             <p class="c-section__text">
-              In recent years, many open source projects and tech companies have adopted inclusive language guides.
-              These are typically "prescriptive lists"—collections of terms to avoid (e.g., <code
-                class="u-code-inline"
-              >master/slave</code>, <code class="u-code-inline">blacklist/whitelist</code>) and their preferred
-              replacements.
+              In recent years, many open source projects and tech companies have adopted inclusive language guides. These are typically "prescriptive
+              lists"—collections of terms to avoid (e.g., <code class="u-code-inline">master/slave</code>, <code class="u-code-inline"
+              >blacklist/whitelist</code>) and their preferred replacements.
             </p>
             <p class="c-section__text">
-              This is a commendable and necessary first step. It signals a commitment to creating safer, more welcoming
-              environments. However, for a truly global community, these lists are not enough. Relying solely on a
-              static list of words can create unintended friction, overlook deeper cultural nuances, and fail to address
-              the core challenges of cross-border communication. This guide explores how we can build upon that
-              foundation to foster a more resilient and globally-aware model of inclusion.
+              This is a commendable and necessary first step. It signals a commitment to creating safer, more welcoming environments. However, for a truly
+              global community, these lists are not enough. Relying solely on a static list of words can create unintended friction, overlook deeper cultural
+              nuances, and fail to address the core challenges of cross-border communication. This guide explores how we can build upon that foundation to
+              foster a more resilient and globally-aware model of inclusion.
             </p>
           </div>
         </section>
@@ -183,41 +162,39 @@
         <section id="personas">
           <h2 class="c-section__title c-section__title--glow">Who Is This For?</h2>
           <p class="c-section__intro-text">
-            This guide is for anyone invested in building a welcoming global open source community. We've considered
-            four key perspectives:
+            This guide is for anyone invested in building a welcoming global open source community. We've considered four key perspectives:
           </p>
           <div class="o-grid o-grid--md-2 o-grid--lg-4" style="gap: var(--space-6)">
             <article class="c-card">
               <h3 class="c-card__title">The Contributor</h3>
               <p class="c-card__meta"><em>e.g., A developer in Germany.</em></p>
               <p class="c-card__text">
-                Your direct, task-focused feedback in a code review might be misinterpreted as rude by a US colleague.
-                You need a shared understanding of communication styles, not just a list of forbidden words.
+                Your direct, task-focused feedback in a code review might be misinterpreted as rude by a US colleague. You need a shared understanding of
+                communication styles, not just a list of forbidden words.
               </p>
             </article>
             <article class="c-card">
               <h3 class="c-card__title">The Project Manager</h3>
               <p class="c-card__meta"><em>e.g., A maintainer in Southeast Asia.</em></p>
               <p class="c-card__text">
-                You manage a team with high-context (e.g., Japanese) and low-context (e.g., Dutch) communicators. You
-                need tools to bridge these deep cultural gaps, which a simple word list cannot provide.
+                You manage a team with high-context (e.g., Japanese) and low-context (e.g., Dutch) communicators. You need tools to bridge these deep cultural
+                gaps, which a simple word list cannot provide.
               </p>
             </article>
             <article class="c-card">
               <h3 class="c-card__title">The DEI Lead</h3>
               <p class="c-card__meta"><em>e.g., A diversity officer in a US-based foundation.</em></p>
               <p class="c-card__text">
-                You see retention for non-US contributors stagnate. You suspect the current language guide, despite its
-                intent, is creating friction and want a more nuanced, evidence-based approach to inclusion.
+                You see retention for non-US contributors stagnate. You suspect the current language guide, despite its intent, is creating friction and want a
+                more nuanced, evidence-based approach to inclusion.
               </p>
             </article>
             <article class="c-card">
               <h3 class="c-card__title">The Technical Writer</h3>
               <p class="c-card__meta"><em>e.g., A documentation lead in Australia.</em></p>
               <p class="c-card__text">
-                Your job is to create maximum clarity. A guide that forbids a technically precise term like "dummy
-                variable" without an equally clear alternative forces you to choose between compliance and quality
-                documentation.
+                Your job is to create maximum clarity. A guide that forbids a technically precise term like "dummy variable" without an equally clear
+                alternative forces you to choose between compliance and quality documentation.
               </p>
             </article>
           </div>
@@ -226,33 +203,29 @@
         <section id="intersectionality">
           <h2 class="c-section__title c-section__title--glow">From Words to Worldviews</h2>
           <p class="c-section__intro-text">
-            True inclusion requires understanding that contributors are not single-axis beings. Their experiences are
-            shaped by a complex intersection of identities and social constructs. An effective guide must reduce
-            burdens, not add new ones.
+            True inclusion requires understanding that contributors are not single-axis beings. Their experiences are shaped by a complex intersection of
+            identities and social constructs. An effective guide must reduce burdens, not add new ones.
           </p>
           <div class="o-grid o-grid--md-3" style="gap: var(--space-6)">
             <article class="c-card">
               <h3 class="c-card__title">The Contributor from a Conflict Zone</h3>
               <p class="c-card__text">
-                For a developer whose reality is shaped by war and instability, the primary need from a community is
-                safety, reliability, and economic opportunity. A lengthy debate over a term's nuance in California can
-                feel profoundly out of touch with their lived experience.
+                For a developer whose reality is shaped by war and instability, the primary need from a community is safety, reliability, and economic
+                opportunity. A lengthy debate over a term's nuance in California can feel profoundly out of touch with their lived experience.
               </p>
             </article>
             <article class="c-card">
               <h3 class="c-card__title">The Older, Non-Native Speaker</h3>
               <p class="c-card__text">
-                An experienced developer from Eastern Europe may face intersecting challenges of ageism and language
-                barriers. The pressure to master a rapidly changing, culturally-specific DEI lexicon adds another layer
-                of anxiety, hindering their ability to share valuable expertise.
+                An experienced developer from Eastern Europe may face intersecting challenges of ageism and language barriers. The pressure to master a rapidly
+                changing, culturally-specific DEI lexicon adds another layer of anxiety, hindering their ability to share valuable expertise.
               </p>
             </article>
             <article class="c-card">
               <h3 class="c-card__title">The Neurodivergent Contributor</h3>
               <p class="c-card__text">
-                For a contributor with autism or ADHD, social cues can be difficult. They often rely on and prefer
-                direct, literal communication. A culture demanding navigation of unwritten rules and high-context
-                language can be uniquely exhausting and exclusionary.
+                For a contributor with autism or ADHD, social cues can be difficult. They often rely on and prefer direct, literal communication. A culture
+                demanding navigation of unwritten rules and high-context language can be uniquely exhausting and exclusionary.
               </p>
             </article>
           </div>
@@ -261,32 +234,30 @@
         <section id="data">
           <h2 class="c-section__title c-section__title--glow">The Data: A Global Snapshot</h2>
           <p class="c-section__intro-text">
-            To build an effective global strategy, we must first understand the numbers. The data reveals a community
-            that is far more diverse and sensitive to interaction quality than many guides assume.
+            To build an effective global strategy, we must first understand the numbers. The data reveals a community that is far more diverse and sensitive to
+            interaction quality than many guides assume.
           </p>
           <div class="o-grid o-grid--md-3" style="gap: var(--space-8)">
             <div class="c-stat-highlight">
               <div class="c-stat-highlight__number">80%</div>
               <p class="c-stat-highlight__text">
-                Of developers are not native English speakers, reflecting a global community where English is a working
-                lingua franca.<sup><a href="#footnote-1" class="c-footnote-link">1</a></sup>
+                Of developers are not native English speakers, reflecting a global community where English is a working lingua franca.<sup><a
+                    href="#footnote-1"
+                    class="c-footnote-link"
+                  >1</a></sup>
               </p>
             </div>
             <div class="c-stat-highlight">
               <div class="c-stat-highlight__number">85%+</div>
               <p class="c-stat-highlight__text">
-                Of major US-based guides lack specific guidance on non-US legal or cultural contexts.<sup><a
-                    href="#footnote-6"
-                    class="c-footnote-link"
+                Of major US-based guides lack specific guidance on non-US legal or cultural contexts.<sup><a href="#footnote-6" class="c-footnote-link"
                   >6</a></sup>
               </p>
             </div>
             <div class="c-stat-highlight">
               <div class="c-stat-highlight__number">59%</div>
               <p class="c-stat-highlight__text">
-                Of maintainers have considered quitting a project due to negative interactions or pressure.<sup><a
-                    href="#footnote-7"
-                    class="c-footnote-link"
+                Of maintainers have considered quitting a project due to negative interactions or pressure.<sup><a href="#footnote-7" class="c-footnote-link"
                   >7</a></sup>
               </p>
             </div>
@@ -296,8 +267,8 @@
         <section id="chasm">
           <h2 class="c-section__title c-section__title--glow">The Transatlantic Chasm</h2>
           <p class="c-section__intro-text">
-            To operate globally, we must understand these fundamental differences. Below are critical examples where
-            North American and European approaches diverge, impacting any global inclusion policy.
+            To operate globally, we must understand these fundamental differences. Below are critical examples where North American and European approaches
+            diverge, impacting any global inclusion policy.
           </p>
           <div class="o-stack--md" style="--stack-space: var(--space-8)">
             <article class="c-comparison-card">
@@ -306,16 +277,16 @@
                 <div>
                   <h4 class="c-comparison-card__column-title">North America (US)</h4>
                   <p class="c-comparison-card__column-text">
-                    Collecting data on 'race' is a <strong>legal mandate</strong> (EEO-1) to enforce civil rights.<sup
-                    ><a href="#footnote-2" class="c-footnote-link">2</a></sup>
+                    Collecting data on 'race' is a <strong>legal mandate</strong> (EEO-1) to enforce civil rights.<sup><a
+                        href="#footnote-2"
+                        class="c-footnote-link"
+                      >2</a></sup>
                   </p>
                 </div>
                 <div>
                   <h4 class="c-comparison-card__column-title">Europe (EU)</h4>
                   <p class="c-comparison-card__column-text">
-                    Processing data on 'racial origin' is <strong>prohibited</strong> by default under GDPR.<sup><a
-                        href="#footnote-3"
-                        class="c-footnote-link"
+                    Processing data on 'racial origin' is <strong>prohibited</strong> by default under GDPR.<sup><a href="#footnote-3" class="c-footnote-link"
                       >3</a></sup>
                   </p>
                 </div>
@@ -329,15 +300,19 @@
                 <div>
                   <h4 class="c-comparison-card__column-title">North America (US)</h4>
                   <p class="c-comparison-card__column-text">
-                    The First Amendment provides exceptionally <strong>broad protection for speech</strong>, even if
-                    hateful.<sup><a href="#footnote-4" class="c-footnote-link">4</a></sup>
+                    The First Amendment provides exceptionally <strong>broad protection for speech</strong>, even if hateful.<sup><a
+                        href="#footnote-4"
+                        class="c-footnote-link"
+                      >4</a></sup>
                   </p>
                 </div>
                 <div>
                   <h4 class="c-comparison-card__column-title">Europe</h4>
                   <p class="c-comparison-card__column-text">
-                    Freedom of expression carries <strong>"duties and responsibilities."</strong> Hate speech is
-                    criminally illegal in many countries.<sup><a href="#footnote-5" class="c-footnote-link">5</a></sup>
+                    Freedom of expression carries <strong>"duties and responsibilities."</strong> Hate speech is criminally illegal in many countries.<sup><a
+                        href="#footnote-5"
+                        class="c-footnote-link"
+                      >5</a></sup>
                   </p>
                 </div>
               </div>
@@ -357,8 +332,10 @@
                 <div>
                   <h4 class="c-comparison-card__column-title">Germany / Netherlands (Low-Context, Direct)</h4>
                   <p class="c-comparison-card__column-text">
-                    Feedback is often blunt and task-focused. This is considered respectful and efficient. <em>"This
-                      logic is incorrect. Fix it."</em><sup><a href="#footnote-5" class="c-footnote-link">5</a></sup>
+                    Feedback is often blunt and task-focused. This is considered respectful and efficient. <em>"This logic is incorrect. Fix it."</em><sup><a
+                        href="#footnote-5"
+                        class="c-footnote-link"
+                      >5</a></sup>
                   </p>
                 </div>
               </div>
@@ -369,44 +346,42 @@
         <section id="global-context">
           <h2 class="c-section__title c-section__title--glow">Beyond the West</h2>
           <p class="c-section__intro-text">
-            A global guide must acknowledge the vast plurality of communication frameworks. Focusing only on US/European
-            norms is insufficient.
+            A global guide must acknowledge the vast plurality of communication frameworks. Focusing only on US/European norms is insufficient.
           </p>
           <div class="o-grid o-grid--md-2 o-grid--lg-3 o-grid--xl-5" style="gap: var(--space-6)">
             <article class="c-card">
               <h4 class="c-card__title" style="font-size: 1.25rem">East Asia (High-Context)</h4>
               <p class="c-card__text">
-                Preserving group harmony and "reading the air" is often more important than direct, literal
-                communication. Publicly correcting someone can cause a loss of face.
+                Preserving group harmony and "reading the air" is often more important than direct, literal communication. Publicly correcting someone can cause
+                a loss of face.
               </p>
             </article>
             <article class="c-card">
               <h4 class="c-card__title" style="font-size: 1.25rem">The Arab World (High-Context)</h4>
               <p class="c-card__text">
-                The concept of "waji" (face) is critical. Communication is often indirect to protect personal honor and
-                relationships. A blunt style can be perceived as a personal insult.
+                The concept of "waji" (face) is critical. Communication is often indirect to protect personal honor and relationships. A blunt style can be
+                perceived as a personal insult.
               </p>
             </article>
             <article class="c-card">
               <h4 class="c-card__title" style="font-size: 1.25rem">Sub-Saharan Africa (Community-Focused)</h4>
               <p class="c-card__text">
-                Many cultures are shaped by "Ubuntu" ("I am because we are"). This emphasizes community over the
-                individualistic "rockstar developer" narrative.<sup><a href="#footnote-8" class="c-footnote-link"
-                  >8</a></sup>
+                Many cultures are shaped by "Ubuntu" ("I am because we are"). This emphasizes community over the individualistic "rockstar developer"
+                narrative.<sup><a href="#footnote-8" class="c-footnote-link">8</a></sup>
               </p>
             </article>
             <article class="c-card">
               <h4 class="c-card__title" style="font-size: 1.25rem">India (Hierarchical)</h4>
               <p class="c-card__text">
-                Communication is often high-context and sensitive to hierarchy. Using a senior colleague's first name
-                without invitation can be seen as disrespectful, a nuance beyond simple word choice.
+                Communication is often high-context and sensitive to hierarchy. Using a senior colleague's first name without invitation can be seen as
+                disrespectful, a nuance beyond simple word choice.
               </p>
             </article>
             <article class="c-card">
               <h4 class="c-card__title" style="font-size: 1.25rem">Latin America (Relationship-Focused)</h4>
               <p class="c-card__text">
-                Building personal relationships (<em>personalismo</em>) is often a prerequisite for professional trust.
-                Jumping straight to business without establishing rapport can be seen as cold.
+                Building personal relationships (<em>personalismo</em>) is often a prerequisite for professional trust. Jumping straight to business without
+                establishing rapport can be seen as cold.
               </p>
             </article>
           </div>
@@ -416,40 +391,36 @@
           <div class="c-framework-box">
             <h2 class="c-section__title c-section__title--glow">A New Framework</h2>
             <p class="c-section__intro-text">
-              We propose moving from a single, prescriptive list to a more resilient, federated model. This approach
-              fosters true inclusion by focusing on principles and providing support, rather than policing language.
+              We propose moving from a single, prescriptive list to a more resilient, federated model. This approach fosters true inclusion by focusing on
+              principles and providing support, rather than policing language.
             </p>
             <div class="o-grid o-grid--md-2" style="gap: var(--space-8); max-width: 56rem; margin-inline: auto">
               <div>
                 <h3 class="c-framework-box__title">1. Adopt a Principle-Based Core Guide</h3>
                 <p class="c-framework-box__text">
-                  Establish universal principles like <strong>Clarity, Respect, and Empathy</strong>. Focus on
-                  behaviors, not just words. Explain the 'why': "We strive for precise language and avoid historical
-                  metaphors that could alienate community members."
+                  Establish universal principles like <strong>Clarity, Respect, and Empathy</strong>. Focus on behaviors, not just words. Explain the 'why': "We
+                  strive for precise language and avoid historical metaphors that could alienate community members."
                 </p>
               </div>
               <div>
                 <h3 class="c-framework-box__title">2. Empower with a Federated Model</h3>
                 <p class="c-framework-box__text">
-                  Allow regional/project-specific supplements. A project in Latin America might add guidance on
-                  linguistic imperialism, while a European project adds notes on GDPR. This respects local context and
-                  legal realities.<sup><a href="#footnote-6" class="c-footnote-link">6</a></sup>
+                  Allow regional/project-specific supplements. A project in Latin America might add guidance on linguistic imperialism, while a European project
+                  adds notes on GDPR. This respects local context and legal realities.<sup><a href="#footnote-6" class="c-footnote-link">6</a></sup>
                 </p>
               </div>
               <div>
                 <h3 class="c-framework-box__title">3. Invest in People, Not Policing</h3>
                 <p class="c-framework-box__text">
-                  Shift resources from reactive moderation to proactive support. Offer free, optional intercultural
-                  communication training. Create mentorship programs that pair new contributors with experienced members
-                  for private, supportive guidance.
+                  Shift resources from reactive moderation to proactive support. Offer free, optional intercultural communication training. Create mentorship
+                  programs that pair new contributors with experienced members for private, supportive guidance.
                 </p>
               </div>
               <div>
                 <h3 class="c-framework-box__title">4. Use AI as an Assistant, Not an Arbiter</h3>
                 <p class="c-framework-box__text">
-                  Integrate optional, client-side AI tools that act as a private "spell-checker" for inclusivity. These
-                  tools can offer suggestions and explanations directly to the contributor <em>before</em> they post,
-                  providing a safe learning environment without public scrutiny.
+                  Integrate optional, client-side AI tools that act as a private "spell-checker" for inclusivity. These tools can offer suggestions and
+                  explanations directly to the contributor <em>before</em> they post, providing a safe learning environment without public scrutiny.
                 </p>
               </div>
             </div>
@@ -461,12 +432,8 @@
           <div style="max-width: 56rem; margin-inline: auto; margin-top: var(--space-12)">
             <ol class="c-sources-list">
               <li id="footnote-1" class="c-sources-list__item">
-                This widely cited industry statistic is a synthesis of data from multiple sources, including the global
-                distribution of developers reported in GitHub's <a
-                  href="https://github.blog/2023-11-08-the-state-of-open-source-and-ai/"
-                  class="c-footnote-link"
-                  target="_blank"
-                  rel="noopener"
+                This widely cited industry statistic is a synthesis of data from multiple sources, including the global distribution of developers reported in
+                GitHub's <a href="https://github.blog/2023-11-08-the-state-of-open-source-and-ai/" class="c-footnote-link" target="_blank" rel="noopener"
                 >2023 State of the Octoverse</a> and historical developer population data from sources like <a
                   href="https://www.slashdata.io/reports"
                   class="c-footnote-link"
@@ -475,8 +442,7 @@
                 >SlashData</a>.
               </li>
               <li id="footnote-2" class="c-sources-list__item">
-                U.S. Equal Employment Opportunity Commission. "Employer EEO-1 Data Collection." Official information
-                available at <a
+                U.S. Equal Employment Opportunity Commission. "Employer EEO-1 Data Collection." Official information available at <a
                   href="https://www.eeoc.gov/data/employer-eeo-1-data-collection"
                   class="c-footnote-link"
                   target="_blank"
@@ -484,13 +450,8 @@
                 >eeoc.gov</a>.
               </li>
               <li id="footnote-3" class="c-sources-list__item">
-                Regulation (EU) 2016/679 (General Data Protection Regulation). See Article 9 on "Processing of special
-                categories of personal data." Full text available at <a
-                  href="https://gdpr-info.eu/art-9-gdpr/"
-                  class="c-footnote-link"
-                  target="_blank"
-                  rel="noopener"
-                >gdpr-info.eu</a>.
+                Regulation (EU) 2016/679 (General Data Protection Regulation). See Article 9 on "Processing of special categories of personal data." Full text
+                available at <a href="https://gdpr-info.eu/art-9-gdpr/" class="c-footnote-link" target="_blank" rel="noopener">gdpr-info.eu</a>.
               </li>
               <li id="footnote-4" class="c-sources-list__item">
                 First Amendment to the U.S. Constitution. See analysis from the ACLU on speech on campus: <a
@@ -501,8 +462,7 @@
                 >aclu.org</a>.
               </li>
               <li id="footnote-5" class="c-sources-list__item">
-                Meyer, E. (2014). <em>The Culture Map: Breaking Through the Invisible Boundaries of Global
-                  Business.</em> <a
+                Meyer, E. (2014). <em>The Culture Map: Breaking Through the Invisible Boundaries of Global Business.</em> <a
                   href="https://www.erinmeyer.com/the-culture-map-book"
                   class="c-footnote-link"
                   target="_blank"
@@ -510,8 +470,7 @@
                 >Learn more at the author's site</a>.
               </li>
               <li id="footnote-6" class="c-sources-list__item">
-                Based on a 2025 review of 12 public inclusive language guides from major tech organizations. Examples
-                include guides from <a
+                Based on a 2025 review of 12 public inclusive language guides from major tech organizations. Examples include guides from <a
                   href="https://developers.google.com/style/inclusive-documentation"
                   class="c-footnote-link"
                   target="_blank"
@@ -521,12 +480,7 @@
                   class="c-footnote-link"
                   target="_blank"
                   rel="noopener"
-                >Microsoft</a>, <a
-                  href="https://www.ibm.com/able/guidelines/language"
-                  class="c-footnote-link"
-                  target="_blank"
-                  rel="noopener"
-                >IBM</a>, and <a
+                >Microsoft</a>, <a href="https://www.ibm.com/able/guidelines/language" class="c-footnote-link" target="_blank" rel="noopener">IBM</a>, and <a
                   href="https://community.mozilla.org/en/docs/inclusive-language-guidelines/"
                   class="c-footnote-link"
                   target="_blank"
@@ -534,9 +488,8 @@
                 >Mozilla</a>, which were found to lack specific guidance on non-US legal or deep cultural contexts.
               </li>
               <li id="footnote-7" class="c-sources-list__item">
-                Tidelift, "The 2021 state of the open source maintainer." This report found 59% of maintainers have
-                considered stopping their work due to feeling unappreciated, user demands, or negative interactions.
-                Available at <a
+                Tidelift, "The 2021 state of the open source maintainer." This report found 59% of maintainers have considered stopping their work due to
+                feeling unappreciated, user demands, or negative interactions. Available at <a
                   href="https://tidelift.com/resources/state-of-the-maintainer"
                   class="c-footnote-link"
                   target="_blank"
@@ -544,8 +497,8 @@
                 >tidelift.com</a>.
               </li>
               <li id="footnote-8" class="c-sources-list__item">
-                Gade, C. B. N. (2012). "What is Ubuntu? Different Interpretations among South Africans of African
-                Descent." <em>South African Journal of Philosophy</em>. The paper can be accessed via <a
+                Gade, C. B. N. (2012). "What is Ubuntu? Different Interpretations among South Africans of African Descent." <em>South African Journal of
+                  Philosophy</em>. The paper can be accessed via <a
                   href="https://www.tandfonline.com/doi/abs/10.1080/02580136.2012.10751789"
                   class="c-footnote-link"
                   target="_blank"

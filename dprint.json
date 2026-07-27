@@ -4,7 +4,7 @@
   "lineWidth": 120,
   "malva": {
     "singleLineBlockThreshold": 6,
-    "printWidth": 120,
+    "printWidth": 160,
     "indentWidth": 2,
     "quotes": "alwaysDouble",
     "hexCase": "lower",
@@ -12,7 +12,7 @@
     "lineBreak": "lf"
   },
   "markup": {
-    "printWidth": 120,
+    "printWidth": 160,
     "indentWidth": 2,
     "quotes": "double",
     "preferAttrsSingleLine": true,
