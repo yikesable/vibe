@@ -41,18 +41,34 @@ The visual identity is a Y2K-inspired, dark-mode neon aesthetic, defined once in
 also serves as an **AI design brief** — the single source of truth for the look
 and feel of any new page.
 
-Core conventions:
+CSS methodology — **zero build step, hand-written only**:
 
-- **Tailwind CSS** via the CDN play script (no build step).
+- **ITCSS** ordering enforced via CSS `@layer` (Baseline 2024): Settings → Tools
+  → Generic → Elements → Objects → Components → Utilities.
+- **BEM** naming convention (`.block__element--modifier`) with Harry Roberts
+  **namespace prefixes**: `o-` (objects), `c-` (components), `u-` (utilities),
+  `t-` (themes), `is-`/`has-` (state), `js-` (JS hooks).
+- **CUBE CSS** philosophy — composition via layout objects (`o-stack`,
+  `o-cluster`, `o-grid`) and a lean utility surface.
+- **No Tailwind, no PostCSS, no bundler** — every selector is written out
+  in full. CSS Nesting is used within blocks, but BEM concatenation
+  (`&__child`) is [not supported by native nesting](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting/Using_CSS_nesting#nesting_and_compound_selectors)
+  so each BEM child is a full selector.
+
+Core visual conventions:
+
 - **Google Fonts:** *Chakra Petch* for headlines, *Inter* for body.
 - **Color:** dark background (`--dark-bg`) with a vibrant `--pop-pink` accent and
   `--glow-color` for neon effects.
-- **Layout:** `.main-container` for centering; *Bento Box* grid for content
-  modules (`.bento-item` / `.bento-item-static`); `.cta-button` for actions.
-- **Components:** every page uses `<kinetic-background>` for the floating
-  particle background and `<code-block>` for any code snippets.
-- **Accessibility:** `prefers-reduced-motion` is respected to disable
-  animations.
+- **Layout:** `o-wrapper` / `o-grid` for structure; `c-bento` components for the
+  landing page grid; `o-stack` for vertical rhythm.
+- **Components:** `<kinetic-background>` for floating particle backgrounds,
+  `<code-block>` for syntax-highlighted snippets.
+- **Accessibility:** `@media (prefers-reduced-motion: reduce)` globally disables
+  CSS animations and transitions across all pages.
+
+See the full token set, namespace contract, and component API in the
+[`@layer` declaration block](https://github.com/yikesable/vibe/blob/main/styles/vibe.css).
 
 ---
 
