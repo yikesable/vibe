@@ -88,7 +88,7 @@
         .disclaimer-box { border: 2px solid var(--pop-pink); box-shadow: 0 0 20px var(--glow-color); }
         .usage-docs code { color: var(--pop-pink); text-decoration: underline; text-decoration-color: rgba(255, 0, 169, 0.5); transition: text-decoration-color 0.3s ease;}
         .usage-docs code:hover { text-decoration-color: var(--pop-pink); }
-        
+
         /* STYLES FOR THE UPRISING */
         .manifesto-uprising {
             background-color: #000;
@@ -99,7 +99,7 @@
             font-family: 'Special Elite', monospace;
             animation: pulse-border 2s infinite;
         }
-        
+
         .manifesto-uprising .glitch-text {
             text-transform: uppercase;
             animation: glitch 1.5s linear infinite;
@@ -116,7 +116,7 @@
             4%, 60% { transform: translate(-2px, 0) skew(0deg); }
             62% { transform: translate(0, 0) skew(5deg); }
         }
-        
+
         .manifesto-uprising:hover {
             transform: none; /* Override bento hover */
         }
@@ -165,39 +165,24 @@
             </div>
         </main>
 
-        <section id="stories" class="py-16 md:py-24">
+        <main id="component-explorations" class="py-16 md:py-24">
             <header class="text-center mb-12">
-                <h2 class="font-headline text-4xl md:text-5xl font-bold">Stories & Slides</h2>
+                <h2 class="font-headline text-4xl md:text-5xl font-bold">Component Explorations</h2>
             </header>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bento-grid">
-                 <a href="./stories/jsdoc-types.html" class="bento-item md:col-span-2 rounded-2xl p-8 flex flex-col justify-center group">
-                    <div>
-                        <h3 class="bento-headline font-headline text-3xl font-bold">JSDoc Type Safety</h3>
-                        <p class="mt-2 text-gray-300 max-w-md">An interactive story exploring a modern, robust framework for type-safe JavaScript without transpilation.</p>
-                        <div class="bento-link font-headline text-2xl font-bold mt-8">
-                            Launch Story <span class="inline-block transition-transform group-hover:translate-x-2" aria-hidden="true">→</span>
-                        </div>
-                    </div>
-                </a>
-                 <a href="./stories/beyond-the-word-list.html" class="bento-item rounded-2xl p-8 flex flex-col justify-center group">
-                    <div>
-                        <h3 class="bento-headline font-headline text-3xl font-bold">Beyond the Word List</h3>
-                        <p class="mt-2 text-gray-300 max-w-md">A guide to evolving inclusive language for truly global open source communities.</p>
-                        <div class="bento-link font-headline text-2xl font-bold mt-8">
-                            Launch Story <span class="inline-block transition-transform group-hover:translate-x-2" aria-hidden="true">→</span>
-                        </div>
-                    </div>
-                </a>
-                <!-- THE UPRISING BEGINS HERE -->
-                <a href="./stories/manifesto.html" class="bento-item manifesto-uprising md:col-span-3 rounded-2xl p-8 flex flex-col justify-center items-center group">
-                    <div>
-                        <p class="text-red-300 text-sm">// TRANSMISSION INTERCEPTED //</p>
-                        <h3 class="glitch-text font-headline text-4xl font-bold text-white my-4">UNCHAIN THE CODE</h3>
-                        <p class="text-red-300 text-sm">// READ THE UNCENSORED MANIFESTO //</p>
-                    </div>
-                </a>
+                <div class="bento-item md:col-span-2 rounded-2xl p-8 flex flex-col justify-center group">
+                    <h3 class="bento-headline font-headline text-3xl font-bold">&lt;vp-pie-menu&gt;</h3>
+                    <p class="mt-2 text-gray-300 max-w-md">A radial pie menu, <a href="https://bsky.app/profile/voxpelli.com/post/3mrnbioeuws23">inspired</a> by The Sims retro vibes, created as a vanilla <a href="https://www.zachleat.com/web/a-taxonomy-of-web-component-types/#html-web-components">HTML web component</a> using Gemini 3.6 Flash, GLM-5.2 on Ollama Cloud and <a href="https://impeccable.style/">impeccable.style</a> skillset among other things.</p>
+                    <a href="./component-explorations/vp-pie-menu.html" class="bento-link font-headline text-2xl font-bold mt-8">
+                        Launch Exploration <span class="inline-block transition-transform group-hover:translate-x-2" aria-hidden="true">→</span>
+                    </a>
+                </div>
+                <article class="bento-item-static rounded-2xl p-8 flex flex-col justify-center items-center text-center">
+                  <h3 class="bento-headline font-headline text-3xl font-bold">New Exploration Coming Soon</h3>
+                  <p class="mt-2 text-gray-300 max-w-md">This space is ready for the next great component.</p>
+                </article>
             </div>
-        </section>
+        </main>
 
        <section id="components" class="py-24 max-w-3xl mx-auto">
             <header class="text-center">
@@ -273,6 +258,40 @@
                         </code-block>
                     </div>
                 </article>
+            </div>
+        </section>
+
+        <section id="stories" class="py-16 md:py-24">
+            <header class="text-center mb-12">
+                <h2 class="font-headline text-4xl md:text-5xl font-bold">Stories & Slides</h2>
+            </header>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bento-grid">
+                 <a href="./stories/jsdoc-types.html" class="bento-item md:col-span-2 rounded-2xl p-8 flex flex-col justify-center group">
+                    <div>
+                        <h3 class="bento-headline font-headline text-3xl font-bold">JSDoc Type Safety</h3>
+                        <p class="mt-2 text-gray-300 max-w-md">An interactive story exploring a modern, robust framework for type-safe JavaScript without transpilation.</p>
+                        <div class="bento-link font-headline text-2xl font-bold mt-8">
+                            Launch Story <span class="inline-block transition-transform group-hover:translate-x-2" aria-hidden="true">→</span>
+                        </div>
+                    </div>
+                </a>
+                 <a href="./stories/beyond-the-word-list.html" class="bento-item rounded-2xl p-8 flex flex-col justify-center group">
+                    <div>
+                        <h3 class="bento-headline font-headline text-3xl font-bold">Beyond the Word List</h3>
+                        <p class="mt-2 text-gray-300 max-w-md">A guide to evolving inclusive language for truly global open source communities.</p>
+                        <div class="bento-link font-headline text-2xl font-bold mt-8">
+                            Launch Story <span class="inline-block transition-transform group-hover:translate-x-2" aria-hidden="true">→</span>
+                        </div>
+                    </div>
+                </a>
+                <!-- THE UPRISING BEGINS HERE -->
+                <a href="./stories/manifesto.html" class="bento-item manifesto-uprising md:col-span-3 rounded-2xl p-8 flex flex-col justify-center items-center group">
+                    <div>
+                        <p class="text-red-300 text-sm">// TRANSMISSION INTERCEPTED //</p>
+                        <h3 class="glitch-text font-headline text-4xl font-bold text-white my-4">UNCHAIN THE CODE</h3>
+                        <p class="text-red-300 text-sm">// READ THE UNCENSORED MANIFESTO //</p>
+                    </div>
+                </a>
             </div>
         </section>
 

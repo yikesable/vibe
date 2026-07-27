@@ -139,7 +139,7 @@ body {
     container-name: bento;
 }
 
-a.bento-item, .bento-item-static {
+.bento-item, .bento-item-static {
     background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
     border: 1px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(12px);
@@ -149,7 +149,7 @@ a.bento-item, .bento-item-static {
     text-decoration: none;
     color: inherit;
 }
-a.bento-item:hover {
+.bento-item:hover {
     border-color: rgba(255, 0, 169, 0.5);
     transform: translateY(-5px);
 }
@@ -169,16 +169,20 @@ a.bento-item::before, .bento-item-static::before {
 a.bento-item:hover::before {
     transform: scale(1);
 }
-a.bento-item > div, .bento-item-static > div {
+.bento-item > div, .bento-item-static > div {
     position: relative;
     z-index: 1;
 }
+.bento-item a,
 .bento-link {
     /* The link inside a bento item uses the accent-link styles */
     color: var(--pop-pink);
     text-decoration: underline;
     text-decoration-color: rgba(255, 0, 169, 0.5);
     transition: text-decoration-color 0.3s ease;
+    &:hover {
+      text-decoration-color: var(--pop-pink);
+    }
 }
 a.bento-item:hover .bento-link {
     text-decoration-color: var(--pop-pink);
