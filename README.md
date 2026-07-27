@@ -57,8 +57,13 @@ CSS methodology — **zero build step, hand-written only**:
 
 Core visual conventions:
 
-- **Google Fonts:** *Chakra Petch* for headlines, *Inter* for body (self-hosted
-  from `assets/fonts/` via `@font-face`).
+- **Fonts:** All fonts are self-hosted in `assets/fonts/` and loaded via
+  `@font-face` — no external font CDN requests. *Inter* (variable, 100–900)
+  is used for body text, *Chakra Petch* for headlines, *Special Elite* for
+  accents, *Roboto Mono* for code, *Oswald* + *Roboto Condensed* for the
+  manifesto page. License compliance is handled via
+  [`LICENSE-fonts.md`](./assets/fonts/LICENSE-fonts.md) with full OFL 1.1 and
+  Apache 2.0 license texts alongside.
 - **Color:** dark background (`--dark-bg`) with a vibrant `--pop-pink` accent and
   `--glow-color` for neon effects.
 - **Layout:** `o-wrapper` / `o-grid` for structure; `c-bento` components for the

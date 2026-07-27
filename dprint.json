@@ -23,7 +23,7 @@
       "!**/stories/jsdoc-types.html"
     ]
   },
-  "includes": ["styles/**/*.css", "**/*.html"],
+  "includes": ["styles/**/*.css", "assets/**/*.css", "**/*.html"],
   "excludes": ["**/node_modules"],
   "plugins": [
     "https://plugins.dprint.dev/g-plane/malva-v0.16.0.wasm",
