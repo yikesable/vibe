@@ -11,9 +11,22 @@
     "omitNumberLeadingZero": false,
     "lineBreak": "lf"
   },
-  "includes": ["styles/**/*.css"],
+  "markup": {
+    "printWidth": 120,
+    "indentWidth": 2,
+    "quotes": "double",
+    "preferAttrsSingleLine": true,
+    "closingBracketSameLine": false,
+    "whitespaceSensitivity": "css",
+    "associations": [
+      "!**/index.html",
+      "!**/stories/jsdoc-types.html"
+    ]
+  },
+  "includes": ["styles/**/*.css", "**/*.html"],
   "excludes": ["**/node_modules"],
   "plugins": [
-    "https://plugins.dprint.dev/g-plane/malva-v0.16.0.wasm"
+    "https://plugins.dprint.dev/g-plane/malva-v0.16.0.wasm",
+    "https://plugins.dprint.dev/g-plane/markup_fmt-v0.27.3.wasm"
   ]
 }

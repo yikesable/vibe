@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CodePen Converter /// Vibe Coded</title>
 
     <!-- Core SEO & Metadata -->
-    <meta name="description" content="An open-source tool to elegantly split a single HTML file into its component parts for CodePen, with a rich editor.">
+    <meta
+      name="description"
+      content="An open-source tool to elegantly split a single HTML file into its component parts for CodePen, with a rich editor."
+    >
     <link rel="canonical" href="https://yikesable.github.io/vibe/codepen-converter/">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90' fill='%23FF00A9'%3E⚡%3C/text%3E%3C/svg%3E">
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90' fill='%23FF00A9'%3E⚡%3C/text%3E%3C/svg%3E"
+    >
 
     <!-- View Transitions -->
     <meta name="view-transition" content="same-origin" />
@@ -17,354 +23,374 @@
     <link rel="stylesheet" href="/styles/vibe.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;500&display=swap"
+      rel="stylesheet"
+    >
     <link rel="stylesheet" href="../vendor/atom-one-dark.css">
-    <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/editor/editor.main.css">
+    <link
+      rel="stylesheet"
+      data-name="vs/editor/editor.main"
+      href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/editor/editor.main.css"
+    >
     <script type="module" src="../components/kinetic-background.js"></script>
 
     <style>
-        /* ── Hero ─────────────────────────────────────────────────── */
-        .c-converter-hero { text-align: center; margin-bottom: var(--space-12); }
-        .c-converter-hero__title { font-family: 'Chakra Petch', sans-serif; color: #fff; font-size: clamp(2.5rem, 8vw, 4rem); line-height: 1.1; }
-        .c-converter-hero__tagline { margin-top: var(--space-2); font-size: 1.125rem; color: var(--text-muted); }
-        .c-converter-hero__link { color: #f472b6; }  /* pink-400 */
-        .c-converter-hero__link:hover { color: #f9a8d4; }  /* pink-300 */
+    /* ── Hero ─────────────────────────────────────────────────── */
+    .c-converter-hero { text-align: center; margin-bottom: var(--space-12); }
+    .c-converter-hero__title {
+      font-family: "Chakra Petch", sans-serif;
+      color: #fff;
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      line-height: 1.1;
+    }
+    .c-converter-hero__tagline { margin-top: var(--space-2); font-size: 1.125rem; color: var(--text-muted); }
+    .c-converter-hero__link { color: #f472b6; } /* pink-400 */
+    .c-converter-hero__link:hover { color: #f9a8d4; } /* pink-300 */
 
-        /* ── Converter box (bento card) ───────────────────────────── */
-        .c-converter-box {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            border-radius: var(--radius-2xl);
-            padding: var(--space-6);
-        }
-        .c-converter-box__label {
-            display: block;
-            font-family: 'Chakra Petch', sans-serif;
-            font-size: 1.125rem;
-            color: #e2e8f0;  /* slate-200 */
-            margin-bottom: var(--space-4);
-        }
+    /* ── Converter box (bento card) ───────────────────────────── */
+    .c-converter-box {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-6);
+    }
+    .c-converter-box__label {
+      display: block;
+      font-family: "Chakra Petch", sans-serif;
+      font-size: 1.125rem;
+      color: #e2e8f0; /* slate-200 */
+      margin-bottom: var(--space-4);
+    }
 
-        /* ── Dropzone & paste ─────────────────────────────────────── */
-        .c-converter-dropzone {
-            border: 2px dashed rgba(255,255,255,0.2);
-            border-radius: var(--radius-lg);
-            padding: var(--space-6);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
-        }
-        .c-converter-dropzone:hover,
-        .c-converter-dropzone.is-dragover {
-            border-color: var(--pop-pink);
-            background-color: rgba(255, 0, 169, 0.1);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.2), 0 0 15px var(--glow-color);
-        }
-        .c-converter-dropzone__title { font-weight: 600; color: #e2e8f0; }
-        .c-converter-dropzone__hint { font-size: 0.875rem; color: var(--text-dim); }
+    /* ── Dropzone & paste ─────────────────────────────────────── */
+    .c-converter-dropzone {
+      border: 2px dashed rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
+    }
+    .c-converter-dropzone:hover,
+    .c-converter-dropzone.is-dragover {
+      border-color: var(--pop-pink);
+      background-color: rgba(255, 0, 169, 0.1);
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2), 0 0 15px var(--glow-color);
+    }
+    .c-converter-dropzone__title { font-weight: 600; color: #e2e8f0; }
+    .c-converter-dropzone__hint { font-size: 0.875rem; color: var(--text-dim); }
 
-        .c-converter-paste-btn {
-            width: 100%; height: 100%;
-            border: 2px dashed rgba(255,255,255,0.2);
-            border-radius: var(--radius-lg);
-            padding: var(--space-6);
-            text-align: center;
-            transition: all 0.2s ease-in-out;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
-            cursor: pointer;
-            background: transparent;
-            color: inherit;
-            font: inherit;
-        }
-        .c-converter-paste-btn:hover {
-            border-color: var(--pop-pink);
-            background-color: rgba(255, 0, 169, 0.1);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.2), 0 0 15px var(--glow-color);
-        }
-        .c-converter-paste-btn__title { font-weight: 600; }
-        .c-converter-paste-btn__hint { font-size: 0.875rem; color: var(--text-dim); }
+    .c-converter-paste-btn {
+      width: 100%;
+      height: 100%;
+      border: 2px dashed rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      text-align: center;
+      transition: all 0.2s ease-in-out;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+    }
+    .c-converter-paste-btn:hover {
+      border-color: var(--pop-pink);
+      background-color: rgba(255, 0, 169, 0.1);
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2), 0 0 15px var(--glow-color);
+    }
+    .c-converter-paste-btn__title { font-weight: 600; }
+    .c-converter-paste-btn__hint { font-size: 0.875rem; color: var(--text-dim); }
 
-        .c-converter-divider { text-align: center; margin-block: var(--space-4); color: var(--text-dim); font-weight: 600; }
+    .c-converter-divider { text-align: center; margin-block: var(--space-4); color: var(--text-dim); font-weight: 600; }
 
-        /* ── Editor ───────────────────────────────────────────────── */
-        #editor-container {
-            width: 100%;
-            height: 400px;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-        }
-        .c-converter-convert {
-            margin-top: var(--space-6);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .c-converter-convert.c-cta {
-            display: block;
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border-radius: var(--radius-lg);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
-        }
+    /* ── Editor ───────────────────────────────────────────────── */
+    #editor-container {
+      width: 100%;
+      height: 400px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .c-converter-convert { margin-top: var(--space-6); text-transform: uppercase; letter-spacing: 0.05em; }
+    .c-converter-convert.c-cta {
+      display: block;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
 
-        /* ── Results ──────────────────────────────────────────────── */
-        .c-converter-step { margin-bottom: var(--space-8); }
-        .c-converter-step__title {
-            font-family: 'Chakra Petch', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: var(--space-4);
-        }
-        .c-converter-step__desc { color: var(--text-muted); margin-bottom: var(--space-6); }
+    /* ── Results ──────────────────────────────────────────────── */
+    .c-converter-step { margin-bottom: var(--space-8); }
+    .c-converter-step__title {
+      font-family: "Chakra Petch", sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: var(--space-4);
+    }
+    .c-converter-step__desc { color: var(--text-muted); margin-bottom: var(--space-6); }
 
-        /* ── Link block ───────────────────────────────────────────── */
-        .c-converter-link {
-            display: flex;
-            align-items: center;
-            background-color: var(--code-bg);
-            border-radius: var(--radius-lg);
-            padding-left: 1rem;
-            font-family: 'Inter', monospace;
-            font-size: 0.875rem;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .c-converter-link__span {
-            color: #e2e8f0;
-            white-space: nowrap;
-            overflow-x: auto;
-            padding-bottom: 8px;
-            margin-bottom: -8px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--pop-pink) var(--code-bg);
-        }
-        .c-converter-link__span::-webkit-scrollbar { height: 4px; }
-        .c-converter-link__span::-webkit-scrollbar-track { background: var(--code-bg); }
-        .c-converter-link__span::-webkit-scrollbar-thumb { background-color: var(--pop-pink); border-radius: 20px; }
-        .c-converter-link__btn {
-            margin-left: auto;
-            background-color: var(--pop-pink);
-            color: var(--dark-bg);
-            font-weight: 600;
-            border: none;
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            flex-shrink: 0;
-        }
-        .c-converter-link__btn:hover { background-color: #ff33b8; }
-        .c-converter-link__btn.is-copied { background-color: #16a34a; }
+    /* ── Link block ───────────────────────────────────────────── */
+    .c-converter-link {
+      display: flex;
+      align-items: center;
+      background-color: var(--code-bg);
+      border-radius: var(--radius-lg);
+      padding-left: 1rem;
+      font-family: "Inter", monospace;
+      font-size: 0.875rem;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .c-converter-link__span {
+      color: #e2e8f0;
+      white-space: nowrap;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: -8px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--pop-pink) var(--code-bg);
+    }
+    .c-converter-link__span::-webkit-scrollbar { height: 4px; }
+    .c-converter-link__span::-webkit-scrollbar-track { background: var(--code-bg); }
+    .c-converter-link__span::-webkit-scrollbar-thumb { background-color: var(--pop-pink); border-radius: 20px; }
+    .c-converter-link__btn {
+      margin-left: auto;
+      background-color: var(--pop-pink);
+      color: var(--dark-bg);
+      font-weight: 600;
+      border: none;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      flex-shrink: 0;
+    }
+    .c-converter-link__btn:hover { background-color: #ff33b8; }
+    .c-converter-link__btn.is-copied { background-color: #16a34a; }
 
-        /* ── Code block ───────────────────────────────────────────── */
-        .c-converter-code {
-            font-family: 'Inter', monospace;
-            border-radius: var(--radius-xl);
-            border: 1px solid rgba(255,255,255,0.1);
-            max-height: 400px;
-            overflow: auto;
-        }
-        .c-converter-code pre,
-        .c-converter-code code {
-            background-color: var(--code-bg) !important;
-            padding: 1rem;
-        }
-        .c-converter-code__empty {
-            background-color: var(--code-bg);
-            border-radius: var(--radius-xl);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text-dim);
-            font-size: 0.875rem;
-            font-style: italic;
-            text-align: center;
-            padding: var(--space-8);
-        }
-        .c-converter-code__copy {
-            position: absolute;
-            top: 0.75rem;
-            right: 0.75rem;
-            background-color: rgba(0,0,0,0.2);
-            color: #e2e8f0;
-            border: 1px solid rgba(255,255,255,0.1);
-            font-family: 'Inter', monospace;
-            padding: 0.25rem 0.5rem;
-            border-radius: var(--radius-md);
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            opacity: 0.5;
-            z-index: 10;
-        }
-        .c-converter-code__wrapper { position: relative; }
-        .c-converter-code__wrapper:hover .c-converter-code__copy { opacity: 1; }
-        .c-converter-code__copy:hover { background-color: rgba(0,0,0,0.4); }
-        .c-converter-code__copy.is-copied { background-color: #16a34a; color: white; opacity: 1; }
+    /* ── Code block ───────────────────────────────────────────── */
+    .c-converter-code {
+      font-family: "Inter", monospace;
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      max-height: 400px;
+      overflow: auto;
+    }
+    .c-converter-code pre,
+    .c-converter-code code { background-color: var(--code-bg) !important; padding: 1rem; }
+    .c-converter-code__empty {
+      background-color: var(--code-bg);
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-dim);
+      font-size: 0.875rem;
+      font-style: italic;
+      text-align: center;
+      padding: var(--space-8);
+    }
+    .c-converter-code__copy {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background-color: rgba(0, 0, 0, 0.2);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-family: "Inter", monospace;
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-md);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      opacity: 0.5;
+      z-index: 10;
+    }
+    .c-converter-code__wrapper { position: relative; }
+    .c-converter-code__wrapper:hover .c-converter-code__copy { opacity: 1; }
+    .c-converter-code__copy:hover { background-color: rgba(0, 0, 0, 0.4); }
+    .c-converter-code__copy.is-copied { background-color: #16a34a; color: white; opacity: 1; }
 
-        /* ── Warning box ──────────────────────────────────────────── */
-        .c-converter-warning {
-            background-color: rgba(255, 0, 169, 0.1);
-            border-left: 4px solid var(--pop-pink);
-            color: #fce7f3;
-            border-radius: var(--radius-lg);
-            padding: var(--space-3);
-            font-size: 0.875rem;
-        }
+    /* ── Warning box ──────────────────────────────────────────── */
+    .c-converter-warning {
+      background-color: rgba(255, 0, 169, 0.1);
+      border-left: 4px solid var(--pop-pink);
+      color: #fce7f3;
+      border-radius: var(--radius-lg);
+      padding: var(--space-3);
+      font-size: 0.875rem;
+    }
 
-        /* ── Action ───────────────────────────────────────────────── */
-        .c-converter-action {
-            margin-top: var(--space-6);
-        }
-        .c-converter-action .c-cta {
-            display: block;
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border-radius: var(--radius-lg);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+    /* ── Action ───────────────────────────────────────────────── */
+    .c-converter-action { margin-top: var(--space-6); }
+    .c-converter-action .c-cta {
+      display: block;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
 
-        /* ── Output panel ─────────────────────────────────────────── */
-        .c-converter-panel { min-width: 0; }
+    /* ── Output panel ─────────────────────────────────────────── */
+    .c-converter-panel { min-width: 0; }
 
-        /* ── Highlight.js overrides ───────────────────────────────── */
-        .hljs-comment, .hljs-quote { color: #5c6370; }
-        .hljs-tag, .hljs-keyword { color: #c678dd; }
-        .hljs-attribute, .hljs-number, .hljs-literal, .hljs-variable, .hljs-template-variable, .hljs-regexp { color: #d19a66; }
-        .hljs-string { color: #98c379; }
-        .hljs-title, .hljs-section, .hljs-name, .hljs-selector-id, .hljs-selector-class { color: #e06c75; }
-        .hljs-type, .hljs-symbol, .hljs-bullet, .hljs-link { color: #61afef; }
+    /* ── Highlight.js overrides ───────────────────────────────── */
+    .hljs-comment, .hljs-quote { color: #5c6370; }
+    .hljs-tag, .hljs-keyword { color: #c678dd; }
+    .hljs-attribute, .hljs-number, .hljs-literal, .hljs-variable, .hljs-template-variable, .hljs-regexp {
+      color: #d19a66;
+    }
+    .hljs-string { color: #98c379; }
+    .hljs-title, .hljs-section, .hljs-name, .hljs-selector-id, .hljs-selector-class { color: #e06c75; }
+    .hljs-type, .hljs-symbol, .hljs-bullet, .hljs-link { color: #61afef; }
 
-        /* ── Reduced motion ───────────────────────────────────────── */
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-            .c-converter-dropzone:hover, .c-converter-paste-btn:hover, .c-converter-code__copy:hover { transform: none; }
-        }
+    /* ── Reduced motion ───────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .c-converter-dropzone:hover, .c-converter-paste-btn:hover, .c-converter-code__copy:hover { transform: none; }
+    }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <kinetic-background></kinetic-background>
 
-    <div class="o-wrapper" style="padding-block-start: var(--space-16); padding-block-end: var(--space-24);">
-        <header class="c-converter-hero">
-            <h1 class="c-converter-hero__title">CodePen Converter</h1>
-            <p class="c-converter-hero__tagline">An open-source tool from <a href="../" class="c-converter-hero__link">yikesable.dev</a></p>
-        </header>
+    <div class="o-wrapper" style="padding-block-start: var(--space-16); padding-block-end: var(--space-24)">
+      <header class="c-converter-hero">
+        <h1 class="c-converter-hero__title">CodePen Converter</h1>
+        <p class="c-converter-hero__tagline">
+          An open-source tool from <a href="../" class="c-converter-hero__link">yikesable.dev</a>
+        </p>
+      </header>
 
-        <div class="c-converter-box">
-            <label class="c-converter-box__label">Provide Your Source HTML</label>
-            <div class="o-grid o-grid--md-2" style="gap: var(--space-4); margin-bottom: var(--space-4);">
-                <div id="file-drop-area" class="c-converter-dropzone">
-                    <p class="c-converter-dropzone__title">Drag &amp; Drop File</p>
-                    <p class="c-converter-dropzone__hint">or click to select</p>
-                    <input type="file" id="file-input" class="is-hidden" accept=".html">
-                </div>
-                <button id="paste-btn" class="c-converter-paste-btn">
-                    <p class="c-converter-paste-btn__title">Paste from Clipboard</p>
-                    <p class="c-converter-paste-btn__hint">requires browser permission</p>
-                </button>
-            </div>
-            <div class="c-converter-divider">... or edit directly below ...</div>
-            <div id="editor-container"></div>
-            <div class="c-converter-convert">
-                <button id="processBtn" class="c-cta" style="display: block; width: 100%; padding: 0.75rem 1rem; text-transform: uppercase; letter-spacing: 0.05em;">Convert</button>
-            </div>
+      <div class="c-converter-box">
+        <label class="c-converter-box__label">Provide Your Source HTML</label>
+        <div class="o-grid o-grid--md-2" style="gap: var(--space-4); margin-bottom: var(--space-4)">
+          <div id="file-drop-area" class="c-converter-dropzone">
+            <p class="c-converter-dropzone__title">Drag &amp; Drop File</p>
+            <p class="c-converter-dropzone__hint">or click to select</p>
+            <input type="file" id="file-input" class="is-hidden" accept=".html">
+          </div>
+          <button id="paste-btn" class="c-converter-paste-btn">
+            <p class="c-converter-paste-btn__title">Paste from Clipboard</p>
+            <p class="c-converter-paste-btn__hint">requires browser permission</p>
+          </button>
         </div>
-
-        <div id="results" class="is-hidden o-stack" style="--stack-space: var(--space-8); margin-top: var(--space-12);">
-            <section class="c-converter-step">
-                <div class="c-converter-box">
-                    <h2 class="c-converter-step__title">Step 1: Pen Settings</h2>
-                    <p class="c-converter-step__desc">In your Pen's Settings, add these to the correct fields.</p>
-
-                    <div class="o-stack" style="--stack-space: var(--space-6);">
-                        <div class="c-converter-panel">
-                            <h3 class="c-converter-box__label" style="font-size: 1rem;">Add Class(es) to &lt;html&gt;</h3>
-                            <div id="html-classes-container"></div>
-                            <div id="body-class-warning" class="c-converter-warning is-hidden" style="margin-top: var(--space-2);">
-                                <strong>Warning:</strong> Classes from the <code>&lt;body&gt;</code> tag were merged here. In CodePen, add all classes to the <code>&lt;html&gt;</code> settings for them to apply correctly.
-                            </div>
-                        </div>
-
-                        <div class="o-grid o-grid--md-2" style="gap: var(--space-8) var(--space-6);">
-                            <div class="c-converter-panel">
-                                <h3 class="c-converter-box__label" style="font-size: 1rem;">CSS (Stuff for &lt;head&gt;)</h3>
-                                <div id="css-links-container" class="o-stack" style="--stack-space: var(--space-2);"></div>
-                            </div>
-                            <div class="c-converter-panel">
-                                <h3 class="c-converter-box__label" style="font-size: 1rem;">JS (External Scripts)</h3>
-                                <div id="js-links-container" class="o-stack" style="--stack-space: var(--space-2);"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="c-converter-step">
-                <div class="c-converter-box">
-                    <h2 class="c-converter-step__title">Step 2: Paste Into Panels</h2>
-                    <p class="c-converter-step__desc">Paste each block into the corresponding panel in your Pen.</p>
-                    <div class="o-stack" style="--stack-space: var(--space-8);">
-                        <div class="c-converter-panel">
-                            <h3 class="c-converter-box__label" style="font-size: 1rem;">HTML Panel</h3>
-                            <div class="c-converter-code__wrapper">
-                                <pre class="c-converter-code is-hidden"><code id="html-output" class="language-html"></code></pre>
-                                <div id="html-empty-message" class="c-converter-code__empty is-hidden"></div>
-                                <button class="c-converter-code__copy is-hidden" data-target="html-output">Copy</button>
-                            </div>
-                        </div>
-                        <div class="c-converter-panel">
-                            <h3 class="c-converter-box__label" style="font-size: 1rem;">CSS Panel</h3>
-                            <div class="c-converter-code__wrapper">
-                                <pre class="c-converter-code is-hidden"><code id="css-output" class="language-css"></code></pre>
-                                <div id="css-empty-message" class="c-converter-code__empty is-hidden"></div>
-                                <button class="c-converter-code__copy is-hidden" data-target="css-output">Copy</button>
-                            </div>
-                        </div>
-                        <div class="c-converter-panel">
-                            <h3 class="c-converter-box__label" style="font-size: 1rem;">JavaScript Panel</h3>
-                            <div class="c-converter-code__wrapper">
-                                <pre class="c-converter-code is-hidden"><code id="js-output" class="language-javascript"></code></pre>
-                                <div id="js-empty-message" class="c-converter-code__empty is-hidden"></div>
-                                <button class="c-converter-code__copy is-hidden" data-target="js-output">Copy</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="c-converter-step">
-                <div class="c-converter-box">
-                    <h2 class="c-converter-step__title">Step 3: Open in CodePen</h2>
-                    <p class="c-converter-step__desc">Or, skip the manual work and send everything to a new Pen automatically.</p>
-                    <div class="c-converter-action">
-                        <button id="open-in-codepen" class="c-cta" style="display: block; width: 100%; padding: 0.75rem 1rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                            Open in CodePen
-                        </button>
-                    </div>
-                </div>
-            </section>
+        <div class="c-converter-divider">... or edit directly below ...</div>
+        <div id="editor-container"></div>
+        <div class="c-converter-convert">
+          <button
+            id="processBtn"
+            class="c-cta"
+            style="display: block; width: 100%; padding: 0.75rem 1rem; text-transform: uppercase; letter-spacing: 0.05em"
+          >
+            Convert
+          </button>
         </div>
+      </div>
 
-        <footer class="c-footer" style="margin-top: var(--space-8);">
-            <p class="c-footer__text">&copy; 2025 yikesable.dev &bull; All projects are open-source.</p>
-        </footer>
+      <div id="results" class="is-hidden o-stack" style="--stack-space: var(--space-8); margin-top: var(--space-12)">
+        <section class="c-converter-step">
+          <div class="c-converter-box">
+            <h2 class="c-converter-step__title">Step 1: Pen Settings</h2>
+            <p class="c-converter-step__desc">In your Pen's Settings, add these to the correct fields.</p>
+
+            <div class="o-stack" style="--stack-space: var(--space-6)">
+              <div class="c-converter-panel">
+                <h3 class="c-converter-box__label" style="font-size: 1rem">Add Class(es) to &lt;html&gt;</h3>
+                <div id="html-classes-container"></div>
+                <div id="body-class-warning" class="c-converter-warning is-hidden" style="margin-top: var(--space-2)">
+                  <strong>Warning:</strong> Classes from the <code>&lt;body&gt;</code> tag were merged here. In CodePen,
+                  add all classes to the <code>&lt;html&gt;</code> settings for them to apply correctly.
+                </div>
+              </div>
+
+              <div class="o-grid o-grid--md-2" style="gap: var(--space-8) var(--space-6)">
+                <div class="c-converter-panel">
+                  <h3 class="c-converter-box__label" style="font-size: 1rem">CSS (Stuff for &lt;head&gt;)</h3>
+                  <div id="css-links-container" class="o-stack" style="--stack-space: var(--space-2)"></div>
+                </div>
+                <div class="c-converter-panel">
+                  <h3 class="c-converter-box__label" style="font-size: 1rem">JS (External Scripts)</h3>
+                  <div id="js-links-container" class="o-stack" style="--stack-space: var(--space-2)"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="c-converter-step">
+          <div class="c-converter-box">
+            <h2 class="c-converter-step__title">Step 2: Paste Into Panels</h2>
+            <p class="c-converter-step__desc">Paste each block into the corresponding panel in your Pen.</p>
+            <div class="o-stack" style="--stack-space: var(--space-8)">
+              <div class="c-converter-panel">
+                <h3 class="c-converter-box__label" style="font-size: 1rem">HTML Panel</h3>
+                <div class="c-converter-code__wrapper">
+                  <pre class="c-converter-code is-hidden"><code id="html-output" class="language-html"></code></pre>
+                  <div id="html-empty-message" class="c-converter-code__empty is-hidden"></div>
+                  <button class="c-converter-code__copy is-hidden" data-target="html-output">Copy</button>
+                </div>
+              </div>
+              <div class="c-converter-panel">
+                <h3 class="c-converter-box__label" style="font-size: 1rem">CSS Panel</h3>
+                <div class="c-converter-code__wrapper">
+                  <pre class="c-converter-code is-hidden"><code id="css-output" class="language-css"></code></pre>
+                  <div id="css-empty-message" class="c-converter-code__empty is-hidden"></div>
+                  <button class="c-converter-code__copy is-hidden" data-target="css-output">Copy</button>
+                </div>
+              </div>
+              <div class="c-converter-panel">
+                <h3 class="c-converter-box__label" style="font-size: 1rem">JavaScript Panel</h3>
+                <div class="c-converter-code__wrapper">
+                  <pre class="c-converter-code is-hidden"><code id="js-output" class="language-javascript"></code></pre>
+                  <div id="js-empty-message" class="c-converter-code__empty is-hidden"></div>
+                  <button class="c-converter-code__copy is-hidden" data-target="js-output">Copy</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="c-converter-step">
+          <div class="c-converter-box">
+            <h2 class="c-converter-step__title">Step 3: Open in CodePen</h2>
+            <p class="c-converter-step__desc">
+              Or, skip the manual work and send everything to a new Pen automatically.
+            </p>
+            <div class="c-converter-action">
+              <button
+                id="open-in-codepen"
+                class="c-cta"
+                style="display: block; width: 100%; padding: 0.75rem 1rem; text-transform: uppercase; letter-spacing: 0.05em"
+              >
+                Open in CodePen
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <footer class="c-footer" style="margin-top: var(--space-8)">
+        <p class="c-footer__text">&copy; 2025 yikesable.dev &bull; All projects are open-source.</p>
+      </footer>
     </div>
 
     <form id="codepen-form" action="https://codepen.io/pen/define" method="POST" target="_blank" class="is-hidden">
-        <input type="hidden" name="data" id="codepen-data">
+      <input type="hidden" name="data" id="codepen-data">
     </form>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.min.js"></script>
     <script type="module">
-        import hljs from '../vendor/highlight.bundle.js';
+    import hljs from '../vendor/highlight.bundle.js';
 
         const processBtn = document.getElementById('processBtn');
         const resultsDiv = document.getElementById('results');
@@ -499,5 +525,5 @@
             });
         });
     </script>
-</body>
+  </body>
 </html>
