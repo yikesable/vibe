@@ -156,29 +156,99 @@
   .c-section__head--gap { margin-bottom: var(--space-12); }
   .c-section__title { font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 2.25rem; } /* text-4xl */
   @media (min-width: 48rem) { .c-section__title { font-size: 3rem; } }                                    /* md:text-5xl */
-  .c-section__intro { max-width: 42rem; margin-inline: auto; margin-top: var(--space-4); font-size: 1.125rem; color: var(--text-muted); }
+  .c-section__intro {
+    max-width: 42rem;
+    margin-inline: auto;
+    margin-top: var(--space-4);
+    font-size: 1.125rem;
+    color: var(--text-muted);
+  }
 
   /* Hero — page header. */
   .c-hero { text-align: center; padding-block: var(--space-16); }
   @media (min-width: 48rem) { .c-hero { padding-block: var(--space-24); } }
-  .c-hero__title { font-family: 'Chakra Petch', sans-serif; text-transform: uppercase; font-size: clamp(3.5rem, 12vw, 9rem); letter-spacing: -.05em; line-height: 1; text-shadow: 0 0 15px var(--glow-color), 0 0 30px var(--glow-color); }
+  .c-hero__title {
+    font-family: 'Chakra Petch', sans-serif;
+    text-transform: uppercase;
+    font-size: clamp(3.5rem, 12vw, 9rem);
+    letter-spacing: -.05em;
+    line-height: 1;
+    text-shadow: 0 0 15px var(--glow-color), 0 0 30px var(--glow-color);
+  }
   .c-hero__title .highlight { color: var(--pop-pink); }
-  .c-hero__tagline { max-width: 42rem; margin-inline: auto; margin-top: var(--space-6); font-size: 1.125rem; color: var(--text-muted); }
+  .c-hero__tagline {
+    max-width: 42rem;
+    margin-inline: auto;
+    margin-top: var(--space-6);
+    font-size: 1.125rem;
+    color: var(--text-muted);
+  }
   @media (min-width: 48rem) { .c-hero__tagline { font-size: 1.25rem; } }   /* md:text-xl */
-  .c-hero__actions { display: flex; align-items: center; justify-content: center; margin-top: var(--space-10); gap: var(--space-6); }
-  .c-hero__link { font-size: 1.125rem; font-weight: 600; line-height: 1.75rem; color: var(--text-muted); transition: color .3s ease; }
+  .c-hero__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--space-10);
+    gap: var(--space-6);
+  }
+  .c-hero__link {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.75rem;
+    color: var(--text-muted);
+    transition: color .3s ease;
+  }
   .c-hero__link:hover { color: #fff; }
 
   /* CTA button — the high-contrast pink action. */
-  .c-cta { display: inline-block; background-color: var(--pop-pink); color: var(--dark-bg); text-shadow: none; border-radius: var(--radius-md); padding: var(--space-3) var(--space-6); font-size: 1.125rem; font-weight: 600; line-height: 1.75rem; box-shadow: 0 0 20px var(--glow-color); transition: all .3s ease; text-decoration: none; }
+  .c-cta {
+    display: inline-block;
+    background-color: var(--pop-pink);
+    color: var(--dark-bg);
+    text-shadow: none;
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-6);
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.75rem;
+    box-shadow: 0 0 20px var(--glow-color);
+    transition: all .3s ease;
+    text-decoration: none;
+  }
   .c-cta:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 0 35px var(--glow-color); }
 
   /* Bento — the card grid. Mix with o-grid for columns; the item is the
      block owning its card appearance, o-grid owns the placement.        */
   .c-bento { grid-auto-rows: 24rem; container-type: inline-size; container-name: bento; }
-  .c-bento__item { display: flex; flex-direction: column; justify-content: center; border-radius: var(--radius-2xl); padding: var(--space-8); background: linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,0)); border: 1px solid rgba(255,255,255,.1); backdrop-filter: blur(12px); transition: all .3s ease; overflow: hidden; position: relative; text-decoration: none; color: inherit; }
+  .c-bento__item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-8);
+    background: linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,0));
+    border: 1px solid rgba(255,255,255,.1);
+    backdrop-filter: blur(12px);
+    transition: all .3s ease;
+    overflow: hidden;
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+  }
   .c-bento__item:hover { border-color: var(--accent-soft); transform: translateY(-5px); }
-  a.c-bento__item::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, var(--glow-color) 0%, transparent 40%); transform: scale(0); transition: transform .5s ease; z-index: 0; opacity: .3; }
+  a.c-bento__item::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--glow-color) 0%, transparent 40%);
+    transform: scale(0);
+    transition: transform .5s ease;
+    z-index: 0;
+    opacity: .3;
+  }
   a.c-bento__item:hover::before { transform: scale(1); }
   .c-bento__item > * { position: relative; z-index: 1; }
   @media (min-width: 48rem) {
@@ -190,20 +260,55 @@
   .c-bento__headline { font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 1.875rem; } /* text-3xl */
   @container bento (min-width: 300px) { .c-bento__headline { font-size: 2.25rem; line-height: 2.5rem; } }
   .c-bento__desc { margin-top: var(--space-2); max-width: 28rem; color: var(--text-muted); }
-  .c-bento__link { display: block; margin-top: var(--space-8); font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 1.5rem; color: var(--pop-pink); text-decoration: underline; text-decoration-color: var(--accent-soft); transition: text-decoration-color .3s ease; }
+  .c-bento__link {
+    display: block;
+    margin-top: var(--space-8);
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--pop-pink);
+    text-decoration: underline;
+    text-decoration-color: var(--accent-soft);
+    transition: text-decoration-color .3s ease;
+  }
   .c-bento__link:hover { text-decoration-color: var(--pop-pink); }
   .c-bento__item:hover .c-bento__link { text-decoration-color: var(--pop-pink); }
   .c-bento__arrow { display: inline-block; transition: transform .3s ease; }
   .c-bento__item:hover .c-bento__arrow { transform: translateX(.5rem); }
 
   /* Banner — a full-width card. The "uprising" look is a t- theme. */
-  .c-banner { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; border-radius: var(--radius-2xl); padding: var(--space-8); overflow: hidden; position: relative; text-decoration: none; color: inherit; }
+  .c-banner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-8);
+    overflow: hidden;
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+  }
   .c-banner--full { grid-column: 1 / -1; }
-  .c-banner__glitch { font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 2.25rem; color: #fff; margin-block: var(--space-4); }
+  .c-banner__glitch {
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    font-size: 2.25rem;
+    color: #fff;
+    margin-block: var(--space-4);
+  }
   .c-banner__meta { font-size: .875rem; }
 
   /* Disclaimer — the experimental-components warning box. */
-  .c-disclaimer { margin-top: var(--space-12); border: 2px solid var(--pop-pink); border-radius: var(--radius-lg); padding: var(--space-6); box-shadow: 0 0 20px var(--glow-color); color: #fbcfe8; } /* text-pink-100 */
+  .c-disclaimer {
+    margin-top: var(--space-12);
+    border: 2px solid var(--pop-pink);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: 0 0 20px var(--glow-color);
+    color: #fbcfe8;
+  } /* text-pink-100 */
   .c-disclaimer__title { font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 1.125rem; color: #fff; }
   .c-disclaimer__text { margin-top: var(--space-2); font-size: .875rem; line-height: 1.625; }
 
@@ -218,9 +323,25 @@
   .c-doc__note code:hover { text-decoration-color: var(--pop-pink); }
 
   /* Accordion — native <details>, styled via [open] (no is- state needed). */
-  .c-accordion { background: linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,0)); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius-xl); padding: var(--space-5); transition: background-color .3s ease; }
+  .c-accordion {
+    background: linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,0));
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    transition: background-color .3s ease;
+  }
   .c-accordion[open] { border-color: var(--accent-soft); }
-  .c-accordion__summary { display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none; font-weight: 500; font-size: 1.125rem; padding: var(--space-5); margin: calc(-1 * var(--space-5)); }
+  .c-accordion__summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 500;
+    font-size: 1.125rem;
+    padding: var(--space-5);
+    margin: calc(-1 * var(--space-5));
+  }
   .c-accordion__summary--sm { font-size: 1rem; }   /* text-base */
   .c-accordion__summary::-webkit-details-marker { display: none; }
   .c-accordion__icon { color: var(--pop-pink); font-size: 1.5rem; transition: transform .3s ease-in-out; }
@@ -237,7 +358,14 @@
  * Cosmetic variants layered over a component. Themes never carry
  * structure; they only recolour / re-animate.                          */
 @layer themes {
-  .t-uprising { background: #000; border: 1px solid #d93025; box-shadow: inset 0 0 15px #d93025, 0 0 20px #d93025; color: #fff; font-family: 'Special Elite', monospace; animation: pulse-border 2s infinite; }
+  .t-uprising {
+    background: #000;
+    border: 1px solid #d93025;
+    box-shadow: inset 0 0 15px #d93025, 0 0 20px #d93025;
+    color: #fff;
+    font-family: 'Special Elite', monospace;
+    animation: pulse-border 2s infinite;
+  }
   .t-uprising:hover { transform: none; }
   .t-uprising .c-banner__meta { color: #fca5a5; }   /* text-red-300 */
   .t-uprising .c-banner__glitch { text-transform: uppercase; animation: glitch 1.5s linear infinite; }
