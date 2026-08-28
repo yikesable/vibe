@@ -157,12 +157,22 @@ Supporting tooling:
   `@voxpelli/eslint-config`, configured for the browser environment.
 - **Stylelint** ([`stylelint.config.mjs`](./stylelint.config.mjs)) for CSS
   consistency, run via `npm run lint:css`.
+- **html-validate** ([`.htmlvalidate.json`](./.htmlvalidate.json)) for semantic,
+  accessible HTML against `html-validate:recommended`, run via `npm run lint:html`.
 - **dprint** ([`dprint.json`](./dprint.json)) with Malva (CSS) and markup_fmt
   (HTML) plugins for automated formatting, run via `npm run fmt`.
 - **TypeScript** ([`tsconfig.json`](./tsconfig.json)) via `@voxpelli/tsconfig`
   (`node20` base, with DOM libs), used only for type-checking the
   `components/**` — no emitted build.
 - **Knip** ([`.knip.jsonc`](./.knip.jsonc)) for unused-code detection.
+- **Playwright** ([`playwright.config.js`](./playwright.config.js)) for e2e
+  checks of the zero-build site, run via `npm run test:e2e`.
+
+One command validates everything that can be validated offline:
+`npm run check` (`run-p check:*` — format, CSS, JS, HTML, unit tests, and a
+vendor-sync guard that rebuilds `vendor/` and fails on drift). Network-dependent
+audits (font reproducibility, external links) live in the weekly
+[`maintenance.yml`](./.github/workflows/maintenance.yml) workflow instead.
 - **Renovate** ([`renovate.json`](./renovate.json)) for dependency updates,
   extending `github>voxpelli/renovate-config`.
 
