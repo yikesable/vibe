@@ -43,11 +43,12 @@ class CodeBlock extends HTMLElement {
                 :host(:hover) .copy-btn { opacity: 1; }
                 .copy-btn:hover { background-color: rgba(0,0,0,0.4); }
                 .copy-btn.copied { background-color: #16a34a; color: white; opacity: 1; }
+                .copy-btn.failed { background-color: #b91c1c; color: white; opacity: 1; }
             </style>
             <div class="code-block">
                 <pre><code class="language-${this.getAttribute('language') || 'plaintext'}"></code></pre>
             </div>
-            <button class="copy-btn">Copy</button>
+            <button class="copy-btn" aria-live="polite">Copy</button>
         `;
     const codeContainer = this.shadow.querySelector('code');
     if (codeContainer === null) {
@@ -68,7 +69,13 @@ class CodeBlock extends HTMLElement {
         btn.classList.add('copied');
         setTimeout(() => { btn.textContent = originalText; btn.classList.remove('copied'); }, 2000);
       } catch (err) {
+        // The clipboard can be absent (non-secure context) or denied — the
+        // failure must appear on the button (aria-live announces it), not
+        // vanish into a console line the user never sees.
         console.error('Failed to copy text:', err);
+        btn.textContent = 'Copy failed';
+        btn.classList.add('failed');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('failed'); }, 2000);
       }
     });
   }

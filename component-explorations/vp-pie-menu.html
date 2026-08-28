@@ -1135,7 +1135,7 @@ document.querySelector(<span class="str">'vp-pie-menu'</span>)
                         pressStartY = e.clientY;
                         dragMode = false;
                         activePointerId = e.pointerId;
-                        try { this.triggerBtn.setPointerCapture(e.pointerId); } catch(_) {}
+                        try { this.triggerBtn.setPointerCapture(e.pointerId); } catch (err) { console.warn('vp-pie-menu: setPointerCapture failed for pointer', e.pointerId, err); }
                         pressTimer = setTimeout(() => {
                             if (!dragMode) enterDragMode(e);
                         }, LONG_PRESS_MS);
@@ -1161,7 +1161,7 @@ document.querySelector(<span class="str">'vp-pie-menu'</span>)
                     this.triggerBtn.addEventListener('pointerup', (e) => {
                         if (e.pointerId !== activePointerId) return;
                         if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
-                        try { this.triggerBtn.releasePointerCapture(e.pointerId); } catch(_) {}
+                        try { this.triggerBtn.releasePointerCapture(e.pointerId); } catch (err) { console.warn('vp-pie-menu: releasePointerCapture failed for pointer', e.pointerId, err); }
                         if (dragMode) {
                             e.preventDefault();
                             if (highlightedIdx >= 0 && dragItems[highlightedIdx]) {

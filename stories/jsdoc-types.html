@@ -949,11 +949,72 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
     if (typeof THREE !== 'undefined') {
         class ParticleField extends HTMLElement {
             constructor() { super(); this.attachShadow({ mode: 'open' }); this.animationFrameId = null; }
-            connectedCallback() { const particleColor = this.getAttribute('color') || '#8A2BE2'; const particleSize = parseFloat(this.getAttribute('size')) || 0.015; const particleCount = parseInt(this.getAttribute('count'), 10) || 5000; const style = document.createElement('style'); style.textContent = `:host { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; } canvas { display: block; width: 100%; height: 100%; }`; const canvas = document.createElement('canvas'); this.shadowRoot.append(style, canvas); this.init(canvas, particleColor, particleSize, particleCount); }
-            disconnectedCallback() { cancelAnimationFrame(this.animationFrameId); if (this.resizeObserver) this.resizeObserver.disconnect(); }
-            init(canvas, color, size, count) { this.scene = new THREE.Scene(); this.camera = new THREE.PerspectiveCamera(75, this.clientWidth / this.clientHeight, 0.1, 1000); this.renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true }); this.onResize(); this.camera.position.z = 5; const geometry = new THREE.BufferGeometry(); const positions = new Float32Array(count * 3); for (let i = 0; i < count * 3; i++) { positions[i] = (Math.random() - 0.5) * 10; } geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3)); const material = new THREE.PointsMaterial({ color: new THREE.Color(color), size: size, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, }); this.particles = new THREE.Points(geometry, material); this.scene.add(this.particles); this.resizeObserver = new ResizeObserver(() => this.onResize()); this.resizeObserver.observe(this); this.animate(); }
-            onResize() { if (!this.isConnected) return; this.camera.aspect = this.clientWidth / this.clientHeight; this.camera.updateProjectionMatrix(); this.renderer.setSize(this.clientWidth, this.clientHeight); }
-            animate() { this.animationFrameId = requestAnimationFrame(() => this.animate()); const time = Date.now() * 0.00005; if (this.particles) { this.particles.rotation.y = time * 0.2; this.particles.rotation.x = time * 0.1; } this.renderer.render(this.scene, this.camera); }
+            connectedCallback() {
+                const particleColor = this.getAttribute('color') || '#8A2BE2';
+                const particleSize = parseFloat(this.getAttribute('size')) || 0.015;
+                const particleCount = parseInt(this.getAttribute('count'), 10) || 5000;
+                const style = document.createElement('style');
+                style.textContent = `:host { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; } canvas { display: block; width: 100%; height: 100%; }`;
+                const canvas = document.createElement('canvas');
+                this.canvas = canvas;
+                this.shadowRoot.append(style, canvas);
+                // Same degradation rule as <kinetic-background>: a WebGL-less
+                // environment must leave the element decorative, not throw
+                // mid-upgrade (which would kill the story slide).
+                try {
+                    this.init(canvas, particleColor, particleSize, particleCount);
+                } catch (err) {
+                    console.warn('<particle-field>: renderer unavailable', err);
+                    this.teardown();
+                }
+            }
+            disconnectedCallback() { this.teardown(); }
+            teardown() {
+                if (this.animationFrameId !== null) { cancelAnimationFrame(this.animationFrameId); this.animationFrameId = null; }
+                if (this.resizeObserver) { this.resizeObserver.disconnect(); this.resizeObserver = undefined; }
+                // Release the GL context instead of leaking it.
+                if (this.renderer) { this.renderer.dispose(); this.renderer = undefined; }
+            }
+            init(canvas, color, size, count) {
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, this.clientWidth / this.clientHeight, 0.1, 1000);
+                this.renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+                // A lost context must not freeze the story into a throwing
+                // loop — the next frame is scheduled before render() runs.
+                canvas.addEventListener('webglcontextlost', (event) => { event.preventDefault(); this.teardown(); });
+                this.onResize();
+                this.camera.position.z = 5;
+                const geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(count * 3);
+                for (let i = 0; i < count * 3; i++) { positions[i] = (Math.random() - 0.5) * 10; }
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                const material = new THREE.PointsMaterial({ color: new THREE.Color(color), size: size, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, });
+                this.particles = new THREE.Points(geometry, material);
+                this.scene.add(this.particles);
+                this.resizeObserver = new ResizeObserver(() => this.onResize());
+                this.resizeObserver.observe(this);
+                this.animate();
+            }
+            onResize() {
+                if (!this.isConnected || !this.renderer) return;
+                this.camera.aspect = this.clientWidth / this.clientHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(this.clientWidth, this.clientHeight);
+            }
+            animate() {
+                this.animationFrameId = requestAnimationFrame(() => this.animate());
+                const time = Date.now() * 0.00005;
+                if (this.particles) { this.particles.rotation.y = time * 0.2; this.particles.rotation.x = time * 0.1; }
+                try {
+                    this.renderer.render(this.scene, this.camera);
+                } catch (err) {
+                    // A throwing render would repeat at 60 fps — the frame is
+                    // already scheduled. Tear down instead of flooding the
+                    // console.
+                    console.warn('<particle-field>: render failed', err);
+                    this.teardown();
+                }
+            }
         }
         customElements.define('particle-field', ParticleField);
     }

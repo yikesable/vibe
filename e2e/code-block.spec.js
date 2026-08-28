@@ -75,4 +75,24 @@ test.describe('code-block usage examples on index.html', () => {
     expect(clip).not.toContain('&lt;');
     expect(clip).toContain('<script type="module"');
   });
+
+  test('a rejected clipboard surfaces visibly instead of a console-only failure', async ({ page }) => {
+    const pageErrors = [];
+    page.on('pageerror', (err) => pageErrors.push(`pageerror: ${err.message}`));
+    await page.goto('/index.html');
+
+    // Reject deterministically — no permission-context games.
+    await page.evaluate(() => {
+      navigator.clipboard.writeText = () => Promise.reject(new DOMException('denied', 'NotAllowedError'));
+    });
+
+    const copyBtn = page.locator('code-block').nth(0).locator('.copy-btn');
+    await expect(copyBtn).toHaveText('Copy');
+    await copyBtn.click();
+    // The failure is on the button (aria-live announces it), not just in the
+    // console — and it flips back so the button stays usable.
+    await expect(copyBtn).toHaveText('Copy failed');
+    await expect(copyBtn).toHaveText('Copy', { timeout: 4000 });
+    expect(pageErrors).toEqual([]);
+  });
 });
