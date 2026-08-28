@@ -1,19 +1,17 @@
 # Vibe Coded ⚡
 
-> A joyful collection of open-source tools and digital experiments, crafted with code for fun.
+> A joyful collection of experiments with AI
 
 **Vibe Coded** is a static, zero-build-step showcase site for small browser
-tools, web components, and "stories" — all written in vanilla JavaScript, modern
-CSS, and semantic HTML. It is published at
-**<https://yikesable.github.io/vibe/>** and lives in this repo as a collection of
-self-contained HTML pages that share a common design system.
+tools, web components, and "stories" — made almost exclusively with AI, guided
+by [Pelle Wessman](https://kodfabrik.se/). It's an experiment in *understanding*
+the tool — its strengths and its limits — not blindly adopting it.
 
-The projects here are almost exclusively developed in collaboration with AI
-assistants, guided by [Pelle Wessman](https://kodfabrik.se/). The AI handles the
-bulk of the boilerplate and implementation, which allows for rapid prototyping
-and exploration of ideas that would otherwise take too long to build from
-scratch. It's an experiment in *understanding* the tool — its strengths and its
-limits — not blindly adopting it.
+The site is not shy about it – the tagline says as much.
+
+It is published at **<https://yikesable.github.io/vibe/>** and lives in
+this repo as a collection of self-contained HTML pages that share a common
+design system, written in vanilla JavaScript, modern CSS, and semantic HTML.
 
 ---
 
@@ -63,7 +61,10 @@ Core visual conventions:
   accents, *Roboto Mono* for code, *Oswald* + *Roboto Condensed* for the
   manifesto page. License compliance is handled via
   [`LICENSE-fonts.md`](./assets/fonts/LICENSE-fonts.md) with full OFL 1.1 and
-  Apache 2.0 license texts alongside.
+  Apache 2.0 license texts alongside. The files are downloaded from their
+  canonical upstream sources and subsetted to Latin by
+  [`scripts/download-fonts.mjs`](./scripts/download-fonts.mjs) (`npm run
+  fonts`) — fully reproducible.
 - **Color:** dark background (`--dark-bg`) with a vibrant `--pop-pink` accent and
   `--glow-color` for neon effects.
 - **Layout:** `o-wrapper` / `o-grid` for structure; `c-bento` components for the
@@ -80,15 +81,16 @@ See the full token set, namespace contract, and component API in the
 
 ## 🧩 Reusable components
 
-Both are dependency-free Web Components that load their own dependencies from a
-CDN inside their module — no bundler required.
+Both are dependency-free Web Components. Their third-party runtime
+dependencies (Three.js, highlight.js) are self-hosted as vendored bundles
+in `vendor/` – no CDN requests, no bundler required for the site itself.
 
 ### `<kinetic-background>`
 
 A self-contained Web Component that renders a mouse-interactive particle
-background using Three.js (loaded from a CDN). It encapsulates all logic in a
-Shadow DOM, manages its own animation lifecycle, and honours the user's motion
-preferences. Drop the script in and add the tag:
+background using a self-hosted Three.js bundle from `vendor/`. It encapsulates
+all logic in a Shadow DOM, manages its own animation lifecycle, and honours
+the user's motion preferences. Drop the script in and add the tag:
 
 ```html
 <script type="module" src="./components/kinetic-background.js"></script>
@@ -122,6 +124,7 @@ or run the included dev server for live-reload:
 ```bash
 npm install          # installs dependencies + vendor build tooling
 npm run build:vendor # bundles third-party libraries into vendor/ (esbuild)
+npm run fonts        # (re)downloads + subsets the self-hosted fonts
 npm run dev          # starts browser-sync and opens the site
 ```
 
@@ -152,12 +155,24 @@ Supporting tooling:
 
 - **ESLint** ([`eslint.config.js`](./eslint.config.js)) via
   `@voxpelli/eslint-config`, configured for the browser environment.
+- **Stylelint** ([`stylelint.config.mjs`](./stylelint.config.mjs)) for CSS
+  consistency, run via `npm run lint:css`.
+- **dprint** ([`dprint.json`](./dprint.json)) with Malva (CSS) and markup_fmt
+  (HTML) plugins for automated formatting, run via `npm run fmt`.
 - **TypeScript** ([`tsconfig.json`](./tsconfig.json)) via `@voxpelli/tsconfig`
   (`node20` base, with DOM libs), used only for type-checking the
   `components/**` — no emitted build.
 - **Knip** ([`.knip.jsonc`](./.knip.jsonc)) for unused-code detection.
 - **Renovate** ([`renovate.json`](./renovate.json)) for dependency updates,
   extending `github>voxpelli/renovate-config`.
+
+## 📚 Project docs
+
+- **[VISION.md](./VISION.md)** — why the project exists: the experiment in
+  understanding AI tooling, and the principles it is built on.
+- **[ROADMAP.md](./ROADMAP.md)** — deferred work and growth triggers.
+- **[`.rpiv/plans/`](./.rpiv/plans/)** — the active work packages, with owner
+  decisions recorded.
 
 ---
 

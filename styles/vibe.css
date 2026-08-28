@@ -183,6 +183,7 @@
   .c-hero__title .highlight { color: var(--pop-pink); }
   .c-hero__tagline { max-width: 42rem; margin-inline: auto; margin-top: var(--space-6); font-size: 1.125rem; color: var(--text-muted); }
   @media (min-width: 48rem) { .c-hero__tagline { font-size: 1.25rem; } } /* md:text-xl */
+  .c-hero__note { margin-top: var(--space-2); font-size: 0.875rem; color: var(--text-muted); }
   .c-hero__actions { display: flex; align-items: center; justify-content: center; margin-top: var(--space-10); gap: var(--space-6); }
   .c-hero__link { font-size: 1.125rem; font-weight: 600; line-height: 1.75rem; color: var(--text-muted); transition: color 0.3s ease; }
   .c-hero__link:hover { color: #fff; }
