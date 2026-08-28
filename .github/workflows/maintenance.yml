@@ -6,10 +6,11 @@ on:
 permissions:
   contents: read
 jobs:
-  # Network-dependent audits that must not gate PRs: font reproducibility
-  # against mutable upstreams, and external link health.
-  audit:
+  # Font reproducibility against mutable upstreams. Independent from the
+  # link audit: a font drift must not mask link health, and vice versa.
+  audit-fonts:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
@@ -17,11 +18,34 @@ jobs:
           node-version: 22.22.0
           cache: npm
       - run: npm ci
-      - run: npm run audit:fonts
+      # Reproduce the committed fonts; drift fails, but the diff must be
+      # visible in the log (a bare exit-1 step shows nothing). The porcelain
+      # check catches untracked additions, which `git diff` cannot.
+      - run: |
+          npm run fonts
+          if ! git diff --exit-code -- assets/fonts/ > /dev/null || [ -n "$(git status --porcelain -- assets/fonts/)" ]; then
+            git -c core.pager=cat diff -- assets/fonts/ | head -100 || true
+            git status --porcelain -- assets/fonts/
+            exit 1
+          fi
+
+  # External link health. README's relative links (./DESIGN.md, ./VISION.md,
+  # ./.github/…) resolve against the file itself — NEVER against the live
+  # site, where Jekyll Pages does not serve .md raw or dotfiles. The served
+  # HTML inputs resolve against the live site via --base.
+  audit-links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
       - uses: lycheeverse/lychee-action@v2
         with:
-          # vendor/ bundles contain URLs (false positives); --base resolves
-          # relative links against the live site.
-          args: --no-progress --exclude-path vendor/ --exclude-mail --base https://yikesable.github.io/vibe/ index.html stories/*.html codepen-converter/**/*.html component-explorations/*.html README.md
+          # vendor/ bundles contain URLs (false positives).
+          args: --no-progress --exclude-path vendor/ --exclude-mail --base https://yikesable.github.io/vibe/ index.html stories/*.html codepen-converter/**/*.html component-explorations/*.html
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: lycheeverse/lychee-action@v2
+        with:
+          args: --no-progress --exclude-mail README.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

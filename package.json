@@ -19,7 +19,7 @@
     "dev": "browser-sync",
     "build:vendor": "node scripts/build-vendor.mjs",
     "fonts": "node scripts/download-fonts.mjs",
-    "audit:fonts": "npm run fonts && git diff --exit-code assets/fonts/",
+    "audit:fonts": "npm run fonts && git diff --exit-code -- assets/fonts/ && test -z \"$(git status --porcelain -- assets/fonts/)\"",
     "lint:css": "stylelint 'styles/**/*.css'",
     "lint:css:fix": "stylelint 'styles/**/*.css' --fix",
     "lint:js": "eslint .",

@@ -131,22 +131,40 @@ const LICENSE_FILES = [
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
-async function fetchBuffer (url) {
-  const res = await fetch(url, { headers: { 'User-Agent': UA } });
-  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
-  return Buffer.from(await res.arrayBuffer());
-}
+const FETCH_TIMEOUT_MS = 30_000;
 
-async function fetchText (url) {
-  const res = await fetch(url, { headers: { 'User-Agent': UA } });
-  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
-  return res.text();
+/**
+ * Fetch a resource with a timeout and a diagnostic error. The script is the
+ * body of a scheduled CI audit, so a hung upstream must not stall the job
+ * until GitHub's hard cap — and a failure must name the URL and the real
+ * cause (a plain network error is `fetch failed` with no URL and no cause).
+ *
+ * @param {string} url
+ * @param {{ text?: boolean }} [options] — `true` returns a string, default a Buffer.
+ * @returns {Promise<string | Buffer>}
+ */
+async function fetchResource (url, { text = false } = {}) {
+  let res;
+  try {
+    res = await fetch(url, {
+      headers: { 'User-Agent': UA },
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    });
+  } catch (err) {
+    const cause = err.cause !== undefined ? ` (${err.cause.code ?? err.cause.message})` : '';
+    throw new Error(`fetch failed for ${url}${cause}: ${err.message}`, { cause: err });
+  }
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status} for ${url}`);
+  }
+  return text ? res.text() : Buffer.from(await res.arrayBuffer());
 }
 
 /**
  * Convert a unicode-range string to a string of characters for subset-font.
  *
- * @param rangeStr
+ * @param {string} rangeStr — e.g. `U+0000-00FF, U+20AC`.
+ * @returns {string} every codepoint in the range(s).
  */
 function unicodeRangeToString (rangeStr) {
   const parts = rangeStr.split(',').map((s) => s.trim().replace(/^U\+/, ''));
@@ -187,6 +205,10 @@ async function main () {
 
   const latinChars = unicodeRangeToString(LATIN_RANGE);
   const results = [];
+  // Every artifact (download, subset, validation) is collected BEFORE any
+  // write: a failure at font 4 of 6 must not leave the first three already
+  // overwritten in the working tree.
+  const outputs = [];
 
   // ── 1. Download and subset all fonts ──
   for (const font of FONTS) {
@@ -195,7 +217,7 @@ async function main () {
     console.log(`  Upstream: ${font.upstreamRepo}`);
     console.log(`  (${font.note})`);
 
-    const original = await fetchBuffer(font.sourceUrl);
+    const original = await fetchResource(font.sourceUrl);
     console.log(`  Original: ${formatBytes(original.length)}`);
 
     console.log('  Subsetting to Latin...');
@@ -203,8 +225,14 @@ async function main () {
       targetFormat: 'woff2',
     });
 
+    // A 200 with an empty or non-font body (proxy, captive redirect) must
+    // not produce a 0-byte or garbage .woff2 that gets committed as genuine.
+    if (subset.length < 4 || subset.subarray(0, 4).toString('latin1') !== 'wOF2') {
+      throw new Error(`subset for ${font.name} is not a WOFF2 (${subset.length} bytes)`);
+    }
+
     const outputPath = path.join(FONTS_DIR, font.outputFile);
-    await writeFile(outputPath, subset);
+    outputs.push({ path: outputPath, data: subset });
     const reduction = ((1 - subset.length / original.length) * 100).toFixed(0);
     console.log(`  → ${font.outputFile}: ${formatBytes(subset.length)} (${reduction}% smaller)`);
     results.push({ file: font.outputFile, size: subset.length });
@@ -214,9 +242,9 @@ async function main () {
   console.log('\n── License files ──');
   for (const lic of LICENSE_FILES) {
     console.log(`  ${lic.outputFile}: downloading from ${lic.url}`);
-    const data = await fetchText(lic.url);
+    const data = await fetchResource(lic.url, { text: true });
     const outputPath = path.join(FONTS_DIR, lic.outputFile);
-    await writeFile(outputPath, data, 'utf8');
+    outputs.push({ path: outputPath, data: Buffer.from(data, 'utf8') });
     console.log(`    → ${lic.outputFile}: ${formatBytes(Buffer.byteLength(data))}`);
   }
 
@@ -228,13 +256,18 @@ async function main () {
   }
   console.log(`  ${'─'.repeat(40)}`);
   console.log(`  Total font payload: ${formatBytes(total)}`);
+
+  // ── 3. Write everything into place ──
+  for (const { data, path: outputPath } of outputs) {
+    await writeFile(outputPath, data);
+  }
   console.log('\n✓ All fonts downloaded and subsetted successfully.');
 }
 
 try {
   await main();
 } catch (err) {
-  console.error('✗ Error:', err.message);
+  console.error('✗ Error:', err instanceof Error ? err.message : String(err));
   // CLI exit path — a thrown error here would lose the exit code.
   process.exitCode = 1;
 }
