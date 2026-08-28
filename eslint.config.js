@@ -22,6 +22,18 @@ export default defineConfig(
     files: ['stylelint.config.mjs'],
     rules: { 'unicorn/no-null': 0 },
   },
+  // Test fixtures assert the `number | null` returns of parseHexColor —
+  // legitimate null, not a placeholder.
+  {
+    files: ['test/**/*.js'],
+    rules: { 'unicorn/no-null': 0 },
+  },
+  // parseHexColor's contract is `number | null` — null means "not a
+  // color", a parse result, not a placeholder.
+  {
+    files: ['components/kinetic-background-state.js'],
+    rules: { 'unicorn/no-null': 0 },
+  },
   {
     rules: {
       // We're in a browser, not in node.js

@@ -20,8 +20,10 @@ picked up.
   (`import { Scene, WebGLRenderer, … }`) — `three` is `sideEffects: false`,
   so esbuild tree-shakes the vendor bundle substantially.
 - **Component hardening** (setPixelRatio cap, `powerPreference: 'low-power'`,
-  the `--pop-pink` drift fix) is scoped in the content plan's Phase 1;
-  OffscreenCanvas+Worker stays deferred — the per-frame JS is tiny, the
+  the `--pop-pink` drift fix) **landed 2026-08-28** (the hardening commit);
+  what remains here is the version bump, the named-import tree-shake, and
+  the color-management visual QA. OffscreenCanvas+Worker stays deferred —
+  the per-frame JS is tiny, the
   dominant cost is GPU compositing, and r128 + Safari make the worker path
   friction-heavy for a marginal win.
 - **Sequence:** do the named-import refactor and the version bump together,

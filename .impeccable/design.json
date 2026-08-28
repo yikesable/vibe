@@ -30,7 +30,7 @@
       { "name": "ease-state", "value": "0.3s ease", "purpose": "Default state transitions: hovers, lifts, glows, borders." },
       { "name": "glow-reveal", "value": "0.5s ease, scale 0 → 1", "purpose": "The radial pink bloom that washes across a bento card on hover." },
       { "name": "arrow-shift", "value": "0.3s ease, translateX 0.5rem", "purpose": "The card-link arrow nudge on hover." },
-      { "name": "reduced-motion", "value": "none", "purpose": "prefers-reduced-motion: all animation and the stardust disabled. Hard rule." }
+      { "name": "reduced-motion", "value": "none", "purpose": "prefers-reduced-motion: no animation without consent; the stardust renders one static frame (depth stays, motion stops). Hard rule." }
     ],
     "breakpoints": [
       { "name": "sm", "value": "640px" },

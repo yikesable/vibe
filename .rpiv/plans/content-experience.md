@@ -49,6 +49,23 @@ image) is owned by the engineering plan.
    - reduced-motion: currently renders nothing (blank canvas, violet-black
      shows through) — documented and defensible; optional upgrade: render
      one static frame to keep the depth layer (~30–60 min, owner decision)
+
+   ✅ **IMPLEMENTED (2026-08-28, `fix(component): harden kinetic-background
+   lifecycle and accessibility`)** — all of the above landed, plus the
+   lifecycle hardening that wasn't yet scoped: idempotent
+   connect/disconnect, a generation token guarding the async lazy Three.js
+   load (the ~600 KB bundle is only fetched on connect, not eagerly — the
+   reduced-motion static frame renders through WebGL too), RAF
+   cancellation, listener removal, geometry/material/renderer disposal, and
+   no duplicate canvases on reconnect. Reduced-motion renders one static
+   frame (resize re-renders once) instead of a blank canvas. Pure lifecycle
+   + math helpers extracted to `components/kinetic-background-state.js`
+   with `node --test` coverage; Playwright e2e covers the running loop,
+   the static frame, detach/reconnect, context loss, and bundle-load
+   failure (`e2e/kinetic-background.spec.js`). The `aria-hidden` host
+   attribute is set in `connectedCallback`, not the constructor — the
+   custom-elements spec forbids adding attributes during construction, and
+   `document.createElement` throws otherwise.
 4. **Font swap CLS** — measure PageSpeed first; only if CLS shows, add
    `size-adjust`/`ascent-override` to the headline `@font-face` rules.
 
