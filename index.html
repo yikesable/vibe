@@ -39,7 +39,7 @@
     </script>
 
     <!-- View Transitions -->
-    <meta name="view-transition" content="same-origin" />
+    <meta name="view-transition" content="same-origin">
 
     <!-- Dependencies -->
     <link rel="preload" href="./assets/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
@@ -57,7 +57,7 @@
 
         <header class="c-hero">
             <h1 class="c-hero__title">
-                Vibe<br /><span class="highlight">Coded</span>
+                Vibe<br><span class="highlight">Coded</span>
             </h1>
             <p class="c-hero__tagline">
                 A joyful collection of experiments with AI.
@@ -88,9 +88,9 @@
             </div>
         </main>
 
-        <main id="projects" class="c-section">
+        <section id="projects" class="c-section">
             <header class="c-section__head c-section__head--gap">
-                <h2 class="c-section__title">Tools & Utilities</h2>
+                <h2 class="c-section__title">Tools &amp; Utilities</h2>
             </header>
             <div class="o-grid o-grid--md-3 c-bento">
                 <a href="./codepen-converter/" class="c-bento__item">
@@ -107,7 +107,7 @@
                      <p class="c-bento__desc">This space is ready for the next great idea.</p>
                 </article>
             </div>
-        </main>
+        </section>
 
        <section id="components" class="c-section c-section--narrow">
             <header class="c-section__head">
@@ -131,10 +131,8 @@
                     <div class="c-doc__body">
                         <h4 class="c-doc__label">Usage:</h4>
                         <code-block language="html">
-                            <script type="text/template">
-<!-- Load this script to use the component -->
-<script type="module" src="https://yikesable.github.io/vibe/components/code-block.js"></script>
-                            </script>
+                            <pre><code>&lt;!-- Load this script to use the component --&gt;
+&lt;script type="module" src="https://yikesable.github.io/vibe/components/code-block.js"&gt;&lt;/script&gt;</code></pre>
                         </code-block>
                         <h4 class="c-doc__label c-doc__label--spaced">Instructions:</h4>
                         <p class="c-doc__note">Set the language with the <code>language</code> attribute. For unescaped HTML, wrap your code in a <code>&lt;script type="text/template"&gt;</code>. For other languages, use a <code>&lt;pre&gt;&lt;code&gt;</code> block.</p>
@@ -173,13 +171,11 @@
                     <div class="c-doc__body">
                         <h4 class="c-doc__label">Usage:</h4>
                         <code-block language="html">
-                            <script type="text/template">
-<!-- Place this tag anywhere in your body -->
-<kinetic-background></kinetic-background>
+                            <pre><code>&lt;!-- Place this tag anywhere in your body --&gt;
+&lt;kinetic-background&gt;&lt;/kinetic-background&gt;
 
-<!-- Load the component script -->
-<script type="module" src="https://yikesable.github.io/vibe/components/kinetic-background.js"></script>
-                            </script>
+&lt;!-- Load the component script --&gt;
+&lt;script type="module" src="https://yikesable.github.io/vibe/components/kinetic-background.js"&gt;&lt;/script&gt;</code></pre>
                         </code-block>
                     </div>
                 </article>
@@ -188,7 +184,7 @@
 
         <section id="stories" class="c-section">
             <header class="c-section__head c-section__head--gap">
-                <h2 class="c-section__title">Stories & Slides</h2>
+                <h2 class="c-section__title">Stories &amp; Slides</h2>
             </header>
             <div class="o-grid o-grid--md-3 c-bento">
                  <a href="./stories/jsdoc-types.html" class="c-bento__item c-bento__item--wide">

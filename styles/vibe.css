@@ -139,7 +139,7 @@
   @media (min-width: 64rem) { .o-wrapper { padding-inline: var(--space-8); } } /* lg:px-8 */
 
   /* Responsive grid. Modifiers are sparse and audit-driven only. */
-  .o-grid { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
+  .o-grid { display: grid; gap: var(--grid-gap, var(--space-6)); grid-template-columns: 1fr; }
   @media (min-width: 48rem) { .o-grid--md-2 { grid-template-columns: repeat(2, 1fr); } .o-grid--md-3 { grid-template-columns: repeat(3, 1fr); } }
   @media (min-width: 64rem) { .o-grid--lg-4 { grid-template-columns: repeat(4, 1fr); } }
   @media (min-width: 80rem) { .o-grid--xl-5 { grid-template-columns: repeat(5, 1fr); } }
@@ -375,6 +375,7 @@
  * reach for an o- object or c- component first.                        */
 @layer utilities {
   .u-text-center { text-align: center; }
+  .u-measure-56 { max-width: 56rem; margin-inline: auto; }
   .u-mt-12 { margin-top: var(--space-12); }
   .is-hidden { display: none !important; }
   .u-link-accent { color: var(--pop-pink); text-decoration: underline; text-decoration-color: var(--accent-soft); transition: text-decoration-color 0.3s ease; }

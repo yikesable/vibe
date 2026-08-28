@@ -305,13 +305,18 @@
             ol.slide-list li, .slide-list li { margin-bottom: 0.75rem; }
             .ratings-grid { grid-template-columns: 1fr; }
         }
+
+        /* ── html-validate cleanup classes (2026-08): repeated inline values class-ized per DESIGN.md ── */
+        .slide-cite { display: block; text-align: right; font-style: normal; margin-top: 0.5rem; color: #9ca3af; }
+        .slide-text--spaced { margin-bottom: 2rem; }
+        .rating-note { color: #9ca3af; }
     </style>
 </head>
 <body>
     <div class="aurora-glow"></div>
     <particle-field color="#39D353" size="0.008" count="8000"></particle-field>
 
-    <button id="presentation-mode-toggle" title="Toggle Presentation Mode">
+    <button id="presentation-mode-toggle" type="button" title="Toggle Presentation Mode" aria-label="Toggle Presentation Mode">
         <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="is-hidden" viewBox="0 0 16 16">
           <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
         </svg>
@@ -319,7 +324,7 @@
           <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5m5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5"/>
         </svg>
     </button>
-    <button id="fullscreen-toggle" title="Enter Fullscreen" aria-label="Enter Fullscreen">
+    <button id="fullscreen-toggle" type="button" title="Enter Fullscreen" aria-label="Enter Fullscreen">
         <svg id="fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
           <path d="M8 3V5H4V9H2V3H8ZM2 21V15H4V19H8V21H2ZM22 21H16V19H20V15H22V21ZM22 9H20V5H16V3H22V9Z"></path>
         </svg>
@@ -359,7 +364,7 @@
                     <li><span>✓</span><div>It <strong>eliminates the mandatory build step</strong>, leading to a faster, lower-friction developer experience.</div></li>
                 </ul>
                 <blockquote>For applications, which will have a build step anyway, the benefits are less pronounced. For libraries, I strongly urge you to use JSDoc instead.
-                <cite style="display: block; text-align: right; font-style: normal; margin-top: 0.5rem; color: #9CA3AF;">— Rich Harris, Creator of Svelte</cite>
+                <cite class="slide-cite">— Rich Harris, Creator of Svelte</cite>
                 </blockquote>
             </div>
         </story-slide>
@@ -553,7 +558,7 @@ const config = /** @type {const} */ ({
 const myTheme = /** @satisfies {Theme} */ ('dark');
 // `myTheme` has the specific type 'dark'
 
-const palette = /** @satisfies {Record<Theme, string[]>} */ ({
+const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
   light: ['#fff', '#eee'],
   dark: ['#000', '#111'],
 });
@@ -587,7 +592,7 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
     "build": "run-s build:*",
     "check:tsc": "tsc",
     "check:type-coverage": "type-coverage --detail --strict",
-    "check": "run-s clean && run-p check:*",
+    "check": "run-s clean &amp;&amp; run-p check:*",
     "clean:declarations-top": "rm -rf $(find . -maxdepth 1 -type f -name '*.d.ts*' ! -name 'index.d.ts')",
     "clean:declarations-lib": "rm -rf $(find lib -type f -name '*.d.ts*' ! -name '*-types.d.ts')",
     "clean": "run-p clean:*"
@@ -673,22 +678,22 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
             <div class="story-slide-content">
                 <div class="pill">Comparative Analysis</div>
                 <h2 class="slide-title">Rule Configuration Balance</h2>
-                 <p class="slide-text" style="margin-bottom: 2rem;">Balancing the roles of <code>tsc</code> and ESLint for a harmonious workflow.</p>
+                 <p class="slide-text slide-text--spaced">Balancing the roles of <code>tsc</code> and ESLint for a harmonious workflow.</p>
                 <div class="ratings-grid">
                     <div class="rating-item">
                         <div class="rating-label">Type Correctness &amp; Logic</div>
                         <div class="rating-bar-bg"><div class="rating-bar-fg" data-value="100"></div></div>
-                        <small style="color: #9CA3AF;">Handled 100% by <code>tsc</code>.</small>
+                        <small class="rating-note">Handled 100% by <code>tsc</code>.</small>
                     </div>
                     <div class="rating-item">
                         <div class="rating-label">Documentation Presence &amp; Quality</div>
                         <div class="rating-bar-bg"><div class="rating-bar-fg" data-value="90"></div></div>
-                         <small style="color: #9CA3AF;">Handled 90% by ESLint, 10% by manual review.</small>
+                         <small class="rating-note">Handled 90% by ESLint, 10% by manual review.</small>
                     </div>
                      <div class="rating-item">
                         <div class="rating-label">Code &amp; JSDoc Style Consistency</div>
                         <div class="rating-bar-bg"><div class="rating-bar-fg" data-value="100"></div></div>
-                         <small style="color: #9CA3AF;">Handled 100% by ESLint &amp; Prettier.</small>
+                         <small class="rating-note">Handled 100% by ESLint &amp; Prettier.</small>
                     </div>
                 </div>
             </div>

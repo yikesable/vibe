@@ -9,6 +9,11 @@
 # macOS
 .DS_Store
 
+# Playwright artifacts
+test-results/
+playwright-report/
+blob-report/
+
 # Impeccable-owned project files: config and the design sidecar are shared
 # and committed; runtime state, per-run evidence, and local overrides stay
 # local. Mirrors the upstream impeccable .gitignore split.

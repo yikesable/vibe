@@ -12,4 +12,4 @@ hljsCore.registerLanguage('xml', xml);
 hljsCore.registerLanguage('css', css);
 hljsCore.registerLanguage('javascript', javascript);
 
-export default hljsCore;
+export { default } from 'highlight.js/lib/core';

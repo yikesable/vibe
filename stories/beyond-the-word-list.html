@@ -41,6 +41,7 @@
     }
     .c-card:hover { border-color: rgba(255, 0, 169, 0.5); transform: translateY(-5px); }
     .c-card__title { font-family: "Chakra Petch", sans-serif; font-weight: 700; font-size: 1.5rem; margin-bottom: var(--space-2); }
+    .c-card__title--sm { font-size: 1.25rem; }
     .c-card__meta { font-size: 0.875rem; color: var(--text-dim); margin-bottom: var(--space-3); }
     .c-card__text { color: var(--text-muted); }
 
@@ -133,7 +134,7 @@
     <div class="o-wrapper">
       <header class="text-center">
         <h1 class="c-hero__title c-hero__title--compact">
-          Beyond the<br /><span class="highlight">Word List</span>
+          Beyond the<br><span class="highlight">Word List</span>
         </h1>
         <p class="c-hero__tagline">
           A guide for communities seeking to evolve their inclusive language standards for a truly global audience.
@@ -163,7 +164,7 @@
           <p class="c-section__intro-text">
             This guide is for anyone invested in building a welcoming global open source community. We've considered four key perspectives:
           </p>
-          <div class="o-grid o-grid--md-2 o-grid--lg-4" style="gap: var(--space-6)">
+          <div class="o-grid o-grid--md-2 o-grid--lg-4">
             <article class="c-card">
               <h3 class="c-card__title">The Contributor</h3>
               <p class="c-card__meta"><em>e.g., A developer in Germany.</em></p>
@@ -205,7 +206,7 @@
             True inclusion requires understanding that contributors are not single-axis beings. Their experiences are shaped by a complex intersection of
             identities and social constructs. An effective guide must reduce burdens, not add new ones.
           </p>
-          <div class="o-grid o-grid--md-3" style="gap: var(--space-6)">
+          <div class="o-grid o-grid--md-3">
             <article class="c-card">
               <h3 class="c-card__title">The Contributor from a Conflict Zone</h3>
               <p class="c-card__text">
@@ -236,7 +237,7 @@
             To build an effective global strategy, we must first understand the numbers. The data reveals a community that is far more diverse and sensitive to
             interaction quality than many guides assume.
           </p>
-          <div class="o-grid o-grid--md-3" style="gap: var(--space-8)">
+          <div class="o-grid o-grid--md-3" style="--grid-gap: var(--space-8)">
             <div class="c-stat-highlight">
               <div class="c-stat-highlight__number">80%</div>
               <p class="c-stat-highlight__text">
@@ -347,37 +348,37 @@
           <p class="c-section__intro-text">
             A global guide must acknowledge the vast plurality of communication frameworks. Focusing only on US/European norms is insufficient.
           </p>
-          <div class="o-grid o-grid--md-2 o-grid--lg-3 o-grid--xl-5" style="gap: var(--space-6)">
+          <div class="o-grid o-grid--md-2 o-grid--lg-3 o-grid--xl-5">
             <article class="c-card">
-              <h4 class="c-card__title" style="font-size: 1.25rem">East Asia (High-Context)</h4>
+              <h4 class="c-card__title c-card__title--sm">East Asia (High-Context)</h4>
               <p class="c-card__text">
                 Preserving group harmony and "reading the air" is often more important than direct, literal communication. Publicly correcting someone can cause
                 a loss of face.
               </p>
             </article>
             <article class="c-card">
-              <h4 class="c-card__title" style="font-size: 1.25rem">The Arab World (High-Context)</h4>
+              <h4 class="c-card__title c-card__title--sm">The Arab World (High-Context)</h4>
               <p class="c-card__text">
                 The concept of "waji" (face) is critical. Communication is often indirect to protect personal honor and relationships. A blunt style can be
                 perceived as a personal insult.
               </p>
             </article>
             <article class="c-card">
-              <h4 class="c-card__title" style="font-size: 1.25rem">Sub-Saharan Africa (Community-Focused)</h4>
+              <h4 class="c-card__title c-card__title--sm">Sub-Saharan Africa (Community-Focused)</h4>
               <p class="c-card__text">
                 Many cultures are shaped by "Ubuntu" ("I am because we are"). This emphasizes community over the individualistic "rockstar developer"
                 narrative.<sup><a href="#footnote-8" class="c-footnote-link">8</a></sup>
               </p>
             </article>
             <article class="c-card">
-              <h4 class="c-card__title" style="font-size: 1.25rem">India (Hierarchical)</h4>
+              <h4 class="c-card__title c-card__title--sm">India (Hierarchical)</h4>
               <p class="c-card__text">
                 Communication is often high-context and sensitive to hierarchy. Using a senior colleague's first name without invitation can be seen as
                 disrespectful, a nuance beyond simple word choice.
               </p>
             </article>
             <article class="c-card">
-              <h4 class="c-card__title" style="font-size: 1.25rem">Latin America (Relationship-Focused)</h4>
+              <h4 class="c-card__title c-card__title--sm">Latin America (Relationship-Focused)</h4>
               <p class="c-card__text">
                 Building personal relationships (<em>personalismo</em>) is often a prerequisite for professional trust. Jumping straight to business without
                 establishing rapport can be seen as cold.
@@ -393,7 +394,7 @@
               We propose moving from a single, prescriptive list to a more resilient, federated model. This approach fosters true inclusion by focusing on
               principles and providing support, rather than policing language.
             </p>
-            <div class="o-grid o-grid--md-2" style="gap: var(--space-8); max-width: 56rem; margin-inline: auto">
+            <div class="o-grid o-grid--md-2 u-measure-56" style="--grid-gap: var(--space-8)">
               <div>
                 <h3 class="c-framework-box__title">1. Adopt a Principle-Based Core Guide</h3>
                 <p class="c-framework-box__text">
@@ -428,7 +429,7 @@
 
         <section id="sources">
           <h2 class="c-section__title c-section__title--glow">Sources &amp; Reading</h2>
-          <div style="max-width: 56rem; margin-inline: auto; margin-top: var(--space-12)">
+          <div class="u-measure-56 u-mt-12">
             <ol class="c-sources-list">
               <li id="footnote-1" class="c-sources-list__item">
                 This widely cited industry statistic is a synthesis of data from multiple sources, including the global distribution of developers reported in

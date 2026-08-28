@@ -310,6 +310,7 @@
     .swatch {
       width: 36px;
       height: 36px;
+      background: var(--swatch-color);
       border-radius: 50%;
       border: 2px solid transparent;
       cursor: pointer;
@@ -606,14 +607,14 @@
         <p class="hero-hint">Long-press and drag to select — or click to open</p>
       </div>
       <vp-pie-menu id="hero-pie" radius="110">
-        <button class="hero-trigger" aria-label="Open radial menu">Open menu</button>
+        <button class="hero-trigger" type="button" aria-label="Open radial menu">Open menu</button>
         <menu class="vp-pie-menu-items">
-          <li><button data-action="Explore" data-icon="explore">Explore</button></li>
-          <li><button data-action="Playground" data-icon="playground">Playground</button></li>
-          <li><button data-action="Use Cases" data-icon="use-cases">Use Cases</button></li>
-          <li><button data-action="API" data-icon="api">API</button></li>
-          <li><button data-action="Code" data-icon="code">Code</button></li>
-          <li><button data-action="Source" data-icon="source">Source</button></li>
+          <li><button type="button" data-action="Explore" data-icon="explore">Explore</button></li>
+          <li><button type="button" data-action="Playground" data-icon="playground">Playground</button></li>
+          <li><button type="button" data-action="Use Cases" data-icon="use-cases">Use Cases</button></li>
+          <li><button type="button" data-action="API" data-icon="api">API</button></li>
+          <li><button type="button" data-action="Code" data-icon="code">Code</button></li>
+          <li><button type="button" data-action="Source" data-icon="source">Source</button></li>
         </menu>
       </vp-pie-menu>
       <div class="hero-toast" id="hero-toast"></div>
@@ -633,12 +634,12 @@
           <vp-pie-menu id="playground-pie" radius="105">
             <button class="demo-trigger" type="button">Open radial menu</button>
             <menu class="vp-pie-menu-items" id="playground-menu">
-              <li><button data-action="Edit" data-icon="edit">Edit</button></li>
-              <li><button data-action="Copy" data-icon="copy">Copy</button></li>
-              <li><button data-action="Move" data-icon="move">Move</button></li>
-              <li><button data-action="Share" data-icon="share">Share</button></li>
-              <li><button data-action="Delete" data-icon="delete">Delete</button></li>
-              <li><button data-action="Info" data-icon="info">Info</button></li>
+              <li><button type="button" data-action="Edit" data-icon="edit">Edit</button></li>
+              <li><button type="button" data-action="Copy" data-icon="copy">Copy</button></li>
+              <li><button type="button" data-action="Move" data-icon="move">Move</button></li>
+              <li><button type="button" data-action="Share" data-icon="share">Share</button></li>
+              <li><button type="button" data-action="Delete" data-icon="delete">Delete</button></li>
+              <li><button type="button" data-action="Info" data-icon="info">Info</button></li>
             </menu>
           </vp-pie-menu>
           <div class="demo-feedback" id="playground-feedback"></div>
@@ -656,11 +657,12 @@
           <div class="control-group">
             <div class="control-label">Accent</div>
             <div class="swatches" id="swatches">
-              <button class="swatch active" data-color="#f97316" data-rgb="249, 115, 22" style="background: #f97316" aria-label="Orange"></button>
-              <button class="swatch" data-color="#3b82f6" data-rgb="59, 130, 246" style="background: #3b82f6" aria-label="Blue"></button>
-              <button class="swatch" data-color="#22c55e" data-rgb="34, 197, 94" style="background: #22c55e" aria-label="Green"></button>
-              <button class="swatch" data-color="#ec4899" data-rgb="236, 72, 153" style="background: #ec4899" aria-label="Pink"></button>
-              <button class="swatch" data-color="#a78bfa" data-rgb="167, 139, 250" style="background: #a78bfa" aria-label="Violet"></button>
+              <button class="swatch active" type="button" data-color="#f97316" data-rgb="249, 115, 22" style="--swatch-color: #f97316" aria-label="Orange">
+              </button>
+              <button class="swatch" type="button" data-color="#3b82f6" data-rgb="59, 130, 246" style="--swatch-color: #3b82f6" aria-label="Blue"></button>
+              <button class="swatch" type="button" data-color="#22c55e" data-rgb="34, 197, 94" style="--swatch-color: #22c55e" aria-label="Green"></button>
+              <button class="swatch" type="button" data-color="#ec4899" data-rgb="236, 72, 153" style="--swatch-color: #ec4899" aria-label="Pink"></button>
+              <button class="swatch" type="button" data-color="#a78bfa" data-rgb="167, 139, 250" style="--swatch-color: #a78bfa" aria-label="Violet"></button>
               <input type="color" class="color-input" id="color-picker" value="#f97316" aria-label="Custom color">
             </div>
           </div>
@@ -668,11 +670,11 @@
           <div class="control-group">
             <div class="control-label">Items</div>
             <div class="count-buttons" id="count-buttons">
-              <button class="count-btn" data-count="3">3</button>
-              <button class="count-btn" data-count="4">4</button>
-              <button class="count-btn" data-count="5">5</button>
-              <button class="count-btn active" data-count="6">6</button>
-              <button class="count-btn" data-count="8">8</button>
+              <button class="count-btn" type="button" data-count="3">3</button>
+              <button class="count-btn" type="button" data-count="4">4</button>
+              <button class="count-btn" type="button" data-count="5">5</button>
+              <button class="count-btn active" type="button" data-count="6">6</button>
+              <button class="count-btn" type="button" data-count="8">8</button>
             </div>
           </div>
         </div>
@@ -697,12 +699,12 @@
           <vp-pie-menu radius="100">
             <button class="demo-trigger" type="button">File</button>
             <menu class="vp-pie-menu-items">
-              <li><button data-action="New" data-icon="new">New</button></li>
-              <li><button data-action="Open" data-icon="open">Open</button></li>
-              <li><button data-action="Save" data-icon="save">Save</button></li>
-              <li><button data-action="Export" data-icon="export">Export</button></li>
-              <li><button data-action="Print" data-icon="print">Print</button></li>
-              <li><button data-action="Share" data-icon="share">Share</button></li>
+              <li><button type="button" data-action="New" data-icon="new">New</button></li>
+              <li><button type="button" data-action="Open" data-icon="open">Open</button></li>
+              <li><button type="button" data-action="Save" data-icon="save">Save</button></li>
+              <li><button type="button" data-action="Export" data-icon="export">Export</button></li>
+              <li><button type="button" data-action="Print" data-icon="print">Print</button></li>
+              <li><button type="button" data-action="Share" data-icon="share">Share</button></li>
             </menu>
           </vp-pie-menu>
           <div class="use-case-feedback" id="uc-file"></div>
@@ -713,12 +715,12 @@
           <vp-pie-menu radius="100">
             <button class="demo-trigger" type="button">Play</button>
             <menu class="vp-pie-menu-items">
-              <li><button data-action="Play" data-icon="play">Play</button></li>
-              <li><button data-action="Pause" data-icon="pause">Pause</button></li>
-              <li><button data-action="Next" data-icon="next">Next</button></li>
-              <li><button data-action="Previous" data-icon="previous">Previous</button></li>
-              <li><button data-action="Volume" data-icon="volume">Volume</button></li>
-              <li><button data-action="Fullscreen" data-icon="fullscreen">Fullscreen</button></li>
+              <li><button type="button" data-action="Play" data-icon="play">Play</button></li>
+              <li><button type="button" data-action="Pause" data-icon="pause">Pause</button></li>
+              <li><button type="button" data-action="Next" data-icon="next">Next</button></li>
+              <li><button type="button" data-action="Previous" data-icon="previous">Previous</button></li>
+              <li><button type="button" data-action="Volume" data-icon="volume">Volume</button></li>
+              <li><button type="button" data-action="Fullscreen" data-icon="fullscreen">Fullscreen</button></li>
             </menu>
           </vp-pie-menu>
           <div class="use-case-feedback" id="uc-media"></div>
@@ -729,11 +731,11 @@
           <vp-pie-menu radius="95">
             <button class="demo-trigger" type="button">Navigate</button>
             <menu class="vp-pie-menu-items">
-              <li><button data-action="Home" data-icon="home">Home</button></li>
-              <li><button data-action="About" data-icon="about">About</button></li>
-              <li><button data-action="Blog" data-icon="blog">Blog</button></li>
-              <li><button data-action="Projects" data-icon="projects">Projects</button></li>
-              <li><button data-action="Contact" data-icon="contact">Contact</button></li>
+              <li><button type="button" data-action="Home" data-icon="home">Home</button></li>
+              <li><button type="button" data-action="About" data-icon="about">About</button></li>
+              <li><button type="button" data-action="Blog" data-icon="blog">Blog</button></li>
+              <li><button type="button" data-action="Projects" data-icon="projects">Projects</button></li>
+              <li><button type="button" data-action="Contact" data-icon="contact">Contact</button></li>
             </menu>
           </vp-pie-menu>
           <div class="use-case-feedback" id="uc-nav"></div>
@@ -763,14 +765,14 @@
         </p>
         <div class="overdrive-menu-wrap">
           <vp-pie-menu id="overdrive-pie" radius="120">
-            <button class="overdrive-trigger">Activate</button>
+            <button class="overdrive-trigger" type="button">Activate</button>
             <menu class="vp-pie-menu-items">
-              <li><button data-action="Create" data-icon="star">Create</button></li>
-              <li><button data-action="Destroy" data-icon="delete">Destroy</button></li>
-              <li><button data-action="Transform" data-icon="settings">Transform</button></li>
-              <li><button data-action="Analyze" data-icon="search">Analyze</button></li>
-              <li><button data-action="Synthesize" data-icon="share">Synthesize</button></li>
-              <li><button data-action="Transcend" data-icon="heart">Transcend</button></li>
+              <li><button type="button" data-action="Create" data-icon="star">Create</button></li>
+              <li><button type="button" data-action="Destroy" data-icon="delete">Destroy</button></li>
+              <li><button type="button" data-action="Transform" data-icon="settings">Transform</button></li>
+              <li><button type="button" data-action="Analyze" data-icon="search">Analyze</button></li>
+              <li><button type="button" data-action="Synthesize" data-icon="share">Synthesize</button></li>
+              <li><button type="button" data-action="Transcend" data-icon="heart">Transcend</button></li>
             </menu>
           </vp-pie-menu>
         </div>
@@ -911,7 +913,7 @@
         <div class="code-card">
           <div class="code-header">
             <span>Basic usage</span>
-            <button class="copy-btn" data-copy="code-basic">Copy</button>
+            <button class="copy-btn" type="button" data-copy="code-basic">Copy</button>
           </div>
           <pre id="code-basic"><span class="tag">&lt;vp-pie-menu</span> <span class="attr">radius</span>=<span class="str">"105"</span><span class="tag">&gt;</span>
   <span class="tag">&lt;button&gt;</span>Open menu<span class="tag">&lt;/button&gt;</span>
@@ -925,7 +927,7 @@
         <div class="code-card">
           <div class="code-header">
             <span>Event handling</span>
-            <button class="copy-btn" data-copy="code-event">Copy</button>
+            <button class="copy-btn" type="button" data-copy="code-event">Copy</button>
           </div>
           <pre id="code-event"><span class="comment">// Listen for selections</span>
 document.querySelector(<span class="str">'vp-pie-menu'</span>)
@@ -940,7 +942,7 @@ document.querySelector(<span class="str">'vp-pie-menu'</span>)
         <div class="code-card full-width">
           <div class="code-header">
             <span>Theming</span>
-            <button class="copy-btn" data-copy="code-theme">Copy</button>
+            <button class="copy-btn" type="button" data-copy="code-theme">Copy</button>
           </div>
           <pre id="code-theme"><span class="comment">/* Override accent and colors via CSS custom properties */</span>
 <span class="tag">vp-pie-menu</span> {
@@ -1323,6 +1325,7 @@ document.querySelector(<span class="str">'vp-pie-menu'</span>)
 
                     // Radial item button
                     const itemBtn = document.createElement('button');
+                    itemBtn.type = 'button';
                     itemBtn.style.cssText = `position:absolute;transform:translate(-50%,-50%);left:${x}px;top:${y}px;padding:0.6rem 1rem;border-radius:12px;background:${panelBg};border:1px solid ${panelBorder};color:${textColor};font-size:0.8rem;font-weight:500;font-family:inherit;display:flex;align-items:center;gap:0.5rem;white-space:nowrap;opacity:0;cursor:pointer;user-select:none;-webkit-user-select:none;box-shadow:0 8px 25px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.05);transition:transform 0.2s ease,border-color 0.2s ease,background 0.2s ease;`;;;
                     itemBtn.classList.add('vp-pie-item-anim');
                     itemBtn.style.setProperty('--vp-pie-delay', `${index * 45}ms`);
@@ -1487,6 +1490,7 @@ document.querySelector(<span class="str">'vp-pie-menu'</span>)
                     const item = demoItems[i];
                     const li = document.createElement('li');
                     const btn = document.createElement('button');
+                    btn.type = 'button';
                     btn.setAttribute('data-action', item.action);
                     btn.setAttribute('data-icon', item.icon);
                     btn.textContent = item.action;

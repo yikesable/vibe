@@ -2,7 +2,7 @@
 
 /** @type {import('stylelint').Config} */
 export default {
-  extends: ['stylelint-config-standard'],
+  'extends': ['stylelint-config-standard'],
 
   rules: {
     // ── Allow BEM naming (c-bento__item--wide, u-text-center, o-grid--md-2) ──

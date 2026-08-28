@@ -8,4 +8,4 @@ import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-bash';
 
-export default (typeof window !== 'undefined' ? window.Prism : null);
+export default (typeof globalThis !== 'undefined' ? globalThis.Prism : undefined);

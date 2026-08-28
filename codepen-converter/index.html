@@ -17,7 +17,7 @@
     >
 
     <!-- View Transitions -->
-    <meta name="view-transition" content="same-origin" />
+    <meta name="view-transition" content="same-origin">
 
     <!-- Dependencies -->
     <link rel="stylesheet" href="/styles/vibe.css">
@@ -254,12 +254,19 @@
       }
       .c-converter-dropzone:hover, .c-converter-paste-btn:hover, .c-converter-code__copy:hover { transform: none; }
     }
+    /* ── html-validate cleanup classes (2026-08): repeated inline values class-ized per DESIGN.md ── */
+    .c-converter-page { padding-block-start: var(--space-16); padding-block-end: var(--space-24); }
+    .c-converter-paste-row { gap: var(--space-4); margin-bottom: var(--space-4); }
+    .c-converter-paste-btn__title, .c-converter-paste-btn__hint { display: block; }
+    .c-converter-box__label--sm { font-size: 1rem; }
+    .c-converter-warning--stacked { margin-top: var(--space-2); }
+    .c-converter-footer { margin-top: var(--space-8); }
     </style>
   </head>
   <body>
     <kinetic-background></kinetic-background>
 
-    <div class="o-wrapper" style="padding-block-start: var(--space-16); padding-block-end: var(--space-24)">
+    <div class="o-wrapper c-converter-page">
       <header class="c-converter-hero">
         <h1 class="c-converter-hero__title">CodePen Converter</h1>
         <p class="c-converter-hero__tagline">
@@ -269,15 +276,15 @@
 
       <div class="c-converter-box">
         <label class="c-converter-box__label">Provide Your Source HTML</label>
-        <div class="o-grid o-grid--md-2" style="gap: var(--space-4); margin-bottom: var(--space-4)">
+        <div class="o-grid o-grid--md-2 c-converter-paste-row">
           <div id="file-drop-area" class="c-converter-dropzone">
             <p class="c-converter-dropzone__title">Drag &amp; Drop File</p>
             <p class="c-converter-dropzone__hint">or click to select</p>
             <input type="file" id="file-input" class="is-hidden" accept=".html">
           </div>
-          <button id="paste-btn" class="c-converter-paste-btn">
-            <p class="c-converter-paste-btn__title">Paste from Clipboard</p>
-            <p class="c-converter-paste-btn__hint">requires browser permission</p>
+          <button id="paste-btn" class="c-converter-paste-btn" type="button">
+            <span class="c-converter-paste-btn__title">Paste from Clipboard</span>
+            <span class="c-converter-paste-btn__hint">requires browser permission</span>
           </button>
         </div>
         <div class="c-converter-divider">... or edit directly below ...</div>
@@ -286,14 +293,14 @@
           <button
             id="processBtn"
             class="c-cta"
-            style="display: block; width: 100%; padding: 0.75rem 1rem; text-transform: uppercase; letter-spacing: 0.05em"
+            type="button"
           >
             Convert
           </button>
         </div>
       </div>
 
-      <div id="results" class="is-hidden o-stack" style="--stack-space: var(--space-8); margin-top: var(--space-12)">
+      <div id="results" class="is-hidden o-stack u-mt-12" style="--stack-space: var(--space-8)">
         <section class="c-converter-step">
           <div class="c-converter-box">
             <h2 class="c-converter-step__title">Step 1: Pen Settings</h2>
@@ -301,21 +308,21 @@
 
             <div class="o-stack" style="--stack-space: var(--space-6)">
               <div class="c-converter-panel">
-                <h3 class="c-converter-box__label" style="font-size: 1rem">Add Class(es) to &lt;html&gt;</h3>
+                <h3 class="c-converter-box__label c-converter-box__label--sm">Add Class(es) to &lt;html&gt;</h3>
                 <div id="html-classes-container"></div>
-                <div id="body-class-warning" class="c-converter-warning is-hidden" style="margin-top: var(--space-2)">
+                <div id="body-class-warning" class="c-converter-warning is-hidden c-converter-warning--stacked">
                   <strong>Warning:</strong> Classes from the <code>&lt;body&gt;</code> tag were merged here. In CodePen,
                   add all classes to the <code>&lt;html&gt;</code> settings for them to apply correctly.
                 </div>
               </div>
 
-              <div class="o-grid o-grid--md-2" style="gap: var(--space-8) var(--space-6)">
+              <div class="o-grid o-grid--md-2" style="--grid-gap: var(--space-8) var(--space-6)">
                 <div class="c-converter-panel">
-                  <h3 class="c-converter-box__label" style="font-size: 1rem">CSS (Stuff for &lt;head&gt;)</h3>
+                  <h3 class="c-converter-box__label c-converter-box__label--sm">CSS (Stuff for &lt;head&gt;)</h3>
                   <div id="css-links-container" class="o-stack" style="--stack-space: var(--space-2)"></div>
                 </div>
                 <div class="c-converter-panel">
-                  <h3 class="c-converter-box__label" style="font-size: 1rem">JS (External Scripts)</h3>
+                  <h3 class="c-converter-box__label c-converter-box__label--sm">JS (External Scripts)</h3>
                   <div id="js-links-container" class="o-stack" style="--stack-space: var(--space-2)"></div>
                 </div>
               </div>
@@ -329,27 +336,27 @@
             <p class="c-converter-step__desc">Paste each block into the corresponding panel in your Pen.</p>
             <div class="o-stack" style="--stack-space: var(--space-8)">
               <div class="c-converter-panel">
-                <h3 class="c-converter-box__label" style="font-size: 1rem">HTML Panel</h3>
+                <h3 class="c-converter-box__label c-converter-box__label--sm">HTML Panel</h3>
                 <div class="c-converter-code__wrapper">
                   <pre class="c-converter-code is-hidden"><code id="html-output" class="language-html"></code></pre>
                   <div id="html-empty-message" class="c-converter-code__empty is-hidden"></div>
-                  <button class="c-converter-code__copy is-hidden" data-target="html-output">Copy</button>
+                  <button class="c-converter-code__copy is-hidden" data-target="html-output" type="button">Copy</button>
                 </div>
               </div>
               <div class="c-converter-panel">
-                <h3 class="c-converter-box__label" style="font-size: 1rem">CSS Panel</h3>
+                <h3 class="c-converter-box__label c-converter-box__label--sm">CSS Panel</h3>
                 <div class="c-converter-code__wrapper">
                   <pre class="c-converter-code is-hidden"><code id="css-output" class="language-css"></code></pre>
                   <div id="css-empty-message" class="c-converter-code__empty is-hidden"></div>
-                  <button class="c-converter-code__copy is-hidden" data-target="css-output">Copy</button>
+                  <button class="c-converter-code__copy is-hidden" data-target="css-output" type="button">Copy</button>
                 </div>
               </div>
               <div class="c-converter-panel">
-                <h3 class="c-converter-box__label" style="font-size: 1rem">JavaScript Panel</h3>
+                <h3 class="c-converter-box__label c-converter-box__label--sm">JavaScript Panel</h3>
                 <div class="c-converter-code__wrapper">
                   <pre class="c-converter-code is-hidden"><code id="js-output" class="language-javascript"></code></pre>
                   <div id="js-empty-message" class="c-converter-code__empty is-hidden"></div>
-                  <button class="c-converter-code__copy is-hidden" data-target="js-output">Copy</button>
+                  <button class="c-converter-code__copy is-hidden" data-target="js-output" type="button">Copy</button>
                 </div>
               </div>
             </div>
@@ -366,7 +373,7 @@
               <button
                 id="open-in-codepen"
                 class="c-cta"
-                style="display: block; width: 100%; padding: 0.75rem 1rem; text-transform: uppercase; letter-spacing: 0.05em"
+                type="button"
               >
                 Open in CodePen
               </button>
@@ -375,13 +382,14 @@
         </section>
       </div>
 
-      <footer class="c-footer" style="margin-top: var(--space-8)">
+      <footer class="c-footer c-converter-footer">
         <p class="c-footer__text">&copy; 2025 yikesable.dev &bull; All projects are open-source.</p>
       </footer>
     </div>
 
     <form id="codepen-form" action="https://codepen.io/pen/define" method="POST" target="_blank" class="is-hidden">
       <input type="hidden" name="data" id="codepen-data">
+      <button type="submit" class="is-hidden">Submit to CodePen</button>
     </form>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.min.js"></script>
