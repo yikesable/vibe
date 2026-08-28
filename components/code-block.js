@@ -1,14 +1,22 @@
 import hljs from '../vendor/highlight.bundle.js';
 
 class CodeBlock extends HTMLElement {
-  constructor () { super(); this.attachShadow({ mode: 'open' }); }
+  constructor () { super(); this.shadow = this.attachShadow({ mode: 'open' }); }
+
+  /**
+   * Strip the common indentation of a code string.
+   * @param {string} codeString — raw template or pre content.
+   * @returns {string}
+   */
   reIndent (codeString) {
     if (!codeString) return '';
     const lines = codeString.split('\n');
     if (lines.length <= 1) return codeString.trim();
     const firstLineWithContent = lines.find(line => line.trim() !== '');
     if (!firstLineWithContent) return '';
-    const minIndent = firstLineWithContent.match(/^\s*/)[0].length;
+    const indentMatch = firstLineWithContent.match(/^\s*/);
+    if (indentMatch === null) return '';
+    const minIndent = indentMatch[0].length;
     return lines.map(line => line.length >= minIndent ? line.slice(Math.max(0, minIndent)) : line).join('\n').trim();
   }
 
@@ -20,11 +28,11 @@ class CodeBlock extends HTMLElement {
     } else {
       const preElement = this.querySelector('pre');
       if (!preElement) return;
-      code = this.reIndent(preElement.textContent);
+      code = this.reIndent(preElement.textContent ?? '');
     }
     if (!code) return;
 
-    this.shadowRoot.innerHTML = `
+    this.shadow.innerHTML = `
             <style>
                 :host { display: block; position: relative; }
                 .code-block { font-family: 'Inter', monospace; background-color: #160f29; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: auto; }
@@ -41,12 +49,18 @@ class CodeBlock extends HTMLElement {
             </div>
             <button class="copy-btn">Copy</button>
         `;
-    const codeContainer = this.shadowRoot.querySelector('code');
+    const codeContainer = this.shadow.querySelector('code');
+    if (codeContainer === null) {
+      return;
+    }
     codeContainer.textContent = code;
     hljs.highlightElement(codeContainer);
 
-    const btn = this.shadowRoot.querySelector('.copy-btn');
-    btn?.addEventListener('click', async () => {
+    const btn = this.shadow.querySelector('.copy-btn');
+    if (btn === null) {
+      return;
+    }
+    btn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(code);
         const originalText = btn.textContent;

@@ -26,6 +26,11 @@ const shared = {
   minify: true,
   target: 'es2020',
   legalComments: 'external',   // preserve license notices as .LEGAL.txt
+  // The bundles are minified third-party code — never feed them to checkJs.
+  // The banner keeps tsc silent when components import them (check:types
+  // runs in CI via `npm run check`). Not applied to the static copies
+  // (three.min.js, CSS): none are imported by components.
+  banner: { js: '// @ts-nocheck — generated vendor bundle (see scripts/build-vendor.mjs)' },
 };
 
 // ---------------------------------------------------------------------------

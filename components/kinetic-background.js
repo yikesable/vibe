@@ -24,7 +24,12 @@ const EASE_FACTOR = 0.05; // parallax lag ≈ a third of a second
 const MAX_PIXEL_RATIO = 2; // cap for crisp specks on Retina without GPU burn
 const FALLBACK_COLOR = 0xFF00A9; // design token --pop-pink, demoted to fallback
 
-/** Lazily cached module promise — reconnects reuse the loaded bundle. */
+/**
+ * Lazily cached module promise — reconnects reuse the loaded bundle. The
+ * vendored bundle ships untyped (see build-vendor's @ts-nocheck banner), so
+ * the module shape is opaque to tsc.
+ * @type {Promise<typeof import('../vendor/three.module.bundle.js')> | undefined}
+ */
 let threeModulePromise;
 
 function loadThree () {
@@ -66,8 +71,10 @@ function loadThree () {
 class KineticBackground extends HTMLElement {
   constructor () {
     super();
-    // Encapsulate the component's styles and markup.
-    this.attachShadow({ mode: 'open' });
+    // Encapsulate the component's styles and markup. Keep a class reference:
+    // the DOM-typed `shadowRoot` getter is `ShadowRoot | null`.
+    this.shadow = this.attachShadow({ mode: 'open' });
+    /** @type {import('./kinetic-background-state.js').LifecycleStateValue} */
     this.lifecycle = LifecycleState.Disconnected;
     this.generation = 0; // bumped on connect and disconnect to orphan async work
     this.animationFrameId = undefined;
@@ -75,7 +82,9 @@ class KineticBackground extends HTMLElement {
     this.renderer = undefined;
     this.geometry = undefined;
     this.material = undefined;
+    /** @type {(() => void) | undefined} */
     this.onWindowResize = undefined;
+    /** @type {((event: MouseEvent) => void) | undefined} */
     this.onDocumentMouseMove = undefined;
   }
 
@@ -105,7 +114,7 @@ class KineticBackground extends HTMLElement {
     const canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
     this.canvas = canvas;
-    this.shadowRoot.append(canvas);
+    this.shadow.append(canvas);
 
     this.motion = motionPreferenceFrom(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)'));
     // Asynchronous: the Three.js bundle loads lazily. The generation token
@@ -155,7 +164,7 @@ class KineticBackground extends HTMLElement {
    * down, keeping the element decorative (transparent canvas, the night shows
    * through). The console note is the trail.
    *
-   * @param {Error | undefined} [err]
+   * @param {unknown} [err] (the thrown value; not assumed to be an `Error`)
    */
   fail (err) {
     this.lifecycle = nextLifecycleState(this.lifecycle, 'fail');
@@ -173,7 +182,7 @@ class KineticBackground extends HTMLElement {
    * @returns {number}
    */
   resolveColor () {
-    const rawColor = this.dataset.color;
+    const rawColor = this.dataset['color'];
     const attribute = parseHexColor(rawColor);
     if (attribute !== null) {
       return attribute;
@@ -202,6 +211,11 @@ class KineticBackground extends HTMLElement {
    */
   async initThree (generation) {
     try {
+      // The vendored bundle is minified third-party code; tsc's structural
+      // inference of its exports is garbage (mangled class shapes). The cast
+      // at this one boundary is the honest declaration of an untyped
+      // dependency — everything downstream of it is intentionally untyped.
+      const three = /** @type {any} */ (await loadThree());
       const {
         AdditiveBlending,
         BufferAttribute,
@@ -212,7 +226,7 @@ class KineticBackground extends HTMLElement {
         Scene,
         Vector2,
         WebGLRenderer,
-      } = await loadThree();
+      } = three;
 
       // Detached (or reconnected) while the bundle was loading — start over.
       if (generation !== this.generation || this.canvas === undefined) {
@@ -237,6 +251,7 @@ class KineticBackground extends HTMLElement {
       // same fail path as any other error — never silently freeze a
       // `running` element. The listener lives on the canvas, so teardown's
       // canvas removal collects it.
+      /** @type {(event: Event) => void} */
       const onContextLost = (event) => {
         event.preventDefault();
         this.fail(new Error('WebGL context lost'));

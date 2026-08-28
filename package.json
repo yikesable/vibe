@@ -31,8 +31,9 @@
     "check:js": "npm run lint:js",
     "check:html": "npm run lint:html",
     "check:test": "npm test",
+    "check:types": "tsc --noEmit",
     "check:vendor": "npm run build:vendor && git diff --exit-code vendor/",
-    "check": "run-p check:*",
+    "check": "npm run check:vendor && run-p check:fmt check:css check:html check:js check:test check:types",
     "fmt": "dprint fmt",
     "fmt:check": "dprint check"
   },

@@ -1,9 +1,20 @@
 /**
  * Pure, DOM-free state helpers for `<kinetic-background>`.
  *
- * Everything in this module is deterministic given its inputs — no global,
- * no DOM, no Three.js — so the component's lifecycle rules and math are
- * unit-testable with `node --test`.
+ * Everything in this module is side-effect-free; every pure helper is
+ * deterministic given its inputs. `createParticlePositions` defaults to the
+ * `Math.random` global unless a random source is injected (the component
+ * relies on the default), which is the one place the module touches a
+ * global. No DOM, no Three.js — so the component's lifecycle rules and math
+ * are unit-testable with `node --test`.
+ *
+ * The string-literal unions below type the module's contract values, so tsc
+ * rejects a bogus state, motion preference, or event at compile time —
+ * enforced by `check:types`, part of `npm run check` (CI).
+ *
+ * @typedef {'reduced' | 'full'} MotionPreferenceValue
+ * @typedef {'disconnected' | 'connecting' | 'running' | 'static'} LifecycleStateValue
+ * @typedef {'connect' | 'ready' | 'disconnect' | 'fail'} LifecycleEventValue
  */
 
 /** The user's motion preference, resolved once at connect time. */
@@ -42,10 +53,10 @@ export const LifecycleState = Object.freeze({
  * - `fail` — initialization threw (WebGL unavailable, bundle load failed);
  *   always returns `Disconnected` so a later connect retries.
  *
- * @param {string} current — the current `LifecycleState`.
- * @param {'connect'|'ready'|'disconnect'|'fail'} event
- * @param {string} [motion] — a `MotionPreference` value, used by `ready`.
- * @returns {string} the next `LifecycleState`.
+ * @param {LifecycleStateValue} current — the current lifecycle state.
+ * @param {LifecycleEventValue} event
+ * @param {MotionPreferenceValue} [motion] (used by `ready`)
+ * @returns {LifecycleStateValue} the next lifecycle state.
  */
 export function nextLifecycleState (current, event, motion = MotionPreference.Full) {
   switch (event) {
@@ -68,7 +79,7 @@ export function nextLifecycleState (current, event, motion = MotionPreference.Fu
  * (no `matchMedia`) default to full motion — never crash on capability.
  *
  * @param {{ matches: boolean } | undefined} mediaQueryList
- * @returns {string} a `MotionPreference` value.
+ * @returns {MotionPreferenceValue} a motion preference.
  */
 export function motionPreferenceFrom (mediaQueryList) {
   return mediaQueryList?.matches ? MotionPreference.Reduced : MotionPreference.Full;
@@ -124,7 +135,7 @@ export function starRotation (now) {
  *
  * @param {number} count
  * @param {number} spread — cube side length.
- * @param {() => number} [random] — uniform [0, 1); defaults to `Math.random`.
+ * @param {() => number} [random] (must return a value in [0, 1); defaults to `Math.random`)
  * @returns {Float32Array} length `count * 3`.
  */
 export function createParticlePositions (count, spread, random = Math.random) {
