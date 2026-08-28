@@ -2,21 +2,20 @@
    All fonts are served from this directory. See LICENSE-fonts.md for
    license information and provenance. */
 
-/* Inter — variable font (weight 100–900), unmodified from rsms.me/inter.
-   The canonical variable font is used without subsetting. */
+/* Inter — variable font (weight 100–900), subsetted to Latin from rsms.me/inter. */
 @font-face { font-family: "Inter"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("Inter-Variable.woff2") format("woff2"); }
 
-/* Chakra Petch — Bold 700 (static, Latin subset) */
+/* Chakra Petch — Bold 700 (static, Latin subset from upstream TTF) */
 @font-face { font-family: "Chakra Petch"; font-style: normal; font-weight: 700; font-display: swap; src: url("ChakraPetch-Bold.woff2") format("woff2"); }
 
-/* Special Elite — Regular 400 (static, Latin subset) */
+/* Special Elite — Regular 400 (static, Latin subset from upstream TTF) */
 @font-face { font-family: "Special Elite"; font-style: normal; font-weight: 400; font-display: swap; src: url("SpecialElite-Regular.woff2") format("woff2"); }
 
-/* Roboto Mono — variable font (weight 100–700, Latin subset) */
+/* Roboto Mono — variable font (weight 100–700, Latin subset from upstream TTF) */
 @font-face { font-family: "Roboto Mono"; font-style: normal; font-weight: 100 700; font-display: swap; src: url("RobotoMono.woff2") format("woff2"); }
 
-/* Oswald — Bold 700 (static, Latin subset) */
-@font-face { font-family: "Oswald"; font-style: normal; font-weight: 700; font-display: swap; src: url("Oswald-Bold.woff2") format("woff2"); }
+/* Oswald — variable font (weight 200–700, Latin subset from upstream TTF) */
+@font-face { font-family: "Oswald"; font-style: normal; font-weight: 200 700; font-display: swap; src: url("Oswald-Bold.woff2") format("woff2"); }
 
-/* Roboto Condensed — variable font (weight 100–900, Latin subset) */
+/* Roboto Condensed — variable font (weight 100–900, Latin subset from upstream TTF) */
 @font-face { font-family: "Roboto Condensed"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("RobotoCondensed.woff2") format("woff2"); }

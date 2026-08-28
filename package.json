@@ -18,6 +18,7 @@
   "scripts": {
     "dev": "browser-sync",
     "build:vendor": "node scripts/build-vendor.mjs",
+    "fonts": "node scripts/download-fonts.mjs",
     "lint:css": "stylelint 'styles/**/*.css'",
     "lint:css:fix": "stylelint 'styles/**/*.css' --fix",
     "fmt": "dprint fmt",
@@ -32,6 +33,7 @@
     "eslint": "^9.29.0",
     "stylelint": "^17.14.1",
     "stylelint-config-standard": "^40.0.0",
+    "subset-font": "^2.5.0",
     "typescript": "~5.8.3"
   },
   "dependencies": {
