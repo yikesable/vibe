@@ -5,3 +5,24 @@
 /.env
 /.nyc_output
 /junit-report.xml
+
+# macOS
+.DS_Store
+
+# Impeccable-owned project files: config and the design sidecar are shared
+# and committed; runtime state, per-run evidence, and local overrides stay
+# local. Mirrors the upstream impeccable .gitignore split.
+/.impeccable/config.local.json
+/.impeccable/history/
+/.impeccable/live/
+/.impeccable/mocks/
+/.impeccable/provider-smoke/
+/.impeccable/questions/
+/.impeccable/review/
+# Per-run critique snapshots are local artifacts; ignore.md carries shared
+# deferrals and is explicitly re-included.
+/.impeccable/critique/*
+!/.impeccable/critique/ignore.md
+# Ephemeral hook cache/state (also inside generated harness skill dirs)
+**/.impeccable/hook.cache.json
+**/.impeccable/hook.pending.json
