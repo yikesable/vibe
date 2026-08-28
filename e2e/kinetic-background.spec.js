@@ -123,11 +123,22 @@ test.describe('kinetic-background on index.html', () => {
     const staticDraws = await glDrawCalls(page);
     expect(staticDraws).toBeGreaterThan(0);
 
-    // A resize re-renders exactly one fresh frame; the state must not leave
-    // 'static' and no animation loop may start.
+    // "Never animates" is the point of reduced motion — prove it: draw
+    // calls stay completely flat (no loop) and no rAF is scheduled.
+    const flatSample = await glDrawCalls(page);
+    await page.waitForTimeout(350);
+    await expect.poll(() => glDrawCalls(page)).toBe(flatSample);
+    const rafId = await page.evaluate(() => document.querySelector('kinetic-background').animationFrameId);
+    expect(rafId).toBeUndefined();
+
+    // A resize re-renders EXACTLY one fresh frame (each render is exactly
+    // one drawArrays for the single Points object); the state must not
+    // leave 'static' and no loop may start from the resize.
     await page.setViewportSize({ width: 800, height: 600 });
     await expect.poll(() => lifecycle(page)).toBe('static');
-    await expect.poll(() => glDrawCalls(page)).toBeGreaterThan(staticDraws);
+    await expect.poll(() => glDrawCalls(page)).toBe(staticDraws + 1);
+    await page.waitForTimeout(300);
+    await expect.poll(() => glDrawCalls(page)).toBe(staticDraws + 1);
     expect(errors).toEqual([]);
   });
 
@@ -237,6 +248,211 @@ test.describe('kinetic-background on index.html', () => {
     await expect.poll(() => lifecycle(page)).toBe('running');
     await expect.poll(() => canvasCount(page)).toBe(1);
     await expect.poll(() => glDrawCalls(page)).toBeGreaterThan(drawsBeforeReconnect);
+    expect(errors).toEqual([]);
+  });
+
+  test('detaching mid-load orphans the stale initialization (success path)', async ({ page }) => {
+    const pageErrors = [];
+    page.on('pageerror', (err) => pageErrors.push(`pageerror: ${err.message}`));
+    await spyOnGlDraws(page);
+
+    // Hold the bundle fetch open so the detach lands while the import is in
+    // flight — the deterministic way to exercise the success-path guard
+    // (`generation !== this.generation` after the awaited load).
+    await page.route('**/vendor/three.module.bundle.js', async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      await route.fulfill({ path: 'vendor/three.module.bundle.js' });
+    });
+    await page.goto('/');
+    await expect.poll(() => lifecycle(page)).toBe('connecting');
+
+    await page.evaluate(() => {
+      globalThis.__kb = document.querySelector('kinetic-background');
+      globalThis.__kb.remove();
+    });
+    await expect.poll(() => page.evaluate(() => globalThis.__kb?.lifecycle)).toBe('disconnected');
+    await expect.poll(() => page.evaluate(() => globalThis.__kb?.shadowRoot?.querySelectorAll('canvas').length ?? -1)).toBe(0);
+
+    // The import resolves AFTER the teardown: the stale init must not create
+    // a renderer, start a loop, or attach listeners (a zombie would draw +
+    // accumulate handlers for the page lifetime).
+    await page.waitForTimeout(500);
+    await expect.poll(() => glDrawCalls(page)).toBe(0);
+    await expect.poll(() => page.evaluate(() => globalThis.__kb?.lifecycle)).toBe('disconnected');
+
+    // No leftover listeners: resize and mousemove after detach must not
+    // reach a renderer either.
+    await page.evaluate(() => {
+      window.dispatchEvent(new Event('resize'));
+      document.dispatchEvent(new Event('mousemove'));
+    });
+    await page.waitForTimeout(150);
+    await expect.poll(() => glDrawCalls(page)).toBe(0);
+    expect(pageErrors).toEqual([]);
+  });
+
+  test('a stale load failure does not tear down the live reconnect', async ({ page }) => {
+    const pageErrors = [];
+    page.on('pageerror', (err) => pageErrors.push(`pageerror: ${err.message}`));
+    const warns = [];
+    page.on('console', (msg) => {
+      if (msg.type() === 'warning') {
+        warns.push(msg.text());
+      }
+    });
+    await spyOnGlDraws(page);
+
+    // Hold the fetch, detach and re-append the same host, then abort: both
+    // attempts share one in-flight module fetch, so a single rejection fans
+    // out to both catches — the stale one must stay silent while the live
+    // one degrades loudly exactly once.
+    await page.route('**/vendor/three.module.bundle.js', async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      await route.abort();
+    });
+    await page.goto('/');
+    await expect.poll(() => lifecycle(page)).toBe('connecting');
+
+    await page.evaluate(() => {
+      const host = document.querySelector('kinetic-background');
+      globalThis.__kb = host;
+      host.remove();
+      document.body.append(host);
+    });
+
+    await expect.poll(() => warns.filter((w) => w.includes('stardust unavailable')).length).toBe(1);
+    await expect.poll(() => page.evaluate(() => globalThis.__kb?.lifecycle)).toBe('disconnected');
+    await expect.poll(() => page.evaluate(() => globalThis.__kb?.shadowRoot?.querySelectorAll('canvas').length ?? -1)).toBe(0);
+    expect(pageErrors).toEqual([]);
+  });
+
+  test('a throwing render inside the loop fails and tears the loop down', async ({ page }) => {
+    const pageErrors = [];
+    page.on('pageerror', (err) => pageErrors.push(`pageerror: ${err.message}`));
+    const warns = [];
+    page.on('console', (msg) => {
+      if (msg.type() === 'warning') {
+        warns.push(msg.text());
+      }
+    });
+    await spyOnGlDraws(page);
+    await page.goto('/');
+    await expect.poll(() => lifecycle(page)).toBe('running');
+
+    // The minified bundle assigns `render` as an own instance property, so
+    // the only hook is the live renderer. Patching it makes the very next
+    // animation frame throw — a render failure that is NOT context loss must
+    // route through the fail path: no 60 fps error storm, no frozen loop.
+    await page.evaluate(() => {
+      document.querySelector('kinetic-background').renderer.render = function () {
+        throw new Error('render boom');
+      };
+    });
+    await expect.poll(() => lifecycle(page)).toBe('disconnected');
+    await expect.poll(() => canvasCount(page)).toBe(0);
+    await expect.poll(() => warns.some((w) => w.includes('stardust unavailable'))).toBe(true);
+
+    // The already-scheduled next frame was cancelled: draws stop growing.
+    const drawsAfter = await glDrawCalls(page);
+    await page.waitForTimeout(300);
+    await expect.poll(() => glDrawCalls(page)).toBe(drawsAfter);
+    expect(pageErrors).toEqual([]);
+  });
+
+  test('a throwing render under reduced motion degrades instead of freezing', async ({ page }) => {
+    const pageErrors = [];
+    page.on('pageerror', (err) => pageErrors.push(`pageerror: ${err.message}`));
+    const warns = [];
+    page.on('console', (msg) => {
+      if (msg.type() === 'warning') {
+        warns.push(msg.text());
+      }
+    });
+    await spyOnGlDraws(page);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    await expect.poll(() => lifecycle(page)).toBe('static');
+    const staticDraws = await glDrawCalls(page);
+    expect(staticDraws).toBeGreaterThan(0);
+
+    // Reduced motion's only re-render is the resize path; a throwing render
+    // there (same minified own-property limitation as the loop test) must
+    // fail and tear down — never leave a `static` element that silently
+    // stopped painting.
+    await page.evaluate(() => {
+      document.querySelector('kinetic-background').renderer.render = function () {
+        throw new Error('render boom');
+      };
+    });
+    await page.setViewportSize({ width: 800, height: 600 });
+    await expect.poll(() => lifecycle(page)).toBe('disconnected');
+    await expect.poll(() => canvasCount(page)).toBe(0);
+    await expect.poll(() => warns.some((w) => w.includes('stardust unavailable'))).toBe(true);
+
+    // The loop never started and no zombie re-render fires.
+    await page.waitForTimeout(300);
+    await expect.poll(() => glDrawCalls(page)).toBe(staticDraws);
+    expect(pageErrors).toEqual([]);
+  });
+
+  test('color resolution honors data-color and warns on invalid overrides', async ({ page }) => {
+    const errors = watchErrors(page);
+    const warns = [];
+    page.on('console', (msg) => {
+      if (msg.type() === 'warning') {
+        warns.push(msg.text());
+      }
+    });
+    await spyOnGlDraws(page);
+    await page.goto('/');
+    await expect.poll(() => lifecycle(page)).toBe('running');
+
+    // A valid data-color drives the stardust material color.
+    await page.evaluate(() => {
+      const el = document.createElement('kinetic-background');
+      el.dataset.color = '#00ff00';
+      globalThis.__green = el;
+      document.body.append(el);
+    });
+    await expect.poll(() => page.evaluate(() => globalThis.__green?.lifecycle)).toBe('running');
+    await expect.poll(() => page.evaluate(() => globalThis.__green.material.color.getHex())).toBe(0x00ff00);
+
+    // A broken --pop-pink token warns and falls back to #FF00A9.
+    await page.evaluate(() => {
+      document.documentElement.style.setProperty('--pop-pink', 'red');
+      const el = document.createElement('kinetic-background');
+      globalThis.__broken = el;
+      document.body.append(el);
+    });
+    await expect.poll(() => warns.some((w) => w.includes('token --pop-pink="red" not #RRGGBB'))).toBe(true);
+    await expect.poll(() => page.evaluate(() => globalThis.__broken.material.color.getHex())).toBe(0xFF00A9);
+
+    // An explicit but invalid data-color warns and falls back too.
+    await page.evaluate(() => {
+      const el = document.createElement('kinetic-background');
+      el.dataset.color = 'red';
+      globalThis.__invalid = el;
+      document.body.append(el);
+    });
+    await expect.poll(() => warns.some((w) => w.includes('ignoring invalid data-color="red"'))).toBe(true);
+    await expect.poll(() => page.evaluate(() => globalThis.__invalid.material.color.getHex())).toBe(0xFF00A9);
+    expect(errors).toEqual([]);
+  });
+
+  test('a re-entrant connectedCallback does not duplicate the canvas', async ({ page }) => {
+    const errors = watchErrors(page);
+    await spyOnGlDraws(page);
+    await page.goto('/');
+    await expect.poll(() => lifecycle(page)).toBe('running');
+
+    // The lifecycle guard makes manual re-entry a no-op: still one canvas.
+    await page.evaluate(() => {
+      const el = document.querySelector('kinetic-background');
+      el.connectedCallback();
+      el.connectedCallback();
+    });
+    await expect.poll(() => canvasCount(page)).toBe(1);
+    await expect.poll(() => lifecycle(page)).toBe('running');
     expect(errors).toEqual([]);
   });
 });

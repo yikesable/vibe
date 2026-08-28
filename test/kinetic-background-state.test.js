@@ -120,6 +120,13 @@ describe('kinetic-background-state helpers', () => {
       assert.equal(parseHexColor('FF00A9'), 0xFF00A9);
     });
 
+    it('trims surrounding whitespace — load-bearing for the CSS token', () => {
+      // `getPropertyValue('--pop-pink')` returns " #ff00a9" with leading
+      // whitespace when the token is written `--pop-pink: #ff00a9;`.
+      assert.equal(parseHexColor('  #FF00A9  '), 0xFF00A9);
+      assert.equal(parseHexColor('\t#ff00a9\n'), 0xFF00A9);
+    });
+
     it('rejects anything that is not a six-digit hex color', () => {
       assert.equal(parseHexColor('#fff'), null);
       assert.equal(parseHexColor('0xFF00A9'), null);

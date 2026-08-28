@@ -26,7 +26,9 @@ createServer(async (req, res) => {
     const url = new URL(req.url ?? '/', `http://localhost:${port}`);
     // Strip query strings; map "/" and directory paths to index.html.
     let pathname = decodeURIComponent(url.pathname);
-    if (pathname === '/' || pathname.endsWith('/')) pathname += 'index.html';
+    if (pathname === '/' || pathname.endsWith('/')) {
+      pathname += 'index.html';
+    }
     const filePath = path.resolve(root, `.${pathname}`);
     // Refuse to serve anything outside the repo root.
     if (!filePath.startsWith(root)) {
@@ -37,7 +39,11 @@ createServer(async (req, res) => {
     const mime = MIME[path.extname(filePath)] ?? 'application/octet-stream';
     res.writeHead(200, { 'content-type': mime });
     res.end(body);
-  } catch {
+  } catch (err) {
+    // The catch-all is the only place a failing e2e can go wrong invisibly
+    // (typo'd paths, a missing bundle on a stale clone, a decodeURIComponent
+    // URIError) — log the request so failures are attributable.
+    console.error(`e2e server: ${req.method ?? 'GET'} ${req.url ?? '/'} → 404 (${err instanceof Error ? err.message : String(err)})`);
     res.writeHead(404).end('Not found');
   }
 }).listen(port, () => {

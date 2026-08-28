@@ -39,6 +39,16 @@ test.describe('code-block usage examples on index.html', () => {
     await expect(page.locator('code-block code.hljs')).toHaveCount(EXAMPLE_BLOCK_COUNT);
   });
 
+  test('the rendered code carries the declared language class', async ({ page }) => {
+    // The language wiring (`class="language-${…}"`) is what highlight.js
+    // keys off; all four examples declare language="html".
+    const blocks = page.locator('code-block');
+    for (let i = 0; i < EXAMPLE_BLOCK_COUNT; i++) {
+      const renderedClass = await blocks.nth(i).evaluate((el) => el.shadowRoot.querySelector('code').className);
+      expect(renderedClass).toContain('language-html');
+    }
+  });
+
   test('every example has a working copy button', async ({ page }) => {
     // Expand the "Show Examples" accordion so the template-path blocks
     // (1 and 2) are visible too.
