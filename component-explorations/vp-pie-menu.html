@@ -21,6 +21,7 @@
     <meta property="og:url" content="https://yikesable.github.io/vibe/component-explorations/vp-pie-menu.html">
     <meta property="og:site_name" content="Vibe Coded">
     <meta name="twitter:card" content="summary">
+    <meta name="view-transition" content="same-origin">
 
     <script>
     document.documentElement.classList.add('js')
@@ -56,6 +57,10 @@
       font-size: 0.875rem;
     }
     .site-back:hover { color: #f97316; }
+
+    /* Cross-document view-transition morph target: the index exploration
+       card grows into this heading. (The page opts in via its own meta.) */
+    .hero-title { view-transition-name: vt-pie-menu; }
 
     vp-pie-menu {
       --vp-accent: #f97316;

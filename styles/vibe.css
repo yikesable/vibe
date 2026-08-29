@@ -50,6 +50,13 @@
  * ===================================================================
  */
 
+/* Cross-document view transitions: the standardized opt-in (Chromium 126+,
+ * Safari 18.2+; other browsers just navigate normally). The legacy
+ * <meta name="view-transition" content="same-origin"> also sits in each
+ * page's head for the older engine path. Card→heading morphs are wired via
+ * view-transition-name pairs — see the c-bento block below. */
+@view-transition { navigation: auto; }
+
 @layer reset, tokens, elements, objects, components, themes, utilities;
 
 /* ── 1. Generic / Reset ─────────────────────────────────────────────
@@ -231,6 +238,17 @@
   /* Bento — the card grid. Mix with o-grid for columns; the item is the
      block owning its card appearance, o-grid owns the placement.        */
   .c-bento { grid-auto-rows: 24rem; container-type: inline-size; container-name: bento; }
+
+  /* Card→heading morph pairs (cross-document view transitions): each
+   * navigable card carries a unique name; the destination page's hero
+   * heading carries the SAME name, so the card visually grows into the
+   * page header. Unnamed (static/placeholder) cards get the default
+   * cross-fade — naming them causes exit-animation glitches. */
+  .c-bento__item--vt-converter { view-transition-name: vt-converter; }
+  .c-bento__item--vt-pie-menu { view-transition-name: vt-pie-menu; }
+  .c-bento__item--vt-story-jsdoc { view-transition-name: vt-story-jsdoc; }
+  .c-bento__item--vt-story-word-list { view-transition-name: vt-story-word-list; }
+  .c-banner--vt-story-manifesto { view-transition-name: vt-story-manifesto; }
   .c-bento__item {
     display: flex;
     flex-direction: column;
@@ -533,4 +551,6 @@ a.bento-item:hover .bento-link { text-decoration-color: var(--pop-pink); }
     scroll-behavior: auto !important;
   }
   .cta-button:hover, a.bento-item:hover { transform: none; }
+  /* View transitions are animation too — no consent, no morph. */
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
