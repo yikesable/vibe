@@ -283,8 +283,8 @@ test.describe('kinetic-background on index.html', () => {
     // No leftover listeners: resize and mousemove after detach must not
     // reach a renderer either.
     await page.evaluate(() => {
-      window.dispatchEvent(new Event('resize'));
-      document.dispatchEvent(new Event('mousemove'));
+      globalThis.dispatchEvent(new Event('resize'));
+      globalThis.dispatchEvent(new Event('mousemove'));
     });
     await page.waitForTimeout(150);
     await expect.poll(() => glDrawCalls(page)).toBe(0);
@@ -415,7 +415,7 @@ test.describe('kinetic-background on index.html', () => {
       document.body.append(el);
     });
     await expect.poll(() => page.evaluate(() => globalThis.__green?.lifecycle)).toBe('running');
-    await expect.poll(() => page.evaluate(() => globalThis.__green.material.color.getHex())).toBe(0x00ff00);
+    await expect.poll(() => page.evaluate(() => globalThis.__green.material.color.getHex())).toBe(0x00FF00);
 
     // A broken --pop-pink token warns and falls back to #FF00A9.
     await page.evaluate(() => {

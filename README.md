@@ -168,13 +168,14 @@ Supporting tooling:
 - **Playwright** ([`playwright.config.js`](./playwright.config.js)) for e2e
   checks of the zero-build site, run via `npm run test:e2e`.
 
-One command validates everything that can be validated offline:
-`npm run check` (`run-p check:*` — format, CSS, JS, HTML, unit tests, and a
-vendor-sync guard that rebuilds `vendor/` and fails on drift). Network-dependent
-audits (font reproducibility, external links) live in the weekly
-[`maintenance.yml`](./.github/workflows/maintenance.yml) workflow instead.
 - **Renovate** ([`renovate.json`](./renovate.json)) for dependency updates,
   extending `github>voxpelli/renovate-config`.
+
+One command validates everything that can be validated offline:
+`npm run check` — vendor-sync rebuild + guard first, then format, CSS, JS,
+HTML, unit tests and type-checking (`tsc --noEmit`) in parallel. Network-
+dependent audits (font reproducibility, external links) live in the weekly
+[`maintenance.yml`](./.github/workflows/maintenance.yml) workflow instead.
 
 ## 📚 Project docs
 

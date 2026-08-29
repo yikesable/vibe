@@ -93,7 +93,8 @@ export function motionPreferenceFrom (mediaQueryList) {
  * @param {number} clientY
  * @param {number} width — viewport width.
  * @param {number} height — viewport height.
- * @returns {{ x: number, y: number }} both in [-1, 1].
+ * @returns {{ x: number, y: number }} both finite; outside [-1, 1] when the
+ *   pointer leaves the viewport (multi-monitor negative coordinates etc.).
  */
 export function normalizedMouse (clientX, clientY, width, height) {
   const w = width > 0 ? width : 1;

@@ -20,7 +20,7 @@ const PARTICLE_COUNT = 2000;
 const SPREAD = 1000; // cube side length, centered on the origin
 const CAMERA_Z = 400;
 const MOUSE_SWAY = 50;
-const EASE_FACTOR = 0.05; // parallax lag ≈ a third of a second
+const EASE_FACTOR = 0.05; // parallax lag ≈ 325 ms at 60 fps (per-frame easing)
 const MAX_PIXEL_RATIO = 2; // cap for crisp specks on Retina without GPU burn
 const FALLBACK_COLOR = 0xFF00A9; // design token --pop-pink, demoted to fallback
 
@@ -36,9 +36,9 @@ function loadThree () {
   if (threeModulePromise === undefined) {
     // Clear the cache on rejection so a later connect re-attempts the fetch:
     // a transient network blip must not disable the decorative layer for the
-    // whole page lifetime. (The browser's module map may itself cache the
-    // failed import within the document — recovery then awaits a fresh
-    // navigation, which serves a fresh module map.)
+    // whole page lifetime. (Chromium's module map caches the failed import
+    // within the document — recovery then awaits a fresh navigation, which
+    // serves a fresh module map.)
     threeModulePromise = (async () => {
       try {
         return await import('../vendor/three.module.bundle.js');
@@ -99,7 +99,7 @@ class KineticBackground extends HTMLElement {
 
     // The stardust is background decoration, not content. Set here, not in
     // the constructor: the custom-elements spec forbids adding attributes
-    // during construction (createElement throws otherwise).
+    // during construction (the constructor's setAttribute throws).
     this.setAttribute('aria-hidden', 'true');
 
     // Set up the component's base styles.

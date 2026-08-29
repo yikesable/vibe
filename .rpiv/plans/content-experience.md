@@ -46,9 +46,11 @@ image) is owned by the engineering plan.
      jsdoc-types.html (~20 min); ties out the One Source Rule in DESIGN.md
    - hidden-tab pause (`visibilitychange`) is hygiene, not a win — browsers
      already throttle rAF in background tabs (MDN)
-   - reduced-motion: currently renders nothing (blank canvas, violet-black
-     shows through) — documented and defensible; optional upgrade: render
-     one static frame to keep the depth layer (~30–60 min, owner decision)
+- **Reduced-motion note (superseded 2026-08-28):** the plan-time behavior
+  rendered nothing (blank canvas, violet-black shows through). The
+  implementation below upgraded it: one static frame keeps the depth layer
+  under `prefers-reduced-motion` (no loop, no pointer response; resize
+  re-renders once).
 
    ✅ **IMPLEMENTED (2026-08-28, `fix(component): harden kinetic-background
    lifecycle and accessibility`)** — all of the above landed, plus the
