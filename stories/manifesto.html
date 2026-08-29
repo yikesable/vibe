@@ -238,6 +238,17 @@
     .c-manifesto-footer__links { margin-top: var(--space-8); display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-6); }
     .c-manifesto-footer__link { font-weight: 700; text-transform: uppercase; color: var(--color-heading); text-decoration: none; transition: color 0.3s; }
     .c-manifesto-footer__link:hover { color: var(--color-accent-srgb); }
+
+    /* ── Reduced motion ───────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
     </style>
   </head>
   <body>
@@ -462,7 +473,11 @@
     <script>
     document.addEventListener('DOMContentLoaded', function () {
             var container = document.getElementById('floating-symbols-container');
-            if (container) {
+            var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+            if (container && !reduceMotion.matches) {
+                // Reduced motion: no floating symbols at all — they exist to
+                // drift, and a field of frozen glyphs is noise, not
+                // decoration.
                 var symbols = ['{', '}', '()', '*', ';', '=>', '</>'];
                 var n = 20, i, el;
                 for (i = 0; i < n; i++) {
@@ -484,7 +499,7 @@
                     var id = this.getAttribute('href');
                     var target = document.querySelector(id);
                     if (target) {
-                        target.scrollIntoView({ behavior: 'smooth' });
+                        target.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth' });
                         // Anchor activation must move focus too — scrolling
                         // alone leaves keyboard users stranded at the top of
                         // the tab order (breaks the skip link).

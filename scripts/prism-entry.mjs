@@ -11,6 +11,11 @@
 // ever added to this entry.
 
 import 'prismjs/components/prism-core';
+// clike is a hard dependency of prism-javascript (it extends the clike
+// grammar); without it the bundle throws at load and Prism silently never
+// attaches — every consumer degrades to plain text (found by the reduced-
+// motion e2e, which is the first test to load this page at all).
+import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-json';
