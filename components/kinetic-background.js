@@ -154,6 +154,10 @@ class KineticBackground extends HTMLElement {
         this.startLoop();
       }
     };
+    // Initialize from the CURRENT state: a connect while the tab is hidden
+    // (restored background tab, prerender) must not schedule a loop that
+    // nothing will ever wake.
+    this.documentHidden = document.hidden;
     document.addEventListener('visibilitychange', this.onVisibilityChange, false);
 
     // Asynchronous: the Three.js bundle loads lazily. The generation token
@@ -260,19 +264,21 @@ class KineticBackground extends HTMLElement {
 
   /**
    * Freeze a running loop into one static frame (live Reduce flip).
-   * The static frame commits the state change — a throwing render fails
-   * honestly instead of leaving a `static` element that never painted.
+   * The render is attempted FIRST and the state change commits only after
+   * it succeeds — a throwing render fails honestly instead of leaving a
+   * `static` element that never painted (same invariant as initThree).
    */
   enterStaticMode () {
     if (this.lifecycle !== LifecycleState.Running) return;
-    this.lifecycle = nextLifecycleState(this.lifecycle, 'motion-change', MotionPreference.Reduced);
-    this.stopLoop();
-    this.removePointerListeners();
     try {
       this.renderer?.render(this.scene, this.camera);
     } catch (err) {
       this.fail(err);
+      return;
     }
+    this.lifecycle = nextLifecycleState(this.lifecycle, 'motion-change', MotionPreference.Reduced);
+    this.stopLoop();
+    this.removePointerListeners();
   }
 
   /** Restart the loop after a live Reduce flip back to full motion. */

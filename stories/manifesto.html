@@ -481,14 +481,18 @@
     document.addEventListener('DOMContentLoaded', function () {
             var container = document.getElementById('floating-symbols-container');
             var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-            if (container && !reduceMotion.matches) {
-                // Reduced motion: no floating symbols at all — they exist to
-                // drift, and a field of frozen glyphs is noise, not
-                // decoration.
-                var symbols = ['{', '}', '()', '*', ';', '=>', '</>'];
-                var n = 20, i, el;
-                for (i = 0; i < n; i++) {
-                    el = document.createElement('li');
+            var symbols = ['{', '}', '()', '*', ';', '=>', '</>'];
+
+            // Reduced motion: no floating symbols at all — they exist to
+            // drift, and a field of frozen glyphs is noise, not decoration.
+            // A live preference flip syncs the field in place: entering
+            // reduce clears it, leaving it recreates exactly one set.
+            function syncSymbols () {
+                if (!container) return;
+                while (container.firstChild) container.removeChild(container.firstChild);
+                if (reduceMotion.matches) return;
+                for (var i = 0; i < 20; i++) {
+                    var el = document.createElement('li');
                     el.className = 'c-manifesto-symbols__item';
                     el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
                     el.style.left = (Math.random() * 100) + '%';
@@ -498,6 +502,8 @@
                     container.appendChild(el);
                 }
             }
+            syncSymbols();
+            reduceMotion.addEventListener('change', syncSymbols);
 
             var anchors = document.querySelectorAll('a[href^="#"]');
             anchors.forEach(function (a) {

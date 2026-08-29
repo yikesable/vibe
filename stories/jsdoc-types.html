@@ -767,7 +767,8 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
     }
     class StoryViewer extends HTMLElement {
         constructor() { super(); this.attachShadow({ mode: 'open' }); this._slides = []; this._currentSlideIndex = 0; this._slideTimer = null; this._isPaused = false; this._isInitialized = false; }
-        connectedCallback() { this._renderBaseLayout(); this._setupEventListeners(); this._motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)'); this._motionQuery.addEventListener('change', () => { if (this._motionQuery.matches) { clearTimeout(this._slideTimer); } else if (this._isInitialized && !this._isPaused) { this._startTimer(); } }); const slot = this.shadowRoot.querySelector('slot'); if (slot) { slot.addEventListener('slotchange', () => this.init()); } }
+        connectedCallback() { this._renderBaseLayout(); this._setupEventListeners(); this._motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)'); this._onMotionChange = () => { if (this._motionQuery.matches) { clearTimeout(this._slideTimer); } else if (this._isInitialized && !this._isPaused) { this._startTimer(); } }; this._motionQuery.addEventListener('change', this._onMotionChange); const slot = this.shadowRoot.querySelector('slot'); if (slot) { slot.addEventListener('slotchange', () => this.init()); } }
+        disconnectedCallback() { if (this._onMotionChange !== undefined) { this._motionQuery.removeEventListener('change', this._onMotionChange); this._onMotionChange = undefined; } clearTimeout(this._slideTimer); }
         init() { if (this._isInitialized) return; this._slides = Array.from(this.querySelectorAll('story-slide')); if (this._slides.length > 0) { this._renderProgressBars(); this.reset(); this._isInitialized = true; } }
         _renderBaseLayout() { const style = document.createElement('style'); style.textContent = `@keyframes fill-progress { from { width: 0%; } to { width: 100%; } } :host { display: block; width: 100vw; height: 100vh; } .story-container { position: relative; width: 100%; height: 100%; overflow: hidden; } .progress-bars { position: absolute; top: 1rem; left: 1rem; right: 1rem; display: grid; gap: 4px; z-index: 20; } .progress-bar-bg { height: 3px; background-color: rgba(255, 255, 255, 0.2); border-radius: 3px; overflow: hidden; } .progress-bar-fg { height: 100%; background-color: #39D353; border-radius: 3px; width: 0%; } .nav-zone { position: absolute; top: 0; bottom: 0; width: 30%; z-index: 10; cursor: pointer; } .nav-zone.left { left: 0; } .nav-zone.right { right: 0; }`; const container = document.createElement('div'); container.className = 'story-container'; const progressContainer = document.createElement('div'); progressContainer.id = 'progress-container'; progressContainer.className = 'progress-bars'; const slot = document.createElement('slot'); const navPrev = document.createElement('div'); navPrev.id = 'nav-prev'; navPrev.className = 'nav-zone left'; const navNext = document.createElement('div'); navNext.id = 'nav-next'; navNext.className = 'nav-zone right'; container.append(progressContainer, slot, navPrev, navNext); this.shadowRoot.append(style, container); }
         _renderProgressBars() { const progressContainer = this.shadowRoot.getElementById('progress-container'); while (progressContainer.firstChild) { progressContainer.removeChild(progressContainer.firstChild); } progressContainer.style.gridTemplateColumns = `repeat(${this._slides.length}, 1fr)`; this._slides.forEach((_, i) => { const barBg = document.createElement('div'); barBg.className = 'progress-bar-bg'; const barFg = document.createElement('div'); barFg.className = 'progress-bar-fg'; barFg.id = `progress-bar-${i}`; barBg.appendChild(barFg); progressContainer.appendChild(barBg); }); }
@@ -892,7 +893,25 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
                 this.shadowRoot.appendChild(prismTheme);
             }
 
+            // Live Reduce flip during an active typing: complete the text
+            // immediately. Stored so disconnect can remove it (custom
+            // elements outlive page handlers otherwise).
+            this._motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+            this._onMotionChange = () => {
+                if (this._motionQuery.matches && this.isTyping) this.complete();
+            };
+            this._motionQuery.addEventListener('change', this._onMotionChange);
+
             if (!this.hasAttribute('manual-start')) this.start();
+        }
+
+        disconnectedCallback() {
+            if (this._onMotionChange !== undefined) {
+                this._motionQuery.removeEventListener('change', this._onMotionChange);
+                this._onMotionChange = undefined;
+            }
+            if (this.timeoutId) clearTimeout(this.timeoutId);
+            this.isTyping = false;
         }
 
         start() {
@@ -903,8 +922,10 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
 
             // Reduced motion: the full text appears at once — the char-by-char
             // animation is decoration, and the blanket reduce block only
-            // freezes CSS animations, not this JS-driven one.
-            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            // freezes CSS animations, not this JS-driven one. Reads the
+            // element's stored query so a mid-session Reduce flip is honored
+            // by every subsequent start() too.
+            if (this._motionQuery?.matches) {
                 if (this.highlight && window.Prism && window.Prism.languages && window.Prism.languages[this.highlight]) {
                     this._typeHighlightedText();
                 } else {
@@ -1023,25 +1044,32 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
                 // Reduced motion: one static frame instead of the loop, and
                 // live preference flips switch modes in place (idempotent —
                 // no double loops on repeated flips). Set up BEFORE init so
-                // init's loop decision sees the preference.
+                // init's loop decision sees the preference. The listener is
+                // stored so teardown can remove it (a reconnecting element
+                // must not accumulate handlers).
                 this._motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-                try {
-                    this.init(canvas, particleColor, particleSize, particleCount);
-                } catch (err) {
-                    console.warn('<particle-field>: renderer unavailable', err);
-                    this.teardown();
-                }
-                this._motionQuery.addEventListener('change', () => {
+                this._onMotionChange = () => {
                     if (this._motionQuery.matches) {
                         if (this.animationFrameId !== null) { cancelAnimationFrame(this.animationFrameId); this.animationFrameId = null; }
                         this._renderStatic();
                     } else if (this.isConnected && this.renderer && this.animationFrameId === null) {
                         this.animate();
                     }
-                });
+                };
+                try {
+                    this.init(canvas, particleColor, particleSize, particleCount);
+                } catch (err) {
+                    console.warn('<particle-field>: renderer unavailable', err);
+                    this.teardown();
+                }
+                this._motionQuery.addEventListener('change', this._onMotionChange);
             }
             disconnectedCallback() { this.teardown(); }
             teardown() {
+                if (this._onMotionChange !== undefined) {
+                    this._motionQuery.removeEventListener('change', this._onMotionChange);
+                    this._onMotionChange = undefined;
+                }
                 if (this.animationFrameId !== null) { cancelAnimationFrame(this.animationFrameId); this.animationFrameId = null; }
                 if (this.resizeObserver) { this.resizeObserver.disconnect(); this.resizeObserver = undefined; }
                 // Release the GL context instead of leaking it.

@@ -379,6 +379,24 @@ test.describe('kinetic-background on index.html', () => {
     });
     await expect.poll(async () => (await glDrawCalls(page)) > drawsAtPause, { timeout: 3000 }).toBe(true);
     await expect.poll(() => lifecycle(page)).toBe('running');
+
+    // Duplicate-loop canary: a second 'visible' dispatch must be a no-op —
+    // and re-hiding must flatten draws again (a leaked duplicate loop would
+    // keep them growing).
+    await page.evaluate(() => {
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    const drawsAfterDoubleShow = await glDrawCalls(page);
+    await page.waitForTimeout(200);
+    await expect.poll(async () => (await glDrawCalls(page)) > drawsAfterDoubleShow).toBe(true);
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });
+      Object.defineProperty(document, 'hidden', { value: true, configurable: true });
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    const drawsAtRePause = await glDrawCalls(page);
+    await page.waitForTimeout(300);
+    await expect.poll(() => glDrawCalls(page)).toBe(drawsAtRePause);
   });
 
   test('a throwing render inside the loop fails and tears the loop down', async ({ page }) => {
