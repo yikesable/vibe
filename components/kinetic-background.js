@@ -80,12 +80,22 @@ class KineticBackground extends HTMLElement {
     this.animationFrameId = undefined;
     this.canvas = undefined;
     this.renderer = undefined;
-    this.geometry = undefined;
-    this.material = undefined;
+    /** Scene objects promoted to fields so the live motion-preference flip can switch modes in place. Deliberately untyped (the same untyped vendor boundary as the renderer). */
+    this.scene = undefined;
+    this.camera = undefined;
+    this.particles = undefined;
+    this.mouse = undefined;
     /** @type {(() => void) | undefined} */
     this.onWindowResize = undefined;
     /** @type {((event: MouseEvent) => void) | undefined} */
     this.onDocumentMouseMove = undefined;
+    /** @type {(() => void) | undefined} */
+    this.onVisibilityChange = undefined;
+    /** @type {MediaQueryList | undefined} */
+    this.motionQuery = undefined;
+    /** @type {(() => void) | undefined} */
+    this.onMotionPreferenceChange = undefined;
+    this.documentHidden = false;
   }
 
   // Called when the element is added to the page's DOM.
@@ -116,7 +126,36 @@ class KineticBackground extends HTMLElement {
     this.canvas = canvas;
     this.shadow.append(canvas);
 
-    this.motion = motionPreferenceFrom(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)'));
+    this.motionQuery = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
+    this.motion = motionPreferenceFrom(this.motionQuery);
+
+    // Live preference changes switch modes in place: a mid-session Reduce
+    // flip freezes to one static frame; flipping back restarts the loop.
+    // Idempotent by construction — the target-state guards in the enter
+    // methods make repeated flips (or re-entrant events) no-ops.
+    this.onMotionPreferenceChange = () => {
+      this.motion = motionPreferenceFrom(this.motionQuery);
+      if (this.motion === MotionPreference.Reduced) {
+        this.enterStaticMode();
+      } else {
+        this.enterRunningMode();
+      }
+    };
+    this.motionQuery?.addEventListener('change', this.onMotionPreferenceChange);
+
+    // A hidden tab must not burn GPU on an off-screen decorative loop. The
+    // element STAYS `running` (animation-mode eligible) — visibility is a
+    // flag, not a lifecycle state; the loop resumes on return.
+    this.onVisibilityChange = () => {
+      this.documentHidden = document.hidden;
+      if (document.hidden) {
+        this.stopLoop();
+      } else {
+        this.startLoop();
+      }
+    };
+    document.addEventListener('visibilitychange', this.onVisibilityChange, false);
+
     // Asynchronous: the Three.js bundle loads lazily. The generation token
     // guards against the element detaching (or reconnecting) mid-load.
     // initThree never rejects — failures are handled inside — so the plain
@@ -148,6 +187,14 @@ class KineticBackground extends HTMLElement {
       document.removeEventListener('mousemove', this.onDocumentMouseMove);
       this.onDocumentMouseMove = undefined;
     }
+    if (this.onVisibilityChange !== undefined) {
+      document.removeEventListener('visibilitychange', this.onVisibilityChange);
+      this.onVisibilityChange = undefined;
+    }
+    if (this.onMotionPreferenceChange !== undefined) {
+      this.motionQuery?.removeEventListener('change', this.onMotionPreferenceChange);
+      this.onMotionPreferenceChange = undefined;
+    }
     // Release GPU resources: geometry and material first, then the renderer.
     this.geometry?.dispose();
     this.material?.dispose();
@@ -155,8 +202,85 @@ class KineticBackground extends HTMLElement {
     this.geometry = undefined;
     this.material = undefined;
     this.renderer = undefined;
+    this.scene = undefined;
+    this.camera = undefined;
+    this.particles = undefined;
+    this.mouse = undefined;
     this.canvas?.remove();
     this.canvas = undefined;
+  }
+
+  /** Install the pointer listeners (idempotent — running mode only). */
+  installPointerListeners () {
+    if (this.onDocumentMouseMove !== undefined || this.mouse === undefined) return;
+    this.onDocumentMouseMove = (event) => {
+      const mouse = this.mouse;
+      const { x, y } = normalizedMouse(event.clientX, event.clientY, window.innerWidth, window.innerHeight);
+      mouse.x = x;
+      mouse.y = y;
+    };
+    document.addEventListener('mousemove', this.onDocumentMouseMove, false);
+  }
+
+  removePointerListeners () {
+    if (this.onDocumentMouseMove === undefined) return;
+    document.removeEventListener('mousemove', this.onDocumentMouseMove);
+    this.onDocumentMouseMove = undefined;
+  }
+
+  /** Start the animation loop (idempotent — one pending frame at a time). */
+  startLoop () {
+    if (this.animationFrameId !== undefined || this.renderer === undefined || this.camera === undefined) return;
+    if (this.documentHidden || this.motion !== MotionPreference.Full || this.lifecycle !== LifecycleState.Running) return;
+    const { camera, mouse, particles, renderer, scene } = this;
+    const animate = () => {
+      this.animationFrameId = requestAnimationFrame(animate);
+      const now = performance.now();
+      camera.position.x = easedCamera(camera.position.x, mouse.x * MOUSE_SWAY, EASE_FACTOR);
+      camera.position.y = easedCamera(camera.position.y, -mouse.y * MOUSE_SWAY, EASE_FACTOR);
+      camera.lookAt(scene.position);
+      particles.rotation.y = starRotation(now);
+      try {
+        renderer.render(scene, camera);
+      } catch (err) {
+        // The loop re-schedules before rendering, so a throwing render
+        // would otherwise burn 60 fps of failures — fail tears it down.
+        this.fail(err);
+      }
+    };
+    animate();
+  }
+
+  stopLoop () {
+    if (this.animationFrameId !== undefined) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = undefined;
+    }
+  }
+
+  /**
+   * Freeze a running loop into one static frame (live Reduce flip).
+   * The static frame commits the state change — a throwing render fails
+   * honestly instead of leaving a `static` element that never painted.
+   */
+  enterStaticMode () {
+    if (this.lifecycle !== LifecycleState.Running) return;
+    this.lifecycle = nextLifecycleState(this.lifecycle, 'motion-change', MotionPreference.Reduced);
+    this.stopLoop();
+    this.removePointerListeners();
+    try {
+      this.renderer?.render(this.scene, this.camera);
+    } catch (err) {
+      this.fail(err);
+    }
+  }
+
+  /** Restart the loop after a live Reduce flip back to full motion. */
+  enterRunningMode () {
+    if (this.lifecycle !== LifecycleState.Static) return;
+    this.lifecycle = nextLifecycleState(this.lifecycle, 'motion-change', MotionPreference.Full);
+    this.installPointerListeners();
+    this.startLoop();
   }
 
   /**
@@ -237,7 +361,6 @@ class KineticBackground extends HTMLElement {
       const scene = new Scene();
       const camera = new PerspectiveCamera(75, (window.innerWidth || 1) / (window.innerHeight || 1), 1, 1000);
       camera.position.z = CAMERA_Z;
-
       const renderer = new WebGLRenderer({
         canvas: this.canvas,
         alpha: true,
@@ -246,6 +369,9 @@ class KineticBackground extends HTMLElement {
       // Assign early — if any later step throws, teardown() must find the
       // renderer and its GL context to dispose them.
       this.renderer = renderer;
+      this.mouse = mouse;
+      this.scene = scene;
+      this.camera = camera;
 
       // A lost context (GPU reset, resource exhaustion) must degrade via the
       // same fail path as any other error — never silently freeze a
@@ -274,6 +400,7 @@ class KineticBackground extends HTMLElement {
       this.geometry = geometry;
       const particles = new Points(geometry, material);
       scene.add(particles);
+      this.particles = particles;
 
       // Resize keeps the projection honest; under reduced motion it is also
       // the one thing allowed to re-render (a single fresh frame).
@@ -307,30 +434,9 @@ class KineticBackground extends HTMLElement {
         return;
       }
 
-      this.onDocumentMouseMove = (event) => {
-        const { x, y } = normalizedMouse(event.clientX, event.clientY, window.innerWidth, window.innerHeight);
-        mouse.x = x;
-        mouse.y = y;
-      };
-      document.addEventListener('mousemove', this.onDocumentMouseMove, false);
-
+      this.installPointerListeners();
       this.lifecycle = nextLifecycleState(this.lifecycle, 'ready', this.motion);
-      const animate = () => {
-        this.animationFrameId = requestAnimationFrame(animate);
-        const now = performance.now();
-        camera.position.x = easedCamera(camera.position.x, mouse.x * MOUSE_SWAY, EASE_FACTOR);
-        camera.position.y = easedCamera(camera.position.y, -mouse.y * MOUSE_SWAY, EASE_FACTOR);
-        camera.lookAt(scene.position);
-        particles.rotation.y = starRotation(now);
-        try {
-          renderer.render(scene, camera);
-        } catch (err) {
-          // The loop re-schedules before rendering, so a throwing render
-          // would otherwise burn 60 fps of failures — fail tears it down.
-          this.fail(err);
-        }
-      };
-      animate();
+      this.startLoop();
     } catch (err) {
       // A stale attempt — a newer connect owns the element — must not tear
       // down the live one (the shared module promise fans a rejection out to

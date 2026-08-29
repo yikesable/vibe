@@ -326,6 +326,61 @@ test.describe('kinetic-background on index.html', () => {
     expect(pageErrors).toEqual([]);
   });
 
+  test('a live prefers-reduced-motion flip switches modes in place', async ({ page }) => {
+    await spyOnGlDraws(page);
+    await page.goto('/');
+    await expect.poll(() => lifecycle(page)).toBe('running');
+
+    // Running → static: the loop stops (draws flat), the canvas stays.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect.poll(() => lifecycle(page)).toBe('static');
+    await expect.poll(() => canvasCount(page)).toBe(1);
+    const drawsAtFreeze = await glDrawCalls(page);
+    await page.waitForTimeout(300);
+    await expect.poll(() => glDrawCalls(page)).toBe(drawsAtFreeze);
+
+    // Static → running: the loop resumes (draws grow again).
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await expect.poll(() => lifecycle(page)).toBe('running');
+    await expect.poll(async () => (await glDrawCalls(page)) > drawsAtFreeze).toBe(true);
+
+    // And back once more: repeated flips stay idempotent (no error storm).
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect.poll(() => lifecycle(page)).toBe('static');
+    await page.waitForTimeout(200);
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await expect.poll(() => lifecycle(page)).toBe('running');
+  });
+
+  test('a hidden tab pauses the loop and resume restarts it exactly once', async ({ page }) => {
+    await spyOnGlDraws(page);
+    await page.goto('/');
+    await expect.poll(() => lifecycle(page)).toBe('running');
+
+    // Simulate tab-hide: override visibilityState and dispatch the event
+    // (Playwright cannot force real occlusion). Element STAYS 'running' —
+    // visibility is a flag, not a lifecycle state.
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });
+      Object.defineProperty(document, 'hidden', { value: true, configurable: true });
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    const drawsAtPause = await glDrawCalls(page);
+    await expect.poll(() => lifecycle(page)).toBe('running');
+    await page.waitForTimeout(300);
+    await expect.poll(() => glDrawCalls(page)).toBe(drawsAtPause);
+
+    // Tab-show: the loop resumes (exactly once — the idempotent startLoop
+    // guard means draws grow at normal rate, and no error storm follows).
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true });
+      Object.defineProperty(document, 'hidden', { value: false, configurable: true });
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await expect.poll(async () => (await glDrawCalls(page)) > drawsAtPause, { timeout: 3000 }).toBe(true);
+    await expect.poll(() => lifecycle(page)).toBe('running');
+  });
+
   test('a throwing render inside the loop fails and tears the loop down', async ({ page }) => {
     const pageErrors = [];
     page.on('pageerror', (err) => pageErrors.push(`pageerror: ${err.message}`));

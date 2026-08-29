@@ -14,7 +14,7 @@
  *
  * @typedef {'reduced' | 'full'} MotionPreferenceValue
  * @typedef {'disconnected' | 'connecting' | 'running' | 'static'} LifecycleStateValue
- * @typedef {'connect' | 'ready' | 'disconnect' | 'fail'} LifecycleEventValue
+ * @typedef {'connect' | 'ready' | 'motion-change' | 'disconnect' | 'fail'} LifecycleEventValue
  */
 
 /** The user's motion preference, resolved once at connect time. */
@@ -66,6 +66,11 @@ export function nextLifecycleState (current, event, motion = MotionPreference.Fu
       return current === LifecycleState.Connecting
         ? (motion === MotionPreference.Reduced ? LifecycleState.Static : LifecycleState.Running)
         : current;
+    case 'motion-change':
+      // A live prefers-reduced-motion flip switches modes in place.
+      if (current === LifecycleState.Running && motion === MotionPreference.Reduced) return LifecycleState.Static;
+      if (current === LifecycleState.Static && motion === MotionPreference.Full) return LifecycleState.Running;
+      return current;
     case 'disconnect':
     case 'fail':
       return LifecycleState.Disconnected;

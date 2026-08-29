@@ -42,6 +42,32 @@ describe('kinetic-background-state helpers', () => {
     it('unknown events leave the state unchanged', () => {
       assert.equal(nextLifecycleState(LifecycleState.Running, 'wobble'), LifecycleState.Running);
     });
+
+    describe('motion-change (live preference flips)', () => {
+      it('freezes a running element to static on a Reduce flip', () => {
+        assert.equal(
+          nextLifecycleState(LifecycleState.Running, 'motion-change', MotionPreference.Reduced),
+          LifecycleState.Static
+        );
+      });
+
+      it('restarts a static element to running on a full-motion flip', () => {
+        assert.equal(
+          nextLifecycleState(LifecycleState.Static, 'motion-change', MotionPreference.Full),
+          LifecycleState.Running
+        );
+      });
+
+      it('is a no-op in mismatched states or mismatched motion', () => {
+        // No double-static, no running→running change, no crossing from
+        // non-motion states.
+        assert.equal(nextLifecycleState(LifecycleState.Running, 'motion-change', MotionPreference.Full), LifecycleState.Running);
+        assert.equal(nextLifecycleState(LifecycleState.Static, 'motion-change', MotionPreference.Reduced), LifecycleState.Static);
+        assert.equal(nextLifecycleState(LifecycleState.Connecting, 'motion-change', MotionPreference.Reduced), LifecycleState.Connecting);
+        assert.equal(nextLifecycleState(LifecycleState.Disconnected, 'motion-change', MotionPreference.Reduced), LifecycleState.Disconnected);
+        assert.equal(nextLifecycleState(LifecycleState.Failed ?? LifecycleState.Disconnected, 'motion-change', MotionPreference.Reduced), LifecycleState.Disconnected);
+      });
+    });
   });
 
   describe('motionPreferenceFrom', () => {
