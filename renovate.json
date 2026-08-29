@@ -1,5 +1,20 @@
 {
   "extends": [
     "github>voxpelli/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "description": "Vendor-affecting deps: the committed vendor/ bundles must be rebuilt via `npm run build:vendor` in the same PR (check:vendor enforces it). Renovate cannot run that rebuild from repo config (postUpgradeTasks/allowedCommands are self-hosted-config territory), so these PRs are grouped and labeled for a manual rebuild. Automerge is off via the preset, so nothing lands unreviewed.",
+      "matchPackageNames": [
+        "three",
+        "highlight.js",
+        "prismjs",
+        "esbuild"
+      ],
+      "groupName": "vendor bundles",
+      "addLabels": [
+        "vendor-rebuild"
+      ]
+    }
   ]
 }
