@@ -29,6 +29,15 @@ picked up.
   done deterministically: seeded `Math.random` (identical particle
   positions), frozen rotation, screenshots under r128 and r185 decode to
   SHA-identical PNGs — pixel-for-pixel identical renders, no color drift.
+- **modulepreload: measured, REJECTED** (2026-08-29). A throttled A/B
+  benchmark (both variants through one identical route handler, AB/BA
+  alternation, 5 fresh contexts per arm, Slow-4G + 4× CPU) found only a
+  ~21 ms median time-to-stardust gain (noise — runs overlap) and a
+  ~136 ms LCP REGRESSION (944 → 1080 ms: the low-priority fetch still
+  occupies a throttled connection slot). The waterfall-saving hypothesis
+  from the 2026-08-28 research round did not survive measurement. If
+  revisited: re-benchmark after the CodeMirror 6 switch (different
+  bandwidth competition).
 - **Bundle:** r185 tree-shaken module bundle ~509 KB (full r128 module was ~584 KB); the global IIFE for jsdoc-types is ~697 KB. The real win was switching
   `components/kinetic-background.js` to **named imports**
   (`import { Scene, WebGLRenderer, … }`) — `three` is `sideEffects: false`,

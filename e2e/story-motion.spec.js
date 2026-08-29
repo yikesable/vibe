@@ -90,4 +90,61 @@ test.describe('story pages honor prefers-reduced-motion', () => {
     );
     expect(inMain).toBe(true);
   });
+
+  test('manifesto: the symbol field syncs live with preference flips', async ({ page }) => {
+    const symbols = page.locator('#floating-symbols-container li');
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.goto('/vibe/stories/manifesto.html');
+    await expect(symbols).toHaveCount(20);
+
+    // Live flip to reduce: the existing glyphs are REMOVED, not frozen.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect(symbols).toHaveCount(0);
+
+    // A repeated reduce dispatch must not create anything.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect(symbols).toHaveCount(0);
+
+    // Flip back: exactly one fresh set — not zero, not doubled.
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await expect(symbols).toHaveCount(20);
+  });
+
+  test('jsdoc-types: a live Reduce flip completes the active typing instantly', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.goto('/vibe/stories/jsdoc-types.html');
+    // The active slide's typewriter is typing (no manual-start on slide 1).
+    const typewriter = page.locator('story-slide[active] dos-typewriter').first();
+    await expect.poll(() =>
+      typewriter.evaluate((el) => el.shadowRoot.querySelector('.container').textContent.length)
+    ).toBeGreaterThan(0);
+
+    // Mid-typing Reduce: the FULL text must appear (not freeze mid-word),
+    // proving the live change listener completes the animation.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const { typed, full } = await typewriter.evaluate((el) => ({
+      typed: el.shadowRoot.querySelector('.container').textContent,
+      full: el.initialText,
+    }));
+    expect(typed).toBe(full);
+  });
+
+  test('vp-pie-menu ships the standardized view-transition opt-in locally', async ({ page }) => {
+    await page.goto('/vibe/component-explorations/vp-pie-menu.html');
+    // The page loads no shared CSS, so the @view-transition rule must live
+    // in its own <style> (the head meta alone is the legacy path).
+    const hasRule = await page.evaluate(() => {
+      for (const sheet of document.styleSheets) {
+        try {
+          for (const rule of sheet.cssRules) {
+            if (rule.cssText.startsWith('@view-transition')) return rule.cssText.includes('auto');
+          }
+        } catch { /* inaccessible sheets are skipped */ }
+      }
+      return false;
+    });
+    expect(hasRule, '@view-transition { navigation: auto } in vp-pie-menu styles').toBe(true);
+    const name = await page.evaluate(() => getComputedStyle(document.querySelector('.hero-title')).viewTransitionName);
+    expect(name).toBe('vt-pie-menu');
+  });
 });
