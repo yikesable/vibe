@@ -113,4 +113,62 @@ test.describe('site plumbing', () => {
     const res = await request.get('/assets/favicon.svg');
     expect(res.status()).toBe(200);
   });
+
+  test('every standard page has a working skip link as its first focusable element', async ({ page }) => {
+    // The five standard pages; vp-pie-menu is the documented bespoke
+    // exception (back link instead of full nav).
+    for (const [route] of PUBLIC_PAGES.slice(0, 5)) {
+      await page.goto(`/vibe/${route}`);
+      const skip = page.locator('.c-skip-link');
+      await expect(skip).toHaveCount(1);
+      // First focusable: tabbing once from document start lands on it.
+      await page.keyboard.press('Tab');
+      await expect(skip).toBeFocused();
+      // It skips INTO the main landmark, which receives focus.
+      await page.keyboard.press('Enter');
+      const inMain = await page.evaluate(() =>
+        document.activeElement?.closest('main') !== null || document.activeElement?.id === 'main-content'
+      );
+      expect(inMain, `skip target on ${route || '/'}`).toBe(true);
+    }
+  });
+
+  test('nav is present with correct current-page marking (bespoke page exempt)', async ({ page }) => {
+    // Home is current on index; the converter on its own page; the stories
+    // point at index sections so no item is "current" there.
+    const expectations = [
+      ['', 'Home'],
+      ['/stories/jsdoc-types.html', undefined],
+      ['/stories/beyond-the-word-list.html', undefined],
+      ['/stories/manifesto.html', undefined],
+      ['/codepen-converter/', 'CodePen Converter'],
+    ];
+    for (const [route, current] of expectations) {
+      await page.goto(`/vibe/${route}`);
+      const nav = page.locator('.c-site-header nav');
+      await expect(nav).toHaveCount(1);
+      const currentLinks = await nav.locator('a[aria-current="page"]').allTextContents();
+      if (current === undefined) {
+        expect(currentLinks, `aria-current on ${route || '/'}`).toEqual([]);
+      } else {
+        expect(currentLinks, `aria-current on ${route || '/'}`).toEqual([current]);
+      }
+    }
+    // The bespoke exploration page opts for a back link instead of the nav.
+    await page.goto('/vibe/component-explorations/vp-pie-menu.html');
+    await expect(page.locator('.c-site-header')).toHaveCount(0);
+    await expect(page.locator('.site-back')).toHaveAttribute('href', '../index.html');
+  });
+
+  test('the © footer line is identical across the standard pages', async ({ page }) => {
+    // The pages that ship the shared footer; jsdoc-types is a fullscreen
+    // slide deck (no footer, deliberate) and manifesto keeps its own
+    // bespoke Armory footer.
+    const routes = ['', '/stories/beyond-the-word-list.html', '/codepen-converter/'];
+    for (const route of routes) {
+      await page.goto(`/vibe/${route}`);
+      const footer = page.locator('.c-footer__text', { hasText: 'Pelle Wessman' });
+      await expect(footer, `footer on ${route || '/'}`).toHaveText(/© Pelle Wessman • yikesable\.dev/);
+    }
+  });
 });

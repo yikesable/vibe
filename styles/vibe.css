@@ -159,6 +159,29 @@
  * Discrete, appearance-owning UI chunks. Blocks own internal layout;
  * external geometry comes from o- objects via a BEM "mix" on the node.  */
 @layer components {
+  /* Site header — sticky, translucent over the stardust. The nav sits in
+   * an o-cluster; geometry comes from the object, color from here. */
+  .c-site-header { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--dark-bg) 88%, transparent); backdrop-filter: blur(8px); }
+  .c-site-header__nav { max-inline-size: 80rem; margin-inline: auto; padding-inline: var(--space-4); padding-block: var(--space-3); }
+  .c-site-header__link { color: var(--text-base); text-decoration: none; transition: color 0.3s ease; }
+  .c-site-header__link:hover { color: var(--pop-pink); }
+  .c-site-header__link[aria-current="page"] { color: var(--pop-pink); text-decoration: underline; text-decoration-color: var(--accent-soft); }
+
+  /* Skip link — visually hidden until keyboard-focused, then pinned to
+   * the top-left above the sticky header (z-index beats it). */
+  .c-skip-link {
+    position: absolute;
+    top: var(--space-2);
+    inset-inline-start: var(--space-2);
+    z-index: 20;
+    padding: var(--space-2) var(--space-4);
+    background: var(--dark-bg);
+    color: var(--pop-pink);
+    border: 1px solid var(--pop-pink);
+    transform: translateY(calc(-100% - var(--space-3)));
+  }
+  .c-skip-link:focus-visible { transform: none; }
+
   /* Section — a vertically-rhythmed page section. */
   .c-section { padding-block: var(--space-16); }
   @media (min-width: 48rem) { .c-section { padding-block: var(--space-24); } }

@@ -146,6 +146,18 @@
     </style>
   </head>
   <body>
+    <a class="c-skip-link" href="#main-content">Skip to content</a>
+
+    <div class="c-site-header">
+      <nav class="c-site-header__nav" aria-label="Main">
+        <ul class="o-cluster">
+          <li><a class="c-site-header__link" href="../index.html">Home</a></li>
+          <li><a class="c-site-header__link" href="../index.html#main-content">Component Explorations</a></li>
+          <li><a class="c-site-header__link" href="../index.html#stories">Stories</a></li>
+          <li><a class="c-site-header__link" href="../codepen-converter/">CodePen Converter</a></li>
+        </ul>
+      </nav>
+    </div>
     <kinetic-background></kinetic-background>
 
     <div class="o-wrapper">
@@ -158,7 +170,7 @@
         </p>
       </header>
 
-      <main class="o-stack" style="--stack-space: var(--space-24)">
+      <main id="main-content" tabindex="-1" class="o-stack" style="--stack-space: var(--space-24)">
         <section id="intro">
           <h2 class="c-section__title c-section__title--glow">The Rise of the Prescriptive Word List</h2>
           <div class="c-section__intro">
@@ -528,7 +540,7 @@
       </main>
 
       <footer class="c-footer">
-        <p class="c-footer__text">A Vibe Coded Story &bull; &copy; 2025 yikesable.dev</p>
+        <p class="c-footer__text">A Vibe Coded Story &bull; &copy; Pelle Wessman &bull; yikesable.dev</p>
       </footer>
     </div>
   </body>

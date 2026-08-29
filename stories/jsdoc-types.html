@@ -325,6 +325,19 @@
     </style>
 </head>
 <body>
+    <a class="c-skip-link" href="#main-content">Skip to content</a>
+
+    <div class="c-site-header">
+        <nav class="c-site-header__nav" aria-label="Main">
+            <ul class="o-cluster">
+                <li><a class="c-site-header__link" href="../index.html">Home</a></li>
+                <li><a class="c-site-header__link" href="../index.html#main-content">Component Explorations</a></li>
+                <li><a class="c-site-header__link" href="../index.html#stories">Stories</a></li>
+                <li><a class="c-site-header__link" href="../codepen-converter/">CodePen Converter</a></li>
+            </ul>
+        </nav>
+    </div>
+
     <div class="aurora-glow"></div>
     <particle-field color="#39D353" size="0.008" count="8000"></particle-field>
 
@@ -345,6 +358,7 @@
         </svg>
     </button>
 
+    <main id="main-content" tabindex="-1">
     <story-viewer>
         <!-- Slide 1: Intro -->
         <story-slide data-duration="8000">
@@ -721,6 +735,7 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
         </story-slide>
 
     </story-viewer>
+    </main>
 
     <!-- Prism.js for Syntax Highlighting (bundled with javascript/typescript/json/bash) -->
     <script src="../vendor/prism.bundle.js"></script>

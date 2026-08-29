@@ -241,11 +241,24 @@
     </style>
   </head>
   <body>
+    <a class="c-skip-link" href="#main-content">Skip to content</a>
+
+    <div class="c-site-header">
+      <nav class="c-site-header__nav" aria-label="Main">
+        <ul class="o-cluster">
+          <li><a class="c-site-header__link" href="../index.html">Home</a></li>
+          <li><a class="c-site-header__link" href="../index.html#main-content">Component Explorations</a></li>
+          <li><a class="c-site-header__link" href="../index.html#stories">Stories</a></li>
+          <li><a class="c-site-header__link" href="../codepen-converter/">CodePen Converter</a></li>
+        </ul>
+      </nav>
+    </div>
+
     <!-- Floating symbols background layer -->
     <ul id="floating-symbols-container" class="c-manifesto-symbols"></ul>
 
     <!-- Main content on top -->
-    <main>
+    <main id="main-content" tabindex="-1">
       <!-- Section 1: The Call -->
       <section class="c-manifesto-hero">
         <div>
@@ -437,7 +450,7 @@
         <p class="c-manifesto-footer__text">
           The revolution will not be centralized. It will be built with open protocols and self-hosted tools. Master them.
         </p>
-        <nav class="c-manifesto-footer__links">
+        <nav class="c-manifesto-footer__links" aria-label="External resources">
           <a href="https://gitea.io" target="_blank" rel="noopener" class="c-manifesto-footer__link">Gitea: The Fortress</a>
           <a href="https://atproto.com" target="_blank" rel="noopener" class="c-manifesto-footer__link">AT Protocol: The Weapon</a>
           <a href="https://tangled.sh" target="_blank" rel="noopener" class="c-manifesto-footer__link">Tangled.sh: The Front</a>
@@ -470,7 +483,13 @@
                     e.preventDefault();
                     var id = this.getAttribute('href');
                     var target = document.querySelector(id);
-                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                        // Anchor activation must move focus too — scrolling
+                        // alone leaves keyboard users stranded at the top of
+                        // the tab order (breaks the skip link).
+                        if (target.hasAttribute('tabindex')) target.focus({ preventScroll: true });
+                    }
                 });
             });
         });

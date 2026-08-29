@@ -31,6 +31,32 @@
        Zero dependencies. Theme via CSS custom properties.
        ======================================================================== */
 
+    /* Site chrome (skip link + back link) — this page loads no shared CSS,
+       so these are self-contained minimal equivalents of vibe.css's
+       .c-skip-link. */
+    .c-skip-link {
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+      z-index: 100;
+      padding: 0.5rem 1rem;
+      background: #160c0a;
+      color: #f97316;
+      border: 1px solid #f97316;
+      transform: translateY(calc(-100% - 1rem));
+    }
+    .c-skip-link:focus-visible { transform: none; }
+    .site-back {
+      position: fixed;
+      bottom: 1rem;
+      left: 1rem;
+      z-index: 50;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-size: 0.875rem;
+    }
+    .site-back:hover { color: #f97316; }
+
     vp-pie-menu {
       --vp-accent: #f97316;
       --vp-accent-rgb: 249, 115, 22;
@@ -615,10 +641,12 @@
     </style>
   </head>
   <body>
+    <a class="c-skip-link" href="#main-content">Skip to content</a>
+    <a class="site-back" href="../index.html">&larr; Back to the collection</a>
     <!-- ================================================================
          HERO: Full viewport, click anywhere to open
          ================================================================ -->
-    <section class="hero" id="hero">
+    <section class="hero" id="main-content" tabindex="-1">
       <div class="hero-content">
         <h1 class="hero-title"><span class="accent">vp</span>-pie-menu</h1>
         <p class="hero-tagline">A radial context menu web component</p>

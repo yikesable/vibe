@@ -267,8 +267,22 @@
     </style>
   </head>
   <body>
+    <a class="c-skip-link" href="#main-content">Skip to content</a>
+
+    <div class="c-site-header">
+      <nav class="c-site-header__nav" aria-label="Main">
+        <ul class="o-cluster">
+          <li><a class="c-site-header__link" href="../index.html">Home</a></li>
+          <li><a class="c-site-header__link" href="../index.html#main-content">Component Explorations</a></li>
+          <li><a class="c-site-header__link" href="../index.html#stories">Stories</a></li>
+          <li><a class="c-site-header__link" href="../codepen-converter/" aria-current="page">CodePen Converter</a></li>
+        </ul>
+      </nav>
+    </div>
+
     <kinetic-background></kinetic-background>
 
+    <main id="main-content" tabindex="-1">
     <div class="o-wrapper c-converter-page">
       <header class="c-converter-hero">
         <h1 class="c-converter-hero__title">CodePen Converter</h1>
@@ -386,9 +400,10 @@
       </div>
 
       <footer class="c-footer c-converter-footer">
-        <p class="c-footer__text">&copy; 2025 yikesable.dev &bull; All projects are open-source.</p>
+        <p class="c-footer__text">&copy; Pelle Wessman &bull; yikesable.dev &bull; All projects are open-source.</p>
       </footer>
     </div>
+    </main>
 
     <form id="codepen-form" action="https://codepen.io/pen/define" method="POST" target="_blank" class="is-hidden">
       <input type="hidden" name="data" id="codepen-data">
