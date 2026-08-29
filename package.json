@@ -39,18 +39,19 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
-    "@voxpelli/eslint-config": "^23.0.0",
-    "@voxpelli/tsconfig": "^15.1.2",
+    "@types/node": "^22.20.1",
+    "@voxpelli/eslint-config": "^25.1.0",
+    "@voxpelli/tsconfig": "^16.2.1",
     "browser-sync": "^3.0.4",
     "dprint": "^0.56.1",
     "esbuild": "^0.28.2",
-    "eslint": "^9.29.0",
+    "eslint": "^9.39.5",
     "html-validate": "^11.10.0",
     "npm-run-all2": "^9.0.3",
     "stylelint": "^17.14.1",
     "stylelint-config-standard": "^40.0.0",
     "subset-font": "^2.6.0",
-    "typescript": "~5.8.3"
+    "typescript": "~6.0.3"
   },
   "dependencies": {
     "highlight.js": "^11.12.0",
