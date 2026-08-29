@@ -95,4 +95,23 @@ test.describe('code-block usage examples on index.html', () => {
     await expect(copyBtn).toHaveText('Copy', { timeout: 4000 });
     expect(pageErrors).toEqual([]);
   });
+
+  test('a real permission-denied clipboard surfaces the same visible failure', async ({ browser }) => {
+    // The context fixture grants clipboard permissions (playwright.config.js);
+    // a context WITHOUT the grant makes the browser itself reject writeText
+    // with NotAllowedError — the real-world denial, not a stub.
+    const context = await browser.newContext({ permissions: [] });
+    const page = await context.newPage();
+    const pageErrors = [];
+    page.on('pageerror', (err) => pageErrors.push(`pageerror: ${err.message}`));
+    await page.goto('/index.html');
+
+    const copyBtn = page.locator('code-block').nth(0).locator('.copy-btn');
+    await expect(copyBtn).toHaveText('Copy');
+    await copyBtn.click();
+    await expect(copyBtn).toHaveText('Copy failed');
+    await expect(copyBtn).toHaveText('Copy', { timeout: 4000 });
+    expect(pageErrors).toEqual([]);
+    await context.close();
+  });
 });

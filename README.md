@@ -128,7 +128,10 @@ npm run fonts        # (re)downloads + subsets the self-hosted fonts
 npm run dev          # starts browser-sync and opens the site
 ```
 
-Requirements: **Node.js ≥ 22** (see `engines` in `package.json`).
+Requirements: **Node.js ≥ 22** (see `engines` in `package.json` — a deliberate
+floor with no upper bound: `engines` is advisory for npm, CI pins an exact
+Node version, and the toolchain is vendored, so future Node majors need no
+pre-emptive cap).
 
 The `build:vendor` step runs [esbuild](https://esbuild.github.io/) to bundle
 CDN-free copies of highlight.js, Prism.js, and Three.js from their npm packages,
