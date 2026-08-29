@@ -23,7 +23,7 @@
     "lint:css": "stylelint 'styles/**/*.css'",
     "lint:css:fix": "stylelint 'styles/**/*.css' --fix",
     "lint:js": "eslint .",
-    "lint:html": "html-validate --max-warnings 0 \"index.html\" \"stories/*.html\" \"codepen-converter/**/*.html\" \"component-explorations/*.html\"",
+    "lint:html": "html-validate --max-warnings 0 \"404.html\" \"index.html\" \"stories/*.html\" \"codepen-converter/**/*.html\" \"component-explorations/*.html\"",
     "test": "node --test",
     "test:e2e": "playwright test",
     "check:fmt": "dprint check",

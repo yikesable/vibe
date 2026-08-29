@@ -11,6 +11,11 @@ Planning: site-correctness planner + upgrades/hygiene planner. Status: not start
   `build-vendor.mjs` step 3 (`copyFile three.min.js`) hard-fails on any upgrade — an IIFE global
   entry is mandatory, not polish.
 - `modulepreload` kills the 3-step waterfall (HTML → component → dynamic import) before the ~600 KB fetch.
+- **Status updates (2026-08-29, A-1 partially executed):** the placehold.co og:image is REMOVED (line 8
+  above no longer describes the tree); the og:image ASSET is deferred (see ROADMAP.md); the sitemap
+  has 6 URLs (vp-pie-menu included — the “5 URLs” below is stale); the vendored Prism usage calls
+  `Prism.tokenize()` + hand-built token DOM, NOT `Prism.highlightElement` (B-WP2 below said
+  highlightElement — wrong).
 
 **Two tracks, one conflict**: Track A (site) and Track B (upgrades) are parallel-safe EXCEPT the
 three.js upgrade (B-WP3) vs modulepreload/og-image/nav (A-WP1/2/4) — both touch index.html and
@@ -127,7 +132,7 @@ replaces two inline data-URI copies; note the token in DESIGN.md), linked from p
    (keep filename; zero HTML edits — or rename to `three.global.bundle.js` + one script-tag edit; prefer rename for honesty).
 3. Tree-shake subset entry (`scripts/three-entry.mjs`, named imports of what kinetic-background uses,
    mirroring highlight-entry.mjs): honest expectation 25–40% off the bundle, not 80% (WebGLRenderer
-   drags in core). Update the component's "~600 KB" comment with the measured size.
+   drags in core). Update the component's "~600 KB" comment with the measured size (also DESIGN.md and 404.html's no-kinetic-background comment).
 4. Color-space audit: r152 sRGB output default may visibly shift the 0xFF00A9 family — QA against an
    r128 reference screenshot; if shifted, set `renderer.outputColorSpace` explicitly and document why.
    e2e lifecycle tests will NOT catch pixel drift — manual visual QA is the real gate.

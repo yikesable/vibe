@@ -7,6 +7,17 @@ picked up.
 
 ## Deferred engineering
 
+### og:image asset (deferred 2026-08-29, decision pending)
+
+- The `og:image` meta was removed from index.html because it pointed at
+  placehold.co — an external CDN, violating the no-CDN rule. The ASSET is
+  deferred: the generation approach is undecided (satori+resvg devDeps /
+  Playwright screenshot / one-off hand-made PNG).
+- **When it lands:** add `assets/og-image-v1.png` + `og:image`,
+  `og:image:width/height`, `og:image:alt`, `twitter:image` on index.html, and
+  flip `twitter:card` back from `summary` to `summary_large_image` (the
+  downgrade exists because a large card with no image renders blank tiles).
+
 ### three.js upgrade (0.128.0 → current) — own work package
 
 - `three` has been pinned at `^0.128.0` (2021) since the kinetic-background
