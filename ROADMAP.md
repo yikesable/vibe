@@ -25,7 +25,10 @@ picked up.
   `Scene`/`PerspectiveCamera`/`WebGLRenderer`/`Points`/`BufferGeometry`
   usage — the only relevant changes are WebGL 1 removal (r163, irrelevant)
   and ColorManagement-on-by-default (r152, may shift the neon-pink a hair —
-  needs visual QA).
+  needs visual QA). Upgrade executed 2026-08-29 (`8e40b01`) — visual QA
+  done deterministically: seeded `Math.random` (identical particle
+  positions), frozen rotation, screenshots under r128 and r185 decode to
+  SHA-identical PNGs — pixel-for-pixel identical renders, no color drift.
 - **Bundle:** r185 tree-shaken module bundle ~509 KB (full r128 module was ~584 KB); the global IIFE for jsdoc-types is ~697 KB. The real win was switching
   `components/kinetic-background.js` to **named imports**
   (`import { Scene, WebGLRenderer, … }`) — `three` is `sideEffects: false`,
@@ -43,6 +46,31 @@ picked up.
 - **Renovate:** `^0.128.0` caret-semver means renovate treats 0.185 as a
   major. Either accept the bump when the work package runs, or
   `ignoreDeps: ["three"]` until then to stop the churn noise.
+
+### Extract and showcase more of the project's web components
+
+The codebase already contains several hand-rolled components living inline
+in page-specific `<script>` blocks — candidates for extraction into
+`components/*.js` files and showcase entries in index.html's "Reusable
+Components" section (which today documents only `<code-block>` and
+`<kinetic-background>`):
+
+- `<dos-typewriter>` — the char-by-char DOS-style typewriter with Prism
+  highlighting (stories/jsdoc-types.html); already reduced-motion-aware.
+- `<story-viewer>` / `<story-slide>` — the auto-advancing slide-deck
+  framework with progress bars and manual nav (stories/jsdoc-types.html).
+- `<particle-field>` — the configurable particle background
+  (stories/jsdoc-types.html); a color/size/count-parameterized sibling to
+  `<kinetic-background>`.
+- `<vp-pie-menu>` — already a standalone exploration
+  (component-explorations/vp-pie-menu.html); could graduate to a
+  documented, self-contained component entry.
+
+Extraction order should follow reuse value: `dos-typewriter` first (most
+self-contained, zero Three.js dependency), then `particle-field`, then
+`story-viewer` (largest API surface). Each extraction must keep the
+hardening patterns (teardown, live reduced-motion, guarded render) and
+come with unit/e2e coverage mirroring the kinetic-background suite.
 
 ### CodePen Converter: monaco-editor → CodeMirror 6
 
