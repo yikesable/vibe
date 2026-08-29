@@ -5,8 +5,8 @@
 // License compliance:
 //   - `legalComments: 'external'` preserves third-party license headers
 //     from bundled packages in separate .LEGAL.txt files
-//   - Static copies (three.min.js, CSS themes) carry their original
-//     license notices in-file — no extraction needed
+//   - CSS theme copies carry their original license notices in-file — no
+//     extraction needed
 //   - Font licenses are documented in assets/fonts/LICENSE-fonts.md
 
 import esbuild from 'esbuild';
@@ -28,8 +28,7 @@ const shared = {
   legalComments: 'external',   // preserve license notices as .LEGAL.txt
   // The bundles are minified third-party code — never feed them to checkJs.
   // The banner keeps tsc silent when components import them (check:types
-  // runs in CI via `npm run check`). Not applied to the static copies
-  // (three.min.js, CSS): none are imported by components.
+  // runs in CI via `npm run check`). Not applied to the CSS copies.
   banner: { js: '// @ts-nocheck — generated vendor bundle (see scripts/build-vendor.mjs)' },
 };
 
@@ -47,25 +46,29 @@ console.log('  ✓ Done');
 
 // ---------------------------------------------------------------------------
 // 2. Three.js — ES module bundle for kinetic-background.js
-//    (full module — tree-shaking gains are marginal with import * as THREE)
+//    Tree-shaken: named re-exports of exactly what the component uses.
 // ---------------------------------------------------------------------------
 console.log('→ Building vendor/three.module.bundle.js ...');
 await esbuild.build({
   ...shared,
-  entryPoints: [path.resolve(root, 'node_modules/three/build/three.module.js')],
+  entryPoints: [path.resolve(here, 'three-entry.mjs')],
   format: 'esm',
   outfile: path.resolve(vendor, 'three.module.bundle.js'),
 });
 console.log('  ✓ Done');
 
 // ---------------------------------------------------------------------------
-// 3. Three.js — UMD copy for jsdoc-types.html (global THREE)
+// 3. Three.js — IIFE global build for jsdoc-types.html (global THREE).
+//    r160 removed the UMD build (build/three.min.js no longer ships), so
+//    this reconstructs the global contract from the module build.
 // ---------------------------------------------------------------------------
-console.log('→ Copying vendor/three.min.js ...');
-await copyFile(
-  path.resolve(root, 'node_modules/three/build/three.min.js'),
-  path.resolve(vendor, 'three.min.js')
-);
+console.log('→ Building vendor/three.global.bundle.js ...');
+await esbuild.build({
+  ...shared,
+  entryPoints: [path.resolve(here, 'three-global-entry.mjs')],
+  format: 'iife',
+  outfile: path.resolve(vendor, 'three.global.bundle.js'),
+});
 console.log('  ✓ Done');
 
 // ---------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 // HUG Principle: Guided - Three.js is loaded lazily from the local vendor
-// copy (built from node_modules via npm run build:vendor): the ~600 KB
-// bundle is fetched only when a <kinetic-background> element connects, not
-// eagerly at page load. Both motion modes render through WebGL (the
+// copy (built from node_modules via npm run build:vendor): the ~509 KB
+// tree-shaken bundle is fetched only when a <kinetic-background> element
+// connects, not eagerly at page load. Both motion modes render through WebGL (the
 // reduced-motion path draws one static frame), so the lazy load applies
 // equally to them.
 import {

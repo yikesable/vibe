@@ -26,7 +26,7 @@ picked up.
   usage — the only relevant changes are WebGL 1 removal (r163, irrelevant)
   and ColorManagement-on-by-default (r152, may shift the neon-pink a hair —
   needs visual QA).
-- **Bundle:** ~600 KB min / ~150 KB gz either way. The real win is switching
+- **Bundle:** r185 tree-shaken module bundle ~509 KB (full r128 module was ~584 KB); the global IIFE for jsdoc-types is ~697 KB. The real win was switching
   `components/kinetic-background.js` to **named imports**
   (`import { Scene, WebGLRenderer, … }`) — `three` is `sideEffects: false`,
   so esbuild tree-shakes the vendor bundle substantially.
