@@ -26,7 +26,7 @@
     <style>
         story-slide[active] .slide-title { view-transition-name: vt-story-jsdoc; }
     </style>
-    <script src="../vendor/three.global.bundle.js"></script>
+    <script defer src="../vendor/three.global.bundle.js"></script>
     <link rel="preload" href="../assets/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="../assets/fonts/fonts.css">
 
@@ -767,10 +767,23 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
     }
     class StoryViewer extends HTMLElement {
         constructor() { super(); this.attachShadow({ mode: 'open' }); this._slides = []; this._currentSlideIndex = 0; this._slideTimer = null; this._isPaused = false; this._isInitialized = false; }
-        connectedCallback() { this._renderBaseLayout(); this._setupEventListeners(); this._motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)'); this._onMotionChange = () => { if (this._motionQuery.matches) { clearTimeout(this._slideTimer); } else if (this._isInitialized && !this._isPaused) { this._startTimer(); } }; this._motionQuery.addEventListener('change', this._onMotionChange); const slot = this.shadowRoot.querySelector('slot'); if (slot) { slot.addEventListener('slotchange', () => this.init()); } }
+        connectedCallback() {
+            // Re-entrant: a reattach must replace the previous layout (a
+            // second .story-container would overlay dead progress bars over
+            // live ones) and re-kick an initialized viewer's timer.
+            this._renderBaseLayout();
+            this._setupEventListeners();
+            this._motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+            this._onMotionChange = () => { if (this._motionQuery.matches) { clearTimeout(this._slideTimer); // The inline fill-progress animation would snap to "100% done" under the blanket reduce rule while the slide never advances — freeze it honestly.
+ const bar = this.shadowRoot.getElementById(`progress-bar-${this._currentSlideIndex}`); if (bar) bar.style.animationPlayState = 'paused'; } else if (this._isInitialized && !this._isPaused) { this._startTimer(); } };
+            this._motionQuery.addEventListener('change', this._onMotionChange);
+            const slot = this.shadowRoot.querySelector('slot');
+            if (slot) { slot.addEventListener('slotchange', () => this.init()); }
+            if (this._isInitialized) { this._showSlide(this._currentSlideIndex); }
+        }
         disconnectedCallback() { if (this._onMotionChange !== undefined) { this._motionQuery.removeEventListener('change', this._onMotionChange); this._onMotionChange = undefined; } clearTimeout(this._slideTimer); }
         init() { if (this._isInitialized) return; this._slides = Array.from(this.querySelectorAll('story-slide')); if (this._slides.length > 0) { this._renderProgressBars(); this.reset(); this._isInitialized = true; } }
-        _renderBaseLayout() { const style = document.createElement('style'); style.textContent = `@keyframes fill-progress { from { width: 0%; } to { width: 100%; } } :host { display: block; width: 100vw; height: 100vh; } .story-container { position: relative; width: 100%; height: 100%; overflow: hidden; } .progress-bars { position: absolute; top: 1rem; left: 1rem; right: 1rem; display: grid; gap: 4px; z-index: 20; } .progress-bar-bg { height: 3px; background-color: rgba(255, 255, 255, 0.2); border-radius: 3px; overflow: hidden; } .progress-bar-fg { height: 100%; background-color: #39D353; border-radius: 3px; width: 0%; } .nav-zone { position: absolute; top: 0; bottom: 0; width: 30%; z-index: 10; cursor: pointer; } .nav-zone.left { left: 0; } .nav-zone.right { right: 0; }`; const container = document.createElement('div'); container.className = 'story-container'; const progressContainer = document.createElement('div'); progressContainer.id = 'progress-container'; progressContainer.className = 'progress-bars'; const slot = document.createElement('slot'); const navPrev = document.createElement('div'); navPrev.id = 'nav-prev'; navPrev.className = 'nav-zone left'; const navNext = document.createElement('div'); navNext.id = 'nav-next'; navNext.className = 'nav-zone right'; container.append(progressContainer, slot, navPrev, navNext); this.shadowRoot.append(style, container); }
+        _renderBaseLayout() { this.shadowRoot.replaceChildren(); const style = document.createElement('style'); style.textContent = `@keyframes fill-progress { from { width: 0%; } to { width: 100%; } } :host { display: block; width: 100vw; height: 100vh; } .story-container { position: relative; width: 100%; height: 100%; overflow: hidden; } .progress-bars { position: absolute; top: 1rem; left: 1rem; right: 1rem; display: grid; gap: 4px; z-index: 20; } .progress-bar-bg { height: 3px; background-color: rgba(255, 255, 255, 0.2); border-radius: 3px; overflow: hidden; } .progress-bar-fg { height: 100%; background-color: #39D353; border-radius: 3px; width: 0%; } .nav-zone { position: absolute; top: 0; bottom: 0; width: 30%; z-index: 10; cursor: pointer; } .nav-zone.left { left: 0; } .nav-zone.right { right: 0; }`; const container = document.createElement('div'); container.className = 'story-container'; const progressContainer = document.createElement('div'); progressContainer.id = 'progress-container'; progressContainer.className = 'progress-bars'; const slot = document.createElement('slot'); const navPrev = document.createElement('div'); navPrev.id = 'nav-prev'; navPrev.className = 'nav-zone left'; const navNext = document.createElement('div'); navNext.id = 'nav-next'; navNext.className = 'nav-zone right'; container.append(progressContainer, slot, navPrev, navNext); this.shadowRoot.append(style, container); }
         _renderProgressBars() { const progressContainer = this.shadowRoot.getElementById('progress-container'); while (progressContainer.firstChild) { progressContainer.removeChild(progressContainer.firstChild); } progressContainer.style.gridTemplateColumns = `repeat(${this._slides.length}, 1fr)`; this._slides.forEach((_, i) => { const barBg = document.createElement('div'); barBg.className = 'progress-bar-bg'; const barFg = document.createElement('div'); barFg.className = 'progress-bar-fg'; barFg.id = `progress-bar-${i}`; barBg.appendChild(barFg); progressContainer.appendChild(barBg); }); }
         _showSlide(index) { clearTimeout(this._slideTimer); if (index >= this._slides.length) { index = 0; } if (index < 0) { index = this._slides.length - 1; } this._currentSlideIndex = index; this._slides.forEach((slide, i) => { const isActive = i === this._currentSlideIndex; slide.toggleAttribute('active', isActive); if (isActive) { this.dispatchEvent(new CustomEvent('slide-changed', { detail: { slide: slide, index: i }})); const typewriter = slide.querySelector('dos-typewriter[manual-start]'); if (typewriter && typeof typewriter.start === 'function') { typewriter.start(); } } }); this.shadowRoot.querySelectorAll('.progress-bar-fg').forEach((bar, i) => { bar.style.animation = 'none'; bar.style.width = i < this._currentSlideIndex ? '100%' : '0%'; }); this._startTimer(); }
         _getSlideDuration(slide) {
@@ -884,7 +897,11 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
             this.cursor.classList.add('cursor');
             const slot = document.createElement('slot');
 
-            this.shadowRoot.append(style, this.container, slot);
+            // Re-entrancy: a detach/reattach (slide recycling, DOM moves)
+            // must not stack a second container next to the stale one —
+            // manual-start typewriters only restart on slide change, so a
+            // ghost half-typed container would sit there forever.
+            this.shadowRoot.replaceChildren(style, this.container, slot);
 
             if (this.highlight) {
                 const prismTheme = document.createElement('link');
@@ -916,7 +933,7 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
 
         start() {
             if (this.isTyping) return;
-            if (this.timeoutId) clearTimeout(this.timeoutId);
+            if (this.timeoutId !== undefined) clearTimeout(this.timeoutId);
             this.isTyping = true;
             this.container.innerHTML = '';
 
@@ -944,7 +961,7 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
 
         complete() {
             if (!this.isTyping) return;
-            clearTimeout(this.timeoutId);
+            if (this.timeoutId !== undefined) clearTimeout(this.timeoutId);
             this.isTyping = false;
             this.animationJobs.forEach(({ node, text }) => node.textContent = text);
             this.dispatchEvent(new CustomEvent('type-finished'));
@@ -1031,7 +1048,7 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
 
     if (typeof THREE !== 'undefined') {
         class ParticleField extends HTMLElement {
-            constructor() { super(); this.attachShadow({ mode: 'open' }); this.animationFrameId = null; }
+            constructor() { super(); this.attachShadow({ mode: 'open' }); this.animationFrameId = undefined; }
             connectedCallback() {
                 const particleColor = this.getAttribute('color') || '#8A2BE2';
                 const particleSize = parseFloat(this.getAttribute('size')) || 0.015;
@@ -1050,9 +1067,9 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
                 this._motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
                 this._onMotionChange = () => {
                     if (this._motionQuery.matches) {
-                        if (this.animationFrameId !== null) { cancelAnimationFrame(this.animationFrameId); this.animationFrameId = null; }
+                        if (this.animationFrameId !== undefined) { cancelAnimationFrame(this.animationFrameId); this.animationFrameId = undefined; }
                         this._renderStatic();
-                    } else if (this.isConnected && this.renderer && this.animationFrameId === null) {
+                    } else if (this.isConnected && this.renderer && this.animationFrameId === undefined) {
                         this.animate();
                     }
                 };
@@ -1070,10 +1087,15 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
                     this._motionQuery.removeEventListener('change', this._onMotionChange);
                     this._onMotionChange = undefined;
                 }
-                if (this.animationFrameId !== null) { cancelAnimationFrame(this.animationFrameId); this.animationFrameId = null; }
+                if (this.animationFrameId !== undefined) { cancelAnimationFrame(this.animationFrameId); this.animationFrameId = undefined; }
                 if (this.resizeObserver) { this.resizeObserver.disconnect(); this.resizeObserver = undefined; }
-                // Release the GL context instead of leaking it.
+                // Release GPU resources like the sibling component: geometry
+                // and material first, then the GL context itself.
+                this.geometry?.dispose();
+                this.material?.dispose();
                 if (this.renderer) { this.renderer.dispose(); this.renderer = undefined; }
+                this.geometry = undefined;
+                this.material = undefined;
             }
             init(canvas, color, size, count) {
                 this.scene = new THREE.Scene();
@@ -1081,14 +1103,16 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
                 this.renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
                 // A lost context must not freeze the story into a throwing
                 // loop — the next frame is scheduled before render() runs.
-                canvas.addEventListener('webglcontextlost', (event) => { event.preventDefault(); this.teardown(); });
+                canvas.addEventListener('webglcontextlost', (event) => { event.preventDefault(); console.warn('<particle-field>: WebGL context lost — tearing down'); this.teardown(); });
                 this.onResize();
                 this.camera.position.z = 5;
                 const geometry = new THREE.BufferGeometry();
                 const positions = new Float32Array(count * 3);
                 for (let i = 0; i < count * 3; i++) { positions[i] = (Math.random() - 0.5) * 10; }
                 geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                this.geometry = geometry;
                 const material = new THREE.PointsMaterial({ color: new THREE.Color(color), size: size, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, });
+                this.material = material;
                 this.particles = new THREE.Points(geometry, material);
                 this.scene.add(this.particles);
                 this.resizeObserver = new ResizeObserver(() => this.onResize());
@@ -1127,6 +1151,10 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
             }
         }
         customElements.define('particle-field', ParticleField);
+    } else {
+        // Same trail as <kinetic-background>'s load failures: a missing
+        // global bundle must never amputate the page decoration silently.
+        console.warn('<particle-field>: THREE unavailable — vendor/three.global.bundle.js failed to load');
     }
 
     // --- PAGE LOGIC ---

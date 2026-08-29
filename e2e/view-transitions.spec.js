@@ -43,7 +43,8 @@ test.describe('view-transition morph wiring', () => {
   });
 
   test('the standardized @view-transition opt-in ships and reduced motion kills the animation', async ({ request }) => {
-    const css = await (await request.get('/vibe/styles/vibe.css')).text();
+    const res = await request.get('/vibe/styles/vibe.css');
+    const css = await res.text();
     expect(css).toContain('@view-transition { navigation: auto; }');
     // The reduce block disables every view-transition pseudo-animation.
     expect(css).toContain('::view-transition-old(*)');

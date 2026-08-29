@@ -5,10 +5,10 @@
 // reduced-motion path draws one static frame), so the lazy load applies
 // equally to them.
 import {
-  LifecycleState,
-  MotionPreference,
   createParticlePositions,
   easedCamera,
+  LifecycleState,
+  MotionPreference,
   motionPreferenceFrom,
   nextLifecycleState,
   normalizedMouse,
@@ -26,8 +26,9 @@ const FALLBACK_COLOR = 0xFF00A9; // design token --pop-pink, demoted to fallback
 
 /**
  * Lazily cached module promise — reconnects reuse the loaded bundle. The
- * vendored bundle ships untyped (see build-vendor's @ts-nocheck banner), so
+ * vendored bundle ships untyped (see build-vendor's ts-nocheck banner), so
  * the module shape is opaque to tsc.
+ *
  * @type {Promise<typeof import('../vendor/three.module.bundle.js')> | undefined}
  */
 let threeModulePromise;
@@ -136,9 +137,9 @@ class KineticBackground extends HTMLElement {
     this.onMotionPreferenceChange = () => {
       this.motion = motionPreferenceFrom(this.motionQuery);
       if (this.motion === MotionPreference.Reduced) {
-        this.enterStaticMode();
+        this.#enterStaticMode();
       } else {
-        this.enterRunningMode();
+        this.#enterRunningMode();
       }
     };
     this.motionQuery?.addEventListener('change', this.onMotionPreferenceChange);
@@ -149,9 +150,9 @@ class KineticBackground extends HTMLElement {
     this.onVisibilityChange = () => {
       this.documentHidden = document.hidden;
       if (document.hidden) {
-        this.stopLoop();
+        this.#stopLoop();
       } else {
-        this.startLoop();
+        this.#startLoop();
       }
     };
     // Initialize from the CURRENT state: a connect while the tab is hidden
@@ -187,10 +188,7 @@ class KineticBackground extends HTMLElement {
       window.removeEventListener('resize', this.onWindowResize);
       this.onWindowResize = undefined;
     }
-    if (this.onDocumentMouseMove !== undefined) {
-      document.removeEventListener('mousemove', this.onDocumentMouseMove);
-      this.onDocumentMouseMove = undefined;
-    }
+    this.#removePointerListeners();
     if (this.onVisibilityChange !== undefined) {
       document.removeEventListener('visibilitychange', this.onVisibilityChange);
       this.onVisibilityChange = undefined;
@@ -215,10 +213,10 @@ class KineticBackground extends HTMLElement {
   }
 
   /** Install the pointer listeners (idempotent — running mode only). */
-  installPointerListeners () {
+  #installPointerListeners () {
     if (this.onDocumentMouseMove !== undefined || this.mouse === undefined) return;
     this.onDocumentMouseMove = (event) => {
-      const mouse = this.mouse;
+      const { mouse } = this;
       const { x, y } = normalizedMouse(event.clientX, event.clientY, window.innerWidth, window.innerHeight);
       mouse.x = x;
       mouse.y = y;
@@ -226,16 +224,31 @@ class KineticBackground extends HTMLElement {
     document.addEventListener('mousemove', this.onDocumentMouseMove, false);
   }
 
-  removePointerListeners () {
+  #removePointerListeners () {
     if (this.onDocumentMouseMove === undefined) return;
     document.removeEventListener('mousemove', this.onDocumentMouseMove);
     this.onDocumentMouseMove = undefined;
   }
 
   /** Start the animation loop (idempotent — one pending frame at a time). */
-  startLoop () {
-    if (this.animationFrameId !== undefined || this.renderer === undefined || this.camera === undefined) return;
-    if (this.documentHidden || this.motion !== MotionPreference.Full || this.lifecycle !== LifecycleState.Running) return;
+  /**
+   * The single named invariant for "a loop may run right now": one pending
+   * frame at a time, live renderer, visible tab, full motion, running state.
+   * Every wake path (visibilitychange, init completion, live flip) goes
+   * through this — no call site re-derives the conjunction.
+   *
+   * @returns {boolean}
+   */
+  #loopEligible () {
+    return this.animationFrameId === undefined &&
+      this.renderer !== undefined && this.camera !== undefined &&
+      !this.documentHidden &&
+      this.motion === MotionPreference.Full &&
+      this.lifecycle === LifecycleState.Running;
+  }
+
+  #startLoop () {
+    if (!this.#loopEligible()) return;
     const { camera, mouse, particles, renderer, scene } = this;
     const animate = () => {
       this.animationFrameId = requestAnimationFrame(animate);
@@ -255,7 +268,7 @@ class KineticBackground extends HTMLElement {
     animate();
   }
 
-  stopLoop () {
+  #stopLoop () {
     if (this.animationFrameId !== undefined) {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = undefined;
@@ -268,25 +281,28 @@ class KineticBackground extends HTMLElement {
    * it succeeds — a throwing render fails honestly instead of leaving a
    * `static` element that never painted (same invariant as initThree).
    */
-  enterStaticMode () {
+  #enterStaticMode () {
     if (this.lifecycle !== LifecycleState.Running) return;
     try {
-      this.renderer?.render(this.scene, this.camera);
+      // No ?. here on purpose: Running implies a live renderer. If that
+      // invariant ever breaks, the throw must route to fail() — a silent
+      // optional chain would commit an unpainted static state.
+      this.renderer.render(this.scene, this.camera);
     } catch (err) {
       this.fail(err);
       return;
     }
     this.lifecycle = nextLifecycleState(this.lifecycle, 'motion-change', MotionPreference.Reduced);
-    this.stopLoop();
-    this.removePointerListeners();
+    this.#stopLoop();
+    this.#removePointerListeners();
   }
 
   /** Restart the loop after a live Reduce flip back to full motion. */
-  enterRunningMode () {
+  #enterRunningMode () {
     if (this.lifecycle !== LifecycleState.Static) return;
     this.lifecycle = nextLifecycleState(this.lifecycle, 'motion-change', MotionPreference.Full);
-    this.installPointerListeners();
-    this.startLoop();
+    this.#installPointerListeners();
+    this.#startLoop();
   }
 
   /**
@@ -440,9 +456,9 @@ class KineticBackground extends HTMLElement {
         return;
       }
 
-      this.installPointerListeners();
+      this.#installPointerListeners();
       this.lifecycle = nextLifecycleState(this.lifecycle, 'ready', this.motion);
-      this.startLoop();
+      this.#startLoop();
     } catch (err) {
       // A stale attempt — a newer connect owns the element — must not tear
       // down the live one (the shared module promise fans a rejection out to

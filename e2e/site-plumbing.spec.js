@@ -16,7 +16,12 @@ const PUBLIC_PAGES = [
   ['/component-explorations/vp-pie-menu.html', 'website'],
 ];
 
-/** Derive the canonical URL for a route ('' → the site root). */
+/**
+ * Derive the canonical URL for a route ('' → the site root).
+ *
+ * @param {string} route — the public route ('' for the index page).
+ * @returns {string} the absolute canonical URL.
+ */
 function canonicalFor (route) {
   return route === '' ? `${BASE}/` : `${BASE}${route}`;
 }
@@ -81,7 +86,7 @@ test.describe('site plumbing', () => {
     // requests fail this test; the documented Monaco debt is the allowlist.
     const external = new Set();
     page.on('request', (req) => {
-      const origin = new URL(req.url()).origin;
+      const { origin } = new URL(req.url());
       if (origin !== 'http://localhost:4173' && !KNOWN_EXTERNAL_ORIGINS.has(origin)) {
         external.add(origin);
       }

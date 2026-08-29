@@ -9,10 +9,10 @@
 //     extraction needed
 //   - Font licenses are documented in assets/fonts/LICENSE-fonts.md
 
-import esbuild from 'esbuild';
 import { copyFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import esbuild from 'esbuild';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..');

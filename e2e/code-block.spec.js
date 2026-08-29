@@ -4,7 +4,7 @@
 // the html-validate cleanup (raw text cannot represent </script>, and the
 // pre path decodes entities). These tests prove the conversion renders
 // decoded code, highlights it, and keeps the copy button working.
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 const EXAMPLE_BLOCK_COUNT = 4;
 

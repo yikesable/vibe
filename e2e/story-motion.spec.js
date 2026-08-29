@@ -63,9 +63,9 @@ test.describe('story pages honor prefers-reduced-motion', () => {
     // Live flip: switching to full motion starts the loop.
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await expect.poll(() => field.evaluate((el) => el.animationFrameId), { timeout: 3000 }).not.toBeNull();
-    // And back: the loop stops again.
+    // And back: the loop stops again (the field's sentinel is undefined).
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await expect.poll(() => field.evaluate((el) => el.animationFrameId), { timeout: 3000 }).toBeNull();
+    await expect.poll(() => field.evaluate((el) => el.animationFrameId), { timeout: 3000 }).toBeUndefined();
   });
 
   test('manifesto: no floating symbols under reduce, symbols under no-preference', async ({ page }) => {
@@ -122,7 +122,7 @@ test.describe('story pages honor prefers-reduced-motion', () => {
     // Mid-typing Reduce: the FULL text must appear (not freeze mid-word),
     // proving the live change listener completes the animation.
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    const { typed, full } = await typewriter.evaluate((el) => ({
+    const { full, typed } = await typewriter.evaluate((el) => ({
       typed: el.shadowRoot.querySelector('.container').textContent,
       full: el.initialText,
     }));

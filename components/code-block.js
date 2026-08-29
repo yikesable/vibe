@@ -5,6 +5,7 @@ class CodeBlock extends HTMLElement {
 
   /**
    * Strip the common indentation of a code string.
+   *
    * @param {string} codeString — raw template or pre content.
    * @returns {string}
    */
@@ -72,6 +73,9 @@ class CodeBlock extends HTMLElement {
         // The clipboard can be absent (non-secure context) or denied — the
         // failure must appear on the button (aria-live announces it), not
         // vanish into a console line the user never sees.
+        // The console line is the durable trail (the button state is the
+        // user-facing half) — deliberately NOT silent.
+        // eslint-disable-next-line no-console -- the failure needs a console trail alongside the visible button state
         console.error('Failed to copy text:', err);
         btn.textContent = 'Copy failed';
         btn.classList.add('failed');

@@ -336,7 +336,7 @@
       </section>
 
       <!-- Section 3: The Orders of Battle (Interactive Field Manual) -->
-      <section id="orders-of-battle" class="c-manifesto-section">
+      <section id="orders-of-battle" tabindex="-1" class="c-manifesto-section">
         <div class="c-manifesto-section__inner">
           <div class="c-manifesto-section__head">
             <h2 class="c-manifesto-section__title">The Gitea Uprising: Field Manual</h2>
@@ -508,16 +508,21 @@
             var anchors = document.querySelectorAll('a[href^="#"]');
             anchors.forEach(function (a) {
                 a.addEventListener('click', function (e) {
-                    e.preventDefault();
                     var id = this.getAttribute('href');
                     var target = document.querySelector(id);
-                    if (target) {
-                        target.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth' });
-                        // Anchor activation must move focus too — scrolling
-                        // alone leaves keyboard users stranded at the top of
-                        // the tab order (breaks the skip link).
-                        if (target.hasAttribute('tabindex')) target.focus({ preventScroll: true });
-                    }
+                    // Validate BEFORE preventDefault: a missing target must
+                    // fall through to the browser's native handling (or
+                    // visibly do nothing for a same-page dead anchor), not
+                    // swallow the click with no scroll, no focus, no trail.
+                    if (!target) return;
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+                    // Anchor activation must move focus too — scrolling
+                    // alone leaves keyboard users stranded at the top of
+                    // the tab order (breaks the skip link). In-page anchor
+                    // targets need tabindex="-1" to be focusable; both
+                    // current targets have it.
+                    target.focus({ preventScroll: true });
                 });
             });
         });
