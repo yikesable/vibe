@@ -17,7 +17,7 @@ test.describe('the global three.js bundle on jsdoc-types', () => {
     await expect.poll(() => field.evaluate((el) => Boolean(el.renderer)), { timeout: 5000 }).toBe(true);
 
     // The loop is live (or static under reduce — this context prefers motion).
-    await expect.poll(() => field.evaluate((el) => el.animationFrameId !== null && el.animationFrameId !== undefined), { timeout: 3000 }).toBe(true);
+    await expect.poll(() => field.evaluate((el) => el.animationFrameId), { timeout: 3000 }).toBeGreaterThan(0);
     expect(pageErrors).toEqual([]);
   });
 });

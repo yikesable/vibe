@@ -927,7 +927,10 @@ const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
                 this._motionQuery.removeEventListener('change', this._onMotionChange);
                 this._onMotionChange = undefined;
             }
-            if (this.timeoutId) clearTimeout(this.timeoutId);
+            // Typing deliberately PAUSES across a detach/reattach (the
+            // container persists); the stored text resumes on the next
+            // start() — clearing the container here would discard it.
+            if (this.timeoutId !== undefined) clearTimeout(this.timeoutId);
             this.isTyping = false;
         }
 

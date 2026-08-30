@@ -61,8 +61,11 @@ test.describe('story pages honor prefers-reduced-motion', () => {
     const frameId = await field.evaluate((el) => el.animationFrameId);
     expect(frameId === null || frameId === undefined).toBe(true);
     // Live flip: switching to full motion starts the loop.
+    // The loop's sentinel is `undefined` (never null) — a started loop is a
+    // numeric rAF id, so `toBeGreaterThan(0)` is falsifiable: an undefined
+    // sentinel (loop never started) fails it.
     await page.emulateMedia({ reducedMotion: 'no-preference' });
-    await expect.poll(() => field.evaluate((el) => el.animationFrameId), { timeout: 3000 }).not.toBeNull();
+    await expect.poll(() => field.evaluate((el) => el.animationFrameId), { timeout: 3000 }).toBeGreaterThan(0);
     // And back: the loop stops again (the field's sentinel is undefined).
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await expect.poll(() => field.evaluate((el) => el.animationFrameId), { timeout: 3000 }).toBeUndefined();

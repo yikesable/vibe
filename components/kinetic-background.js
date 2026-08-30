@@ -230,7 +230,6 @@ class KineticBackground extends HTMLElement {
     this.onDocumentMouseMove = undefined;
   }
 
-  /** Start the animation loop (idempotent — one pending frame at a time). */
   /**
    * The single named invariant for "a loop may run right now": one pending
    * frame at a time, live renderer, visible tab, full motion, running state.
@@ -247,6 +246,7 @@ class KineticBackground extends HTMLElement {
       this.lifecycle === LifecycleState.Running;
   }
 
+  /** Start the animation loop (idempotent — one pending frame at a time). */
   #startLoop () {
     if (!this.#loopEligible()) return;
     const { camera, mouse, particles, renderer, scene } = this;

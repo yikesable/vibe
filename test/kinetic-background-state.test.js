@@ -65,7 +65,7 @@ describe('kinetic-background-state helpers', () => {
         assert.equal(nextLifecycleState(LifecycleState.Static, 'motion-change', MotionPreference.Reduced), LifecycleState.Static);
         assert.equal(nextLifecycleState(LifecycleState.Connecting, 'motion-change', MotionPreference.Reduced), LifecycleState.Connecting);
         assert.equal(nextLifecycleState(LifecycleState.Disconnected, 'motion-change', MotionPreference.Reduced), LifecycleState.Disconnected);
-        assert.equal(nextLifecycleState(LifecycleState.Failed ?? LifecycleState.Disconnected, 'motion-change', MotionPreference.Reduced), LifecycleState.Disconnected);
+        assert.equal(nextLifecycleState(LifecycleState.Disconnected, 'motion-change', MotionPreference.Reduced), LifecycleState.Disconnected);
       });
     });
   });
