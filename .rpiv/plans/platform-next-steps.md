@@ -7,7 +7,7 @@ Planning: site-correctness planner + upgrades/hygiene planner. Status: not start
 - `actions/setup-node@v4` is dead after **2026-09-16** (Node 20 runner removal) — hard deadline.
 - `og:image` still points at placehold.co — the one live violation of DESIGN.md's no-CDN rule.
 - `stories/jsdoc-types.html` + `stories/manifesto.html` animate unconditionally — violates "no animation without consent, ever".
-- Three.js is pinned at 0.128.0 (Apr 2021, ~57 releases behind); **r160 removed the UMD build**, so
+- Three.js is pinned at 0.128.0 (Apr 2021, ~57 releases behind); **r161 removed the UMD build** (r160 only deprecated it), so
   `build-vendor.mjs` step 3 (`copyFile three.min.js`) hard-fails on any upgrade — an IIFE global
   entry is mandatory, not polish.
 - `modulepreload` kills the 3-step waterfall (HTML → component → dynamic import) before the ~600 KB fetch.
@@ -127,7 +127,7 @@ replaces two inline data-URI copies; note the token in DESIGN.md), linked from p
 
 ## Then: B-WP3 — three.js 0.128 → 0.185 (P2, L) — AFTER Track A's page-head edits land
 1. package.json `"three": "^0.185.1"`; npm install.
-2. build-vendor.mjs step 3 replacement (UMD is gone in r160+): new `scripts/three-global-entry.mjs`
+2. build-vendor.mjs step 3 replacement (UMD is gone in r161+): new `scripts/three-global-entry.mjs`
    (`import * as THREE from 'three'; globalThis.THREE = THREE;`) bundled as IIFE → `vendor/three.min.js`
    (keep filename; zero HTML edits — or rename to `three.global.bundle.js` + one script-tag edit; prefer rename for honesty).
 3. Tree-shake subset entry (`scripts/three-entry.mjs`, named imports of what kinetic-background uses,

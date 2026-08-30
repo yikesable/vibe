@@ -18,9 +18,9 @@ picked up.
   flip `twitter:card` back from `summary` to `summary_large_image` (the
   downgrade exists because a large card with no image renders blank tiles).
 
-### three.js upgrade (0.128.0 → current) — own work package
+### three.js upgrade (0.128.0 → 0.185.1) — EXECUTED 2026-08-29 (`8e40b01`)
 
-- `three` has been pinned at `^0.128.0` (2021) since the kinetic-background
+- `three` had been pinned at `^0.128.0` (2021) since the kinetic-background
   component was written. Research (2026-08-28): no API break for the
   `Scene`/`PerspectiveCamera`/`WebGLRenderer`/`Points`/`BufferGeometry`
   usage — the only relevant changes are WebGL 1 removal (r163, irrelevant)
@@ -38,23 +38,19 @@ picked up.
   from the 2026-08-28 research round did not survive measurement. If
   revisited: re-benchmark after the CodeMirror 6 switch (different
   bandwidth competition).
-- **Bundle:** r185 tree-shaken module bundle ~509 KB (full r128 module was ~584 KB); the global IIFE for jsdoc-types is ~697 KB. The real win was switching
-  `components/kinetic-background.js` to **named imports**
+- **Bundle:** r185 tree-shaken module bundle 520,670 B (~509 KB decimal; full
+  r128 module was 597,907 B — ~13% off, not the naive 25–40%: WebGLRenderer
+  drags in the core). The global IIFE for jsdoc-types is 730,383 B (~713
+  KiB) — it intentionally ships the full module namespace.
+  `components/kinetic-background.js` now uses **named imports**
   (`import { Scene, WebGLRenderer, … }`) — `three` is `sideEffects: false`,
   so esbuild tree-shakes the vendor bundle substantially.
 - **Component hardening** (setPixelRatio cap, `powerPreference: 'low-power'`,
-  the `--pop-pink` drift fix) **landed 2026-08-28** (the hardening commit);
-  what remains here is the version bump, the named-import tree-shake, and
-  the color-management visual QA. OffscreenCanvas+Worker stays deferred —
+  the `--pop-pink` drift fix) **landed 2026-08-28** (the hardening commit).
+  OffscreenCanvas+Worker stays deferred —
   the per-frame JS is tiny, the
   dominant cost is GPU compositing, and r128 + Safari make the worker path
   friction-heavy for a marginal win.
-- **Sequence:** do the named-import refactor and the version bump together,
-  rebuild via `npm run build:vendor`, visual QA on all pages using the
-  component.
-- **Renovate:** `^0.128.0` caret-semver means renovate treats 0.185 as a
-  major. Either accept the bump when the work package runs, or
-  `ignoreDeps: ["three"]` until then to stop the churn noise.
 
 ### Extract and showcase more of the project's web components
 
