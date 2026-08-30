@@ -3,12 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSDoc Type Safety: The Story</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+    <title>JSDoc Type Safety /// Vibe Coded</title>
+
+    <!-- Core SEO & Metadata -->
+    <meta name="description" content="A slide-story on JSDoc type safety for AI-written JavaScript — standard JS, the library-first rationale, and the discipline that makes generated code maintainable.">
+    <link rel="canonical" href="https://yikesable.github.io/vibe/stories/jsdoc-types.html">
+    <link rel="icon" href="/vibe/assets/favicon.svg">
+    <meta property="og:title" content="JSDoc Type Safety /// Vibe Coded">
+    <meta property="og:description" content="A slide-story on JSDoc type safety for AI-written JavaScript — standard JS, the library-first rationale, and the discipline that makes generated code maintainable.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://yikesable.github.io/vibe/stories/jsdoc-types.html">
+    <meta property="og:site_name" content="Vibe Coded">
+    <meta name="twitter:card" content="summary">
+    <meta name="view-transition" content="same-origin">
+
+    <link rel="stylesheet" href="../styles/vibe.css">
+
+    <!-- Cross-document view-transition morph target: the index story card
+         carrying c-bento__item--vt-story-jsdoc grows into this heading.
+         Scoped to the ACTIVE slide — every slide shares .slide-title, and
+         duplicate view-transition-names in one snapshot disable the morph. -->
+    <style>
+        story-slide[active] .slide-title { view-transition-name: vt-story-jsdoc; }
+    </style>
+    <script defer src="../vendor/three.global.bundle.js"></script>
+    <link rel="preload" href="../assets/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="../assets/fonts/fonts.css">
 
     <style>
         /* --- THEME DEFINITION --- */
@@ -290,7 +310,7 @@
         #fullscreen-toggle svg {
             pointer-events: none;
         }
-        .hidden { display: none; }
+
 
         @media (orientation: portrait) {
             .slide-title { font-size: clamp(2rem, min(10vw, 10vh), 3.5rem); margin-bottom: 0.25rem; }
@@ -306,29 +326,59 @@
             ol.slide-list li, .slide-list li { margin-bottom: 0.75rem; }
             .ratings-grid { grid-template-columns: 1fr; }
         }
+
+        /* ── html-validate cleanup classes (2026-08): repeated inline values class-ized per DESIGN.md ── */
+        .slide-cite { display: block; text-align: right; font-style: normal; margin-top: 0.5rem; color: #9ca3af; }
+        .slide-text--spaced { margin-bottom: 2rem; }
+        .rating-note { color: #9ca3af; }
+
+        /* ── Reduced motion ───────────────────────────────────────── */
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
     </style>
 </head>
 <body>
+    <a class="c-skip-link" href="#main-content">Skip to content</a>
+
+    <div class="c-site-header">
+        <nav class="c-site-header__nav" aria-label="Main">
+            <ul class="o-cluster">
+                <li><a class="c-site-header__link" href="../index.html">Home</a></li>
+                <li><a class="c-site-header__link" href="../index.html#main-content">Component Explorations</a></li>
+                <li><a class="c-site-header__link" href="../index.html#stories">Stories</a></li>
+                <li><a class="c-site-header__link" href="../codepen-converter/">CodePen Converter</a></li>
+            </ul>
+        </nav>
+    </div>
+
     <div class="aurora-glow"></div>
     <particle-field color="#39D353" size="0.008" count="8000"></particle-field>
 
-    <button id="presentation-mode-toggle" title="Toggle Presentation Mode">
-        <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-play-fill hidden" viewBox="0 0 16 16">
+    <button id="presentation-mode-toggle" type="button" title="Toggle Presentation Mode" aria-label="Toggle Presentation Mode">
+        <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="is-hidden" viewBox="0 0 16 16">
           <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
         </svg>
         <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-pause-fill" viewBox="0 0 16 16">
           <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5m5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5"/>
         </svg>
     </button>
-    <button id="fullscreen-toggle" title="Enter Fullscreen" aria-label="Enter Fullscreen">
+    <button id="fullscreen-toggle" type="button" title="Enter Fullscreen" aria-label="Enter Fullscreen">
         <svg id="fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
           <path d="M8 3V5H4V9H2V3H8ZM2 21V15H4V19H8V21H2ZM22 21H16V19H20V15H22V21ZM22 9H20V5H16V3H22V9Z"></path>
         </svg>
-        <svg id="fullscreen-exit-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" class="hidden">
+        <svg id="fullscreen-exit-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" class="is-hidden">
           <path d="M18 7H22V9H16V3H18V7ZM8 9H2V7H6V3H8V9ZM18 17V21H16V15H22V17H18ZM8 15V21H6V17H2V15H8Z"></path>
         </svg>
     </button>
 
+    <main id="main-content" tabindex="-1">
     <story-viewer>
         <!-- Slide 1: Intro -->
         <story-slide data-duration="8000">
@@ -360,7 +410,7 @@
                     <li><span>✓</span><div>It <strong>eliminates the mandatory build step</strong>, leading to a faster, lower-friction developer experience.</div></li>
                 </ul>
                 <blockquote>For applications, which will have a build step anyway, the benefits are less pronounced. For libraries, I strongly urge you to use JSDoc instead.
-                <cite class="block text-right not-italic mt-2 text-gray-400">— Rich Harris, Creator of Svelte</cite>
+                <cite class="slide-cite">— Rich Harris, Creator of Svelte</cite>
                 </blockquote>
             </div>
         </story-slide>
@@ -554,7 +604,7 @@ const config = /** @type {const} */ ({
 const myTheme = /** @satisfies {Theme} */ ('dark');
 // `myTheme` has the specific type 'dark'
 
-const palette = /** @satisfies {Record<Theme, string[]>} */ ({
+const palette = /** @satisfies {Record&lt;Theme, string[]&gt;} */ ({
   light: ['#fff', '#eee'],
   dark: ['#000', '#111'],
 });
@@ -588,7 +638,7 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
     "build": "run-s build:*",
     "check:tsc": "tsc",
     "check:type-coverage": "type-coverage --detail --strict",
-    "check": "run-s clean && run-p check:*",
+    "check": "run-s clean &amp;&amp; run-p check:*",
     "clean:declarations-top": "rm -rf $(find . -maxdepth 1 -type f -name '*.d.ts*' ! -name 'index.d.ts')",
     "clean:declarations-lib": "rm -rf $(find lib -type f -name '*.d.ts*' ! -name '*-types.d.ts')",
     "clean": "run-p clean:*"
@@ -674,22 +724,22 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
             <div class="story-slide-content">
                 <div class="pill">Comparative Analysis</div>
                 <h2 class="slide-title">Rule Configuration Balance</h2>
-                 <p class="slide-text mb-8">Balancing the roles of <code>tsc</code> and ESLint for a harmonious workflow.</p>
+                 <p class="slide-text slide-text--spaced">Balancing the roles of <code>tsc</code> and ESLint for a harmonious workflow.</p>
                 <div class="ratings-grid">
                     <div class="rating-item">
                         <div class="rating-label">Type Correctness &amp; Logic</div>
                         <div class="rating-bar-bg"><div class="rating-bar-fg" data-value="100"></div></div>
-                        <small class="text-gray-400">Handled 100% by <code>tsc</code>.</small>
+                        <small class="rating-note">Handled 100% by <code>tsc</code>.</small>
                     </div>
                     <div class="rating-item">
                         <div class="rating-label">Documentation Presence &amp; Quality</div>
                         <div class="rating-bar-bg"><div class="rating-bar-fg" data-value="90"></div></div>
-                         <small class="text-gray-400">Handled 90% by ESLint, 10% by manual review.</small>
+                         <small class="rating-note">Handled 90% by ESLint, 10% by manual review.</small>
                     </div>
                      <div class="rating-item">
                         <div class="rating-label">Code &amp; JSDoc Style Consistency</div>
                         <div class="rating-bar-bg"><div class="rating-bar-fg" data-value="100"></div></div>
-                         <small class="text-gray-400">Handled 100% by ESLint &amp; Prettier.</small>
+                         <small class="rating-note">Handled 100% by ESLint &amp; Prettier.</small>
                     </div>
                 </div>
             </div>
@@ -705,10 +755,10 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
         </story-slide>
 
     </story-viewer>
+    </main>
 
-    <!-- Prism.js for Syntax Highlighting -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <!-- Prism.js for Syntax Highlighting (bundled with javascript/typescript/json/bash) -->
+    <script src="../vendor/prism.bundle.js"></script>
 
 <script type="module">
     // --- WEB COMPONENTS (Self-contained, Refactored June 2025) ---
@@ -717,9 +767,23 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
     }
     class StoryViewer extends HTMLElement {
         constructor() { super(); this.attachShadow({ mode: 'open' }); this._slides = []; this._currentSlideIndex = 0; this._slideTimer = null; this._isPaused = false; this._isInitialized = false; }
-        connectedCallback() { this._renderBaseLayout(); this._setupEventListeners(); const slot = this.shadowRoot.querySelector('slot'); if (slot) { slot.addEventListener('slotchange', () => this.init()); } }
+        connectedCallback() {
+            // Re-entrant: a reattach must replace the previous layout (a
+            // second .story-container would overlay dead progress bars over
+            // live ones) and re-kick an initialized viewer's timer.
+            this._renderBaseLayout();
+            this._setupEventListeners();
+            this._motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+            this._onMotionChange = () => { if (this._motionQuery.matches) { clearTimeout(this._slideTimer); // The inline fill-progress animation would snap to "100% done" under the blanket reduce rule while the slide never advances — freeze it honestly.
+ const bar = this.shadowRoot.getElementById(`progress-bar-${this._currentSlideIndex}`); if (bar) bar.style.animationPlayState = 'paused'; } else if (this._isInitialized && !this._isPaused) { this._startTimer(); } };
+            this._motionQuery.addEventListener('change', this._onMotionChange);
+            const slot = this.shadowRoot.querySelector('slot');
+            if (slot) { slot.addEventListener('slotchange', () => this.init()); }
+            if (this._isInitialized) { this._showSlide(this._currentSlideIndex); }
+        }
+        disconnectedCallback() { if (this._onMotionChange !== undefined) { this._motionQuery.removeEventListener('change', this._onMotionChange); this._onMotionChange = undefined; } clearTimeout(this._slideTimer); }
         init() { if (this._isInitialized) return; this._slides = Array.from(this.querySelectorAll('story-slide')); if (this._slides.length > 0) { this._renderProgressBars(); this.reset(); this._isInitialized = true; } }
-        _renderBaseLayout() { const style = document.createElement('style'); style.textContent = `@keyframes fill-progress { from { width: 0%; } to { width: 100%; } } :host { display: block; width: 100vw; height: 100vh; } .story-container { position: relative; width: 100%; height: 100%; overflow: hidden; } .progress-bars { position: absolute; top: 1rem; left: 1rem; right: 1rem; display: grid; gap: 4px; z-index: 20; } .progress-bar-bg { height: 3px; background-color: rgba(255, 255, 255, 0.2); border-radius: 3px; overflow: hidden; } .progress-bar-fg { height: 100%; background-color: #39D353; border-radius: 3px; width: 0%; } .nav-zone { position: absolute; top: 0; bottom: 0; width: 30%; z-index: 10; cursor: pointer; } .nav-zone.left { left: 0; } .nav-zone.right { right: 0; }`; const container = document.createElement('div'); container.className = 'story-container'; const progressContainer = document.createElement('div'); progressContainer.id = 'progress-container'; progressContainer.className = 'progress-bars'; const slot = document.createElement('slot'); const navPrev = document.createElement('div'); navPrev.id = 'nav-prev'; navPrev.className = 'nav-zone left'; const navNext = document.createElement('div'); navNext.id = 'nav-next'; navNext.className = 'nav-zone right'; container.append(progressContainer, slot, navPrev, navNext); this.shadowRoot.append(style, container); }
+        _renderBaseLayout() { this.shadowRoot.replaceChildren(); const style = document.createElement('style'); style.textContent = `@keyframes fill-progress { from { width: 0%; } to { width: 100%; } } :host { display: block; width: 100vw; height: 100vh; } .story-container { position: relative; width: 100%; height: 100%; overflow: hidden; } .progress-bars { position: absolute; top: 1rem; left: 1rem; right: 1rem; display: grid; gap: 4px; z-index: 20; } .progress-bar-bg { height: 3px; background-color: rgba(255, 255, 255, 0.2); border-radius: 3px; overflow: hidden; } .progress-bar-fg { height: 100%; background-color: #39D353; border-radius: 3px; width: 0%; } .nav-zone { position: absolute; top: 0; bottom: 0; width: 30%; z-index: 10; cursor: pointer; } .nav-zone.left { left: 0; } .nav-zone.right { right: 0; }`; const container = document.createElement('div'); container.className = 'story-container'; const progressContainer = document.createElement('div'); progressContainer.id = 'progress-container'; progressContainer.className = 'progress-bars'; const slot = document.createElement('slot'); const navPrev = document.createElement('div'); navPrev.id = 'nav-prev'; navPrev.className = 'nav-zone left'; const navNext = document.createElement('div'); navNext.id = 'nav-next'; navNext.className = 'nav-zone right'; container.append(progressContainer, slot, navPrev, navNext); this.shadowRoot.append(style, container); }
         _renderProgressBars() { const progressContainer = this.shadowRoot.getElementById('progress-container'); while (progressContainer.firstChild) { progressContainer.removeChild(progressContainer.firstChild); } progressContainer.style.gridTemplateColumns = `repeat(${this._slides.length}, 1fr)`; this._slides.forEach((_, i) => { const barBg = document.createElement('div'); barBg.className = 'progress-bar-bg'; const barFg = document.createElement('div'); barFg.className = 'progress-bar-fg'; barFg.id = `progress-bar-${i}`; barBg.appendChild(barFg); progressContainer.appendChild(barBg); }); }
         _showSlide(index) { clearTimeout(this._slideTimer); if (index >= this._slides.length) { index = 0; } if (index < 0) { index = this._slides.length - 1; } this._currentSlideIndex = index; this._slides.forEach((slide, i) => { const isActive = i === this._currentSlideIndex; slide.toggleAttribute('active', isActive); if (isActive) { this.dispatchEvent(new CustomEvent('slide-changed', { detail: { slide: slide, index: i }})); const typewriter = slide.querySelector('dos-typewriter[manual-start]'); if (typewriter && typeof typewriter.start === 'function') { typewriter.start(); } } }); this.shadowRoot.querySelectorAll('.progress-bar-fg').forEach((bar, i) => { bar.style.animation = 'none'; bar.style.width = i < this._currentSlideIndex ? '100%' : '0%'; }); this._startTimer(); }
         _getSlideDuration(slide) {
@@ -733,7 +797,9 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
             return parseInt(slide.dataset.duration, 10) || 10000;
         }
         _startTimer() {
-            if (this._isPaused || !this._slides.length) return;
+            // Reduced motion: no auto-advance — slides navigate manually via
+            // the nav zones; the change listener resumes timers on flip.
+            if (this._isPaused || !this._slides.length || this._motionQuery?.matches) return;
             const currentSlide = this._slides[this._currentSlideIndex];
             const duration = this._getSlideDuration(currentSlide);
             const currentBar = this.shadowRoot.getElementById(`progress-bar-${this._currentSlideIndex}`);
@@ -831,25 +897,65 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
             this.cursor.classList.add('cursor');
             const slot = document.createElement('slot');
 
-            this.shadowRoot.append(style, this.container, slot);
+            // Re-entrancy: a detach/reattach (slide recycling, DOM moves)
+            // must not stack a second container next to the stale one —
+            // manual-start typewriters only restart on slide change, so a
+            // ghost half-typed container would sit there forever.
+            this.shadowRoot.replaceChildren(style, this.container, slot);
 
             if (this.highlight) {
                 const prismTheme = document.createElement('link');
                 prismTheme.setAttribute('rel', 'stylesheet');
-                prismTheme.setAttribute('href', 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css');
+                prismTheme.setAttribute('href', '../vendor/prism-okaidia.css');
                 this.shadowRoot.appendChild(prismTheme);
             }
+
+            // Live Reduce flip during an active typing: complete the text
+            // immediately. Stored so disconnect can remove it (custom
+            // elements outlive page handlers otherwise).
+            this._motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+            this._onMotionChange = () => {
+                if (this._motionQuery.matches && this.isTyping) this.complete();
+            };
+            this._motionQuery.addEventListener('change', this._onMotionChange);
 
             if (!this.hasAttribute('manual-start')) this.start();
         }
 
+        disconnectedCallback() {
+            if (this._onMotionChange !== undefined) {
+                this._motionQuery.removeEventListener('change', this._onMotionChange);
+                this._onMotionChange = undefined;
+            }
+            // Typing deliberately PAUSES across a detach/reattach (the
+            // container persists); the stored text resumes on the next
+            // start() — clearing the container here would discard it.
+            if (this.timeoutId !== undefined) clearTimeout(this.timeoutId);
+            this.isTyping = false;
+        }
+
         start() {
             if (this.isTyping) return;
-            if (this.timeoutId) clearTimeout(this.timeoutId);
+            if (this.timeoutId !== undefined) clearTimeout(this.timeoutId);
             this.isTyping = true;
             this.container.innerHTML = '';
 
-            if (this.highlight && window.Prism && window.Prism.plugins && window.Prism.plugins.autoloader) {
+            // Reduced motion: the full text appears at once — the char-by-char
+            // animation is decoration, and the blanket reduce block only
+            // freezes CSS animations, not this JS-driven one. Reads the
+            // element's stored query so a mid-session Reduce flip is honored
+            // by every subsequent start() too.
+            if (this._motionQuery?.matches) {
+                if (this.highlight && window.Prism && window.Prism.languages && window.Prism.languages[this.highlight]) {
+                    this._typeHighlightedText();
+                } else {
+                    this._typePlainText(this.initialText);
+                }
+                this.complete();
+                return;
+            }
+
+            if (this.highlight && window.Prism && window.Prism.languages && window.Prism.languages[this.highlight]) {
                 this._typeHighlightedText();
             } else {
                 this._typePlainText(this.initialText);
@@ -858,7 +964,7 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
 
         complete() {
             if (!this.isTyping) return;
-            clearTimeout(this.timeoutId);
+            if (this.timeoutId !== undefined) clearTimeout(this.timeoutId);
             this.isTyping = false;
             this.animationJobs.forEach(({ node, text }) => node.textContent = text);
             this.dispatchEvent(new CustomEvent('type-finished'));
@@ -866,27 +972,18 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
         }
 
         _typeHighlightedText() {
-            window.Prism.plugins.autoloader.loadLanguages(
-                [this.highlight],
-                () => {
-                    const grammar = window.Prism.languages[this.highlight];
-                    if (!grammar) {
-                        this._typePlainText(this.initialText);
-                        return;
-                    }
-                    this.animationJobs = [];
-                    const fragment = document.createDocumentFragment();
-                    this._buildTokenDOM(fragment, window.Prism.tokenize(this.initialText, grammar), this.animationJobs);
-                    this.container.appendChild(fragment);
-                    this.container.appendChild(this.cursor);
-                    this.cursor.style.display = 'inline-block';
-                    this._animateTyping(this.animationJobs);
-                },
-                () => {
-                    console.warn(`Prism autoloader could not load language: ${this.highlight}. Falling back to plain text.`);
-                    this._typePlainText(this.initialText);
-                }
-            );
+            const grammar = window.Prism.languages[this.highlight];
+            if (!grammar) {
+                this._typePlainText(this.initialText);
+                return;
+            }
+            this.animationJobs = [];
+            const fragment = document.createDocumentFragment();
+            this._buildTokenDOM(fragment, window.Prism.tokenize(this.initialText, grammar), this.animationJobs);
+            this.container.appendChild(fragment);
+            this.container.appendChild(this.cursor);
+            this.cursor.style.display = 'inline-block';
+            this._animateTyping(this.animationJobs);
         }
 
         _typePlainText(text) {
@@ -954,14 +1051,113 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
 
     if (typeof THREE !== 'undefined') {
         class ParticleField extends HTMLElement {
-            constructor() { super(); this.attachShadow({ mode: 'open' }); this.animationFrameId = null; }
-            connectedCallback() { const particleColor = this.getAttribute('color') || '#8A2BE2'; const particleSize = parseFloat(this.getAttribute('size')) || 0.015; const particleCount = parseInt(this.getAttribute('count'), 10) || 5000; const style = document.createElement('style'); style.textContent = `:host { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; } canvas { display: block; width: 100%; height: 100%; }`; const canvas = document.createElement('canvas'); this.shadowRoot.append(style, canvas); this.init(canvas, particleColor, particleSize, particleCount); }
-            disconnectedCallback() { cancelAnimationFrame(this.animationFrameId); if (this.resizeObserver) this.resizeObserver.disconnect(); }
-            init(canvas, color, size, count) { this.scene = new THREE.Scene(); this.camera = new THREE.PerspectiveCamera(75, this.clientWidth / this.clientHeight, 0.1, 1000); this.renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true }); this.onResize(); this.camera.position.z = 5; const geometry = new THREE.BufferGeometry(); const positions = new Float32Array(count * 3); for (let i = 0; i < count * 3; i++) { positions[i] = (Math.random() - 0.5) * 10; } geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3)); const material = new THREE.PointsMaterial({ color: new THREE.Color(color), size: size, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, }); this.particles = new THREE.Points(geometry, material); this.scene.add(this.particles); this.resizeObserver = new ResizeObserver(() => this.onResize()); this.resizeObserver.observe(this); this.animate(); }
-            onResize() { if (!this.isConnected) return; this.camera.aspect = this.clientWidth / this.clientHeight; this.camera.updateProjectionMatrix(); this.renderer.setSize(this.clientWidth, this.clientHeight); }
-            animate() { this.animationFrameId = requestAnimationFrame(() => this.animate()); const time = Date.now() * 0.00005; if (this.particles) { this.particles.rotation.y = time * 0.2; this.particles.rotation.x = time * 0.1; } this.renderer.render(this.scene, this.camera); }
+            constructor() { super(); this.attachShadow({ mode: 'open' }); this.animationFrameId = undefined; }
+            connectedCallback() {
+                const particleColor = this.getAttribute('color') || '#8A2BE2';
+                const particleSize = parseFloat(this.getAttribute('size')) || 0.015;
+                const particleCount = parseInt(this.getAttribute('count'), 10) || 5000;
+                const style = document.createElement('style');
+                style.textContent = `:host { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; } canvas { display: block; width: 100%; height: 100%; }`;
+                const canvas = document.createElement('canvas');
+                this.canvas = canvas;
+                this.shadowRoot.append(style, canvas);
+                // Reduced motion: one static frame instead of the loop, and
+                // live preference flips switch modes in place (idempotent —
+                // no double loops on repeated flips). Set up BEFORE init so
+                // init's loop decision sees the preference. The listener is
+                // stored so teardown can remove it (a reconnecting element
+                // must not accumulate handlers).
+                this._motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+                this._onMotionChange = () => {
+                    if (this._motionQuery.matches) {
+                        if (this.animationFrameId !== undefined) { cancelAnimationFrame(this.animationFrameId); this.animationFrameId = undefined; }
+                        this._renderStatic();
+                    } else if (this.isConnected && this.renderer && this.animationFrameId === undefined) {
+                        this.animate();
+                    }
+                };
+                try {
+                    this.init(canvas, particleColor, particleSize, particleCount);
+                } catch (err) {
+                    console.warn('<particle-field>: renderer unavailable', err);
+                    this.teardown();
+                }
+                this._motionQuery.addEventListener('change', this._onMotionChange);
+            }
+            disconnectedCallback() { this.teardown(); }
+            teardown() {
+                if (this._onMotionChange !== undefined) {
+                    this._motionQuery.removeEventListener('change', this._onMotionChange);
+                    this._onMotionChange = undefined;
+                }
+                if (this.animationFrameId !== undefined) { cancelAnimationFrame(this.animationFrameId); this.animationFrameId = undefined; }
+                if (this.resizeObserver) { this.resizeObserver.disconnect(); this.resizeObserver = undefined; }
+                // Release GPU resources like the sibling component: geometry
+                // and material first, then the GL context itself.
+                this.geometry?.dispose();
+                this.material?.dispose();
+                if (this.renderer) { this.renderer.dispose(); this.renderer = undefined; }
+                this.geometry = undefined;
+                this.material = undefined;
+            }
+            init(canvas, color, size, count) {
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, this.clientWidth / this.clientHeight, 0.1, 1000);
+                this.renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+                // A lost context must not freeze the story into a throwing
+                // loop — the next frame is scheduled before render() runs.
+                canvas.addEventListener('webglcontextlost', (event) => { event.preventDefault(); console.warn('<particle-field>: WebGL context lost — tearing down'); this.teardown(); });
+                this.onResize();
+                this.camera.position.z = 5;
+                const geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(count * 3);
+                for (let i = 0; i < count * 3; i++) { positions[i] = (Math.random() - 0.5) * 10; }
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                this.geometry = geometry;
+                const material = new THREE.PointsMaterial({ color: new THREE.Color(color), size: size, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, });
+                this.material = material;
+                this.particles = new THREE.Points(geometry, material);
+                this.scene.add(this.particles);
+                this.resizeObserver = new ResizeObserver(() => this.onResize());
+                this.resizeObserver.observe(this);
+                if (this._motionQuery?.matches) this._renderStatic();
+                else this.animate();
+            }
+            _renderStatic() {
+                if (!this.renderer) return;
+                try {
+                    this.renderer.render(this.scene, this.camera);
+                } catch (err) {
+                    console.warn('<particle-field>: render failed', err);
+                    this.teardown();
+                }
+            }
+            onResize() {
+                if (!this.isConnected || !this.renderer) return;
+                this.camera.aspect = this.clientWidth / this.clientHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(this.clientWidth, this.clientHeight);
+            }
+            animate() {
+                this.animationFrameId = requestAnimationFrame(() => this.animate());
+                const time = Date.now() * 0.00005;
+                if (this.particles) { this.particles.rotation.y = time * 0.2; this.particles.rotation.x = time * 0.1; }
+                try {
+                    this.renderer.render(this.scene, this.camera);
+                } catch (err) {
+                    // A throwing render would repeat at 60 fps — the frame is
+                    // already scheduled. Tear down instead of flooding the
+                    // console.
+                    console.warn('<particle-field>: render failed', err);
+                    this.teardown();
+                }
+            }
         }
         customElements.define('particle-field', ParticleField);
+    } else {
+        // Same trail as <kinetic-background>'s load failures: a missing
+        // global bundle must never amputate the page decoration silently.
+        console.warn('<particle-field>: THREE unavailable — vendor/three.global.bundle.js failed to load');
     }
 
     // --- PAGE LOGIC ---
@@ -972,8 +1168,8 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
         const pauseIcon = document.getElementById('pause-icon');
 
         const updatePlayPauseButton = (isPlaying) => {
-             playIcon.classList.toggle('hidden', isPlaying);
-             pauseIcon.classList.toggle('hidden', !isPlaying);
+             playIcon.classList.toggle('is-hidden', isPlaying);
+             pauseIcon.classList.toggle('is-hidden', !isPlaying);
         };
 
         storyViewer.addEventListener('play', () => updatePlayPauseButton(true));
@@ -998,7 +1194,7 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
         });
 
         presentationToggle.addEventListener('click', () => {
-            const isPlaying = playIcon.classList.contains('hidden');
+            const isPlaying = playIcon.classList.contains('is-hidden');
             if (isPlaying) {
                 storyViewer.pause();
             } else {
@@ -1037,8 +1233,8 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
 
         function updateFullscreenButton() {
             const fs = isFullscreen();
-            fullscreenIcon.classList.toggle('hidden', fs);
-            fullscreenExitIcon.classList.toggle('hidden', !fs);
+            fullscreenIcon.classList.toggle('is-hidden', fs);
+            fullscreenExitIcon.classList.toggle('is-hidden', !fs);
             fullscreenToggle.title = fs ? 'Exit Fullscreen' : 'Enter Fullscreen';
             fullscreenToggle.setAttribute('aria-label', fs ? 'Exit Fullscreen' : 'Enter Fullscreen');
         }
@@ -1057,14 +1253,7 @@ const palette = /** @satisfies {Record<Theme, string[]>} */ ({
         updateFullscreenButton();
 
         function preloadSyntaxHighlighting() {
-            if (!window.Prism || !window.Prism.plugins.autoloader) return;
-            const languages = new Set();
-            document.querySelectorAll('dos-typewriter[highlight]').forEach(el => {
-                languages.add(el.getAttribute('highlight'));
-            });
-            if (languages.size > 0) {
-                 window.Prism.plugins.autoloader.loadLanguages(Array.from(languages));
-            }
+            // Languages are bundled in prism.bundle.js — no need to preload
         }
 
         preloadSyntaxHighlighting();

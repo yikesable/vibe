@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 /// Vibe Coded</title>
+
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="/vibe/assets/favicon.svg">
+
+    <!-- Absolute /vibe/ paths, NOT relative ones: GitHub Pages serves this
+         file at ANY unmatched depth (e.g. /vibe/a/b/), where ./… would
+         resolve one level too deep and recursively 404. Root-absolute under
+         the /vibe/ subpath works at every depth. No <kinetic-background>
+         mount here — a 404 must not pay the ~509 KB three.js fetch. -->
+    <link rel="stylesheet" href="/vibe/styles/vibe.css">
+    <link rel="stylesheet" href="/vibe/assets/fonts/fonts.css">
+    <style>
+    /* Page-specific one-off layout for the error page. */
+    .c-404 { min-height: 100vh; display: grid; place-content: center; text-align: center; }
+    .c-404__hint { max-width: 42ch; margin: 1.5em auto; }
+    </style>
+  </head>
+  <body>
+    <a class="c-skip-link" href="#main-content">Skip to content</a>
+
+    <div class="c-site-header">
+      <nav class="c-site-header__nav" aria-label="Main">
+        <ul class="o-cluster">
+          <li><a class="c-site-header__link" href="/vibe/index.html">Home</a></li>
+          <li><a class="c-site-header__link" href="/vibe/index.html#main-content">Component Explorations</a></li>
+          <li><a class="c-site-header__link" href="/vibe/index.html#stories">Stories</a></li>
+          <li><a class="c-site-header__link" href="/vibe/codepen-converter/">CodePen Converter</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <main id="main-content" tabindex="-1" class="c-404">
+      <h1 class="c-hero__title">This page<br><span class="highlight">doesn't exist.</span></h1>
+      <p class="c-404__hint">
+        This page was made with AI, like everything else here – and even that couldn't find what you're looking for. Perhaps it never existed, or it moved.
+      </p>
+      <p><a class="accent-link" href="/vibe/">Back to the collection →</a></p>
+    </main>
+  </body>
+</html>

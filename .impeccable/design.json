@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-28T00:00:00.000Z",
+  "title": "Design System: Vibe Coded",
+  "extensions": {
+    "colorMeta": {
+      "neon-pop-pink": { "role": "primary", "displayName": "Neon Pop Pink", "canonical": "#ff00a9", "tonalRamp": ["oklch(0.15 0.10 341)", "oklch(0.25 0.16 341)", "oklch(0.35 0.21 341)", "oklch(0.45 0.26 341)", "oklch(0.55 0.30 341)", "oklch(0.65 0.29 341)", "oklch(0.80 0.18 341)", "oklch(0.95 0.05 341)"] },
+      "accent-soft": { "role": "primary", "displayName": "Accent Soft", "canonical": "rgba(255, 0, 169, 0.5)", "tonalRamp": ["oklch(0.15 0.05 341)", "oklch(0.30 0.10 341)", "oklch(0.45 0.15 341)", "oklch(0.55 0.17 341)", "oklch(0.65 0.15 341)", "oklch(0.75 0.10 341)", "oklch(0.85 0.06 341)", "oklch(0.95 0.02 341)"] },
+      "violet-black": { "role": "neutral", "displayName": "Violet-Black", "canonical": "#0a001f", "tonalRamp": ["oklch(0.05 0.01 290)", "oklch(0.10 0.03 290)", "oklch(0.18 0.05 290)", "oklch(0.28 0.06 290)", "oklch(0.40 0.07 290)", "oklch(0.55 0.06 290)", "oklch(0.75 0.04 290)", "oklch(0.93 0.02 290)"] },
+      "code-surface": { "role": "neutral", "displayName": "Code Surface", "canonical": "#160f29", "tonalRamp": ["oklch(0.10 0.02 290)", "oklch(0.16 0.04 290)", "oklch(0.25 0.05 290)", "oklch(0.35 0.06 290)", "oklch(0.48 0.05 290)", "oklch(0.62 0.04 290)", "oklch(0.80 0.03 290)", "oklch(0.95 0.01 290)"] },
+      "text-bright": { "role": "neutral", "displayName": "Text Bright", "canonical": "#eae2ff", "tonalRamp": ["oklch(0.30 0.05 300)", "oklch(0.42 0.05 300)", "oklch(0.55 0.05 300)", "oklch(0.67 0.04 300)", "oklch(0.78 0.03 300)", "oklch(0.85 0.03 300)", "oklch(0.90 0.03 300)", "oklch(0.96 0.02 300)"] },
+      "text-muted": { "role": "neutral", "displayName": "Text Muted", "canonical": "#d1d5db", "tonalRamp": ["oklch(0.30 0.02 260)", "oklch(0.42 0.02 260)", "oklch(0.54 0.02 260)", "oklch(0.66 0.02 260)", "oklch(0.75 0.02 260)", "oklch(0.82 0.01 260)", "oklch(0.87 0.01 260)", "oklch(0.94 0.01 260)"] },
+      "text-dim": { "role": "neutral", "displayName": "Text Dim", "canonical": "#9ca3af", "tonalRamp": ["oklch(0.25 0.02 260)", "oklch(0.36 0.02 260)", "oklch(0.47 0.02 260)", "oklch(0.57 0.02 260)", "oklch(0.66 0.02 260)", "oklch(0.74 0.01 260)", "oklch(0.82 0.01 260)", "oklch(0.90 0.01 260)"] },
+      "text-faint": { "role": "neutral", "displayName": "Text Faint", "canonical": "#6b7280", "tonalRamp": ["oklch(0.20 0.02 260)", "oklch(0.30 0.02 260)", "oklch(0.40 0.02 260)", "oklch(0.49 0.02 260)", "oklch(0.57 0.02 260)", "oklch(0.65 0.01 260)", "oklch(0.74 0.01 260)", "oklch(0.83 0.01 260)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero title only – Chakra Petch, uppercase, glow." },
+      "headline": { "displayName": "Headline", "purpose": "Section titles and banner glitch." },
+      "title": { "displayName": "Title", "purpose": "Bento card headlines and doc titles." },
+      "body": { "displayName": "Body", "purpose": "Paragraphs, descriptions, muted steps for hierarchy." },
+      "label": { "displayName": "Label", "purpose": "Hero note, meta lines, small print." },
+      "mono": { "displayName": "Mono", "purpose": "Code blocks on Code Surface." }
+    },
+    "shadows": [
+      { "name": "accent-glow", "value": "0 0 20px rgba(255, 0, 169, 0.5)", "purpose": "The CTA's neon glow at rest – the only shadow the system casts." },
+      { "name": "accent-glow-strong", "value": "0 0 35px rgba(255, 0, 169, 0.5)", "purpose": "CTA on hover – the accent's light intensifies." },
+      { "name": "title-glow", "value": "0 0 15px rgba(255, 0, 169, 0.5), 0 0 30px rgba(255, 0, 169, 0.5)", "purpose": "Text-shadow glow on the hero display title." }
+    ],
+    "motion": [
+      { "name": "ease-state", "value": "0.3s ease", "purpose": "Default state transitions: hovers, lifts, glows, borders." },
+      { "name": "glow-reveal", "value": "0.5s ease, scale 0 → 1", "purpose": "The radial pink bloom that washes across a bento card on hover." },
+      { "name": "arrow-shift", "value": "0.3s ease, translateX 0.5rem", "purpose": "The card-link arrow nudge on hover." },
+      { "name": "reduced-motion", "value": "none", "purpose": "prefers-reduced-motion: no animation without consent; the stardust renders one static frame (depth stays, motion stops). Hard rule." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one loud action – Neon Pop Pink on Violet-Black with its own glow.",
+      "html": "<button class=\"ds-btn-primary\">Explore</button>",
+      "css": ".ds-btn-primary { background: #ff00a9; color: #0a001f; border: none; border-radius: 6px; padding: 0.75rem 1.5rem; font-family: \"Inter\", sans-serif; font-size: 1.125rem; font-weight: 600; line-height: 1.75rem; box-shadow: 0 0 20px rgba(255, 0, 169, 0.5); cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; } .ds-btn-primary:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 0 35px rgba(255, 0, 169, 0.5); } .ds-btn-primary:focus-visible { outline: 2px solid #ff00a9; outline-offset: 2px; }"
+    },
+    {
+      "name": "Bento Card",
+      "kind": "card",
+      "refersTo": "card-bento",
+      "description": "Glass over stardust – translucent card with the pink bloom on hover.",
+      "html": "<a class=\"ds-card\" href=\"#\"><h3 class=\"ds-card__title\">vp-popover</h3><p class=\"ds-card__desc\">An exploration of the Popover API.</p><span class=\"ds-card__link\">Launch Exploration →</span></a>",
+      "css": ".ds-card { display: flex; flex-direction: column; justify-content: center; gap: 0.5rem; padding: 2rem; border-radius: 16px; background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0)); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px); color: #eae2ff; text-decoration: none; position: relative; overflow: hidden; transition: transform 0.3s ease, border-color 0.3s ease; } .ds-card::before { content: \"\"; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,0,169,0.5) 0%, transparent 40%); opacity: 0.3; transform: scale(0); transition: transform 0.5s ease; } .ds-card:hover { transform: translateY(-5px); border-color: rgba(255,0,169,0.5); } .ds-card:hover::before { transform: scale(1); } .ds-card__title { font-family: \"Chakra Petch\", sans-serif; font-weight: 700; font-size: 1.875rem; margin: 0; position: relative; z-index: 1; } .ds-card__desc { color: #d1d5db; margin: 0; position: relative; z-index: 1; } .ds-card__link { color: #d1d5db; position: relative; z-index: 1; } .ds-card:hover .ds-card__link { text-decoration: underline; text-decoration-color: #ff00a9; } .ds-card:focus-visible { outline: 2px solid #ff00a9; outline-offset: 2px; }"
+    },
+    {
+      "name": "Hero Display Title",
+      "kind": "custom",
+      "refersTo": "hero-display",
+      "description": "The landing statement – Chakra Petch, uppercase, glow, one pink highlight.",
+      "html": "<h1 class=\"ds-display\">Vibe <span class=\"ds-display__hl\">Coded</span></h1>",
+      "css": ".ds-display { font-family: \"Chakra Petch\", sans-serif; font-weight: 700; font-size: clamp(3.5rem, 12vw, 9rem); line-height: 1; letter-spacing: -0.05em; text-transform: uppercase; color: #eae2ff; text-shadow: 0 0 15px rgba(255,0,169,0.5), 0 0 30px rgba(255,0,169,0.5); margin: 0; text-align: center; } .ds-display__hl { color: #ff00a9; }"
+    },
+    {
+      "name": "Text Link",
+      "kind": "nav",
+      "refersTo": "button-primary",
+      "description": "Calm muted link; the pink underline and arrow nudge appear on hover.",
+      "html": "<a class=\"ds-link\" href=\"#\">Launch Exploration <span class=\"ds-link__arrow\">→</span></a>",
+      "css": ".ds-link { color: #d1d5db; font-family: \"Inter\", sans-serif; font-size: 1.125rem; font-weight: 600; text-decoration: none; } .ds-link__arrow { display: inline-block; transition: transform 0.3s ease; } .ds-link:hover { text-decoration: underline; text-decoration-color: #ff00a9; } .ds-link:hover .ds-link__arrow { transform: translateX(0.5rem); } .ds-link:focus-visible { outline: 2px solid #ff00a9; outline-offset: 2px; }"
+    },
+    {
+      "name": "Code Surface",
+      "kind": "custom",
+      "refersTo": "card-bento",
+      "description": "The darker room inside the night – code blocks on Code Surface.",
+      "html": "<pre class=\"ds-code\"><code>const greeting = 'hello';</code></pre>",
+      "css": ".ds-code { background: #160f29; border-radius: 6px; padding: 1rem 1.25rem; font-family: \"Roboto Mono\", ui-monospace, monospace; font-size: 1em; color: #eae2ff; border: 1px solid rgba(255,255,255,0.08); overflow-x: auto; margin: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Neon Lab Notebook",
+    "overview": "A glowing laboratory record of experiments with AI: dark violet-black surfaces, one loud neon pink, honest annotations. The site is a notebook that happens to be built with AI and says so – the visual system is the same calm honesty in another medium. Playful but kept: the Y2K joy is deliberate, and the discipline is that nothing shouts twice.\n\nThe depth model is the memorable part: layered glass cards float over a living field of pink stardust – the <kinetic-background> component, a sparse, slow-drifting cloud of 2000 tiny points that parallaxes with the cursor, like sitting inside a slow snow-globe of pink dust. The background is the depth; the cards are translucent windows onto it. Neon glow is the accent's own light – the only shadow this system casts.",
+    "keyCharacteristics": [
+      "One loud neon accent (Neon Pop Pink) on a violet-black night",
+      "Glass-over-stardust: translucent cards, blur, subtle gradient, living starfield depth behind",
+      "Geometric sci-fi headlines (Chakra Petch) over a calm humanist body (Inter)",
+      "Calm at rest, loud on hover – motion with discipline",
+      "Honest by design: the AI-first provocation lives in the hero, FAQ, and credits, not in every component"
+    ],
+    "rules": [
+      { "name": "The One Voice Rule", "body": "The pink accent is used on a small fraction of any given screen – one CTA, the hero highlight, one hover state. Its rarity is the provocation; a screen where pink is everywhere is a screen where nothing is loud.", "section": "colors" },
+      { "name": "The Glass-Over-Stardust Rule", "body": "Cards are translucent glass (gradient + blur) floating over the living starfield. The background is the depth – and the cards' backdrop blur is what softens the points into a pink glow behind the glass; never fake that depth with a gray drop shadow.", "section": "colors" },
+      { "name": "The Two-Type Rule", "body": "Headlines are Chakra Petch, everything else is Inter. A third family only for a deliberate accent (Special Elite) or a page's own world (the manifesto). If a new family is needed for body text, the design brief has drifted.", "section": "typography" }
+    ],
+    "dos": [
+      "Do use the tokens from @layer tokens – never hardcode a color or spacing value.",
+      "Do keep the pink rare: one loud moment per screen is the provocation.",
+      "Do place glass cards over the stardust and let it show through.",
+      "Do honor prefers-reduced-motion: no animation without consent, ever.",
+      "Do write every selector in full (ITCSS + BEM), hand-written – no Tailwind, no CDN framework."
+    ],
+    "donts": [
+      "Don't add drop shadows – the glow is the only shadow in this system.",
+      "Don't introduce a second accent color – pink is the one voice.",
+      "Don't add a third typeface for body text – the Two-Type Rule holds.",
+      "Don't load external fonts or CDNs – everything is self-hosted and vendored.",
+      "Don't make every element shout – calm surfaces, loud moments; the honesty lives in the hero, the FAQ, and the credits, not in every card."
+    ]
+  }
+}

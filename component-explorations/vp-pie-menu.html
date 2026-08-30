@@ -1,1111 +1,988 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>vp-pie-menu: a radial context menu web component</title>
-<script>document.documentElement.classList.add('js')</script>
+    <title>vp-pie-menu /// Vibe Coded</title>
+
+    <!-- Core SEO & Metadata -->
+    <meta
+      name="description"
+      content="A radial menu web component — long-press and drag to select, or click to open. Configure it live; three ready-made configurations included."
+    >
+    <link rel="canonical" href="https://yikesable.github.io/vibe/component-explorations/vp-pie-menu.html">
+    <link rel="icon" href="/vibe/assets/favicon.svg">
+    <meta property="og:title" content="vp-pie-menu /// Vibe Coded">
+    <meta
+      property="og:description"
+      content="A radial menu web component — long-press and drag to select, or click to open. Configure it live; three ready-made configurations included."
+    >
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yikesable.github.io/vibe/component-explorations/vp-pie-menu.html">
+    <meta property="og:site_name" content="Vibe Coded">
+    <meta name="twitter:card" content="summary">
+    <meta name="view-transition" content="same-origin">
+
+    <script>
+    document.documentElement.classList.add('js')
+    </script>
     <style>
-        /* ========================================================================
-           vp-pie-menu: Component CSS
-           Zero dependencies. Theme via CSS custom properties.
-           ======================================================================== */
-
-        vp-pie-menu {
-            --vp-accent: #f97316;
-            --vp-accent-rgb: 249, 115, 22;
-            --vp-overlay-bg: rgba(12, 10, 9, 0.8);
-            --vp-panel-bg: rgba(28, 25, 23, 0.95);
-            --vp-panel-border: rgba(68, 64, 60, 0.6);
-            --vp-text: #fafaf9;
-            --vp-stem-color: rgba(var(--vp-accent-rgb), 0.45);
-            --vp-stem-active-color: rgba(var(--vp-accent-rgb), 0.85);
-            display: block;
-        }
-
-        /* --- Keyframes --- */
-
-        @keyframes vp-pie-pop-in {
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.15) rotate(-18deg); }
-            70% { transform: translate(-50%, -50%) scale(1.1) rotate(2deg); }
-            100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
-        }
-
-        @keyframes vp-pie-fade-out {
-            0% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0.85); }
-        }
-
-        @keyframes vp-pie-center-glow {
-            0%, 100% {
-                box-shadow: 0 0 12px rgba(var(--vp-accent-rgb), 0.4), inset 0 0 8px rgba(var(--vp-accent-rgb), 0.3);
-                transform: translate(-50%, -50%) scale(1);
-            }
-            50% {
-                box-shadow: 0 0 24px rgba(var(--vp-accent-rgb), 0.7), inset 0 0 14px rgba(var(--vp-accent-rgb), 0.5);
-                transform: translate(-50%, -50%) scale(1.06);
-            }
-        }
-
-        @keyframes vp-pie-stem-fade-in {
-            from { opacity: 0; }
-            to { opacity: 0.45; }
-        }
-
-        @keyframes vp-pie-item-selected {
-            0% { transform: translate(-50%, -50%) scale(1); }
-            40% { transform: translate(-50%, -50%) scale(1.15); border-color: var(--vp-accent); box-shadow: 0 0 20px rgba(var(--vp-accent-rgb), 0.5); }
-            100% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
-        }
-
-        @keyframes vp-pie-item-collapse {
-            from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-            to { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
-        }
-
-        @keyframes vp-pie-center-flash {
-            0% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.3); box-shadow: 0 0 25px rgba(var(--vp-accent-rgb), 0.9); }
-            100% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-        }
-
-        /* --- Component classes --- */
-
-        .vp-pie-item-anim {
-            animation: vp-pie-pop-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            animation-delay: var(--vp-pie-delay, 0ms);
-        }
-
-        .vp-pie-overlay-close {
-            animation: vp-pie-fade-out 0.18s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        .vp-pie-center-anim {
-            animation: vp-pie-center-glow 2s infinite ease-in-out;
-        }
-
-        .vp-pie-stem-anim {
-            opacity: 0;
-            animation: vp-pie-stem-fade-in 0.2s ease-out forwards;
-        }
-
-        .vp-pie-stem-active {
-            stroke: var(--vp-stem-active-color) !important;
-            stroke-width: 3 !important;
-            transition: stroke 0.15s ease, stroke-width 0.15s ease;
-        }
-
-        .vp-pie-item-selected {
-            animation: vp-pie-item-selected 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-        }
-
-        .vp-pie-item-collapse {
-            animation: vp-pie-item-collapse 0.18s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
-        }
-
-        .vp-pie-center-flash {
-            animation: vp-pie-center-flash 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-        }
-
-        .vp-panel {
-            background: var(--vp-panel-bg);
-            border: 1px solid var(--vp-panel-border);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-        }
-
-        /* --- Reduced motion --- */
-
-        @media (prefers-reduced-motion: reduce) {
-            .vp-pie-center-anim,
-            .vp-pie-item-anim,
-            .vp-pie-overlay-close,
-            .vp-pie-stem-anim,
-            .vp-pie-item-selected,
-            .vp-pie-item-collapse,
-            .vp-pie-center-flash,
-            .hero-scroll {
-                animation: none !important;
-            }
-            .vp-pie-item-anim { opacity: 1 !important; }
-            .vp-pie-stem-anim { opacity: 0.45 !important; }
-        }
-
-        /* --- Focus visibility --- */
-
-        *:focus-visible {
-            outline: 2px solid var(--vp-accent, #f97316);
-            outline-offset: 2px;
-            border-radius: 4px;
-        }
-
-        /* ========================================================================
-           Showcase page styles
-           ======================================================================== */
-
-        :root {
-            --bg: #0c0a09;
-            --surface: #1c1917;
-            --surface-2: #292524;
-            --border: #44403c;
-            --text: #fafaf9;
-            --text-2: #a8a29e;
-            --text-3: #78716c;
-            --accent: #f97316;
-            --accent-rgb: 249, 115, 22;
-            --accent-light: #fb923c;
-            --code-bg: #1c1917;
-            --radius: 12px;
-            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas, monospace;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        html { scroll-behavior: smooth; }
-
-        body {
-            font-family: var(--font-sans);
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            text-rendering: optimizeLegibility;
-        }
-
-        /* --- Hero --- */
-
-        .hero {
-            position: relative;
-            min-height: 100vh;
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--bg);
-            background-image: radial-gradient(circle, rgba(var(--accent-rgb), 0.07) 1px, transparent 1px);
-            background-size: 24px 24px;
-            overflow: hidden;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
-        }
-
-        .hero-content {
-            text-align: center;
-            z-index: 1;
-            pointer-events: none;
-            padding: 0 1.5rem;
-        }
-
-        .hero-title {
-            font-size: clamp(2.5rem, 7vw, 5rem);
-            font-weight: 800;
-            letter-spacing: -0.04em;
-            line-height: 1;
-            color: var(--text);
-        }
-
-        .hero-title .accent { color: var(--accent); }
-
-        .hero-tagline {
-            margin-top: 0.75rem;
-            font-size: clamp(0.95rem, 2vw, 1.15rem);
-            color: var(--text-2);
-            font-weight: 400;
-        }
-
-        .hero-hint {
-            margin-top: 2rem;
-            font-size: 0.85rem;
-            color: var(--text-3);
-            font-family: var(--font-mono);
-            letter-spacing: 0.02em;
-        }
-
-        .hero-hint::before { content: '→ '; color: var(--accent); }
-
-        .hero-toast {
-            position: absolute;
-            bottom: max(5rem, env(safe-area-inset-bottom));
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 0.6rem 1.25rem;
-            border-radius: 100px;
-            font-size: 0.85rem;
-            font-family: var(--font-mono);
-            opacity: 0;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-
-        .hero-toast.visible {
-            opacity: 1;
-            transform: translateX(-50%) translateY(-8px);
-        }
-
-        .hero-scroll {
-            position: absolute;
-            bottom: max(1.5rem, env(safe-area-inset-bottom));
-            left: 50%;
-            transform: translateX(-50%);
-            color: var(--text-3);
-            font-size: 0.75rem;
-            font-family: var(--font-mono);
-            animation: hero-scroll-hint 2s ease-in-out infinite;
-        }
-
-        @keyframes hero-scroll-hint {
-            0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
-            50% { transform: translateX(-50%) translateY(6px); opacity: 1; }
-        }
-
-        /* Hero trigger: transparent, covers full viewport */
-        .hero vp-pie-menu {
-            position: absolute;
-            inset: 0;
-            z-index: 2;
-        }
-
-        .hero-trigger {
-            position: absolute;
-            inset: 0;
-            background: transparent;
-            border: none;
-            cursor: crosshair;
-            color: transparent;
-        }
-
-        /* --- Section layout --- */
-
-        .section {
-            max-width: 880px;
-            margin: 0 auto;
-            padding: 5rem 1.5rem;
-        }
-
-        .section-label {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--accent);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-        }
-
-        .section-title {
-            font-size: clamp(1.5rem, 4vw, 2.25rem);
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            line-height: 1.1;
-            margin-bottom: 0.75rem;
-        }
-
-        .section-desc {
-            color: var(--text-2);
-            max-width: 60ch;
-            margin-bottom: 2.5rem;
-        }
-
-        /* --- Playground --- */
-
-        .playground {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-
-        @media (min-width: 768px) {
-            .playground { grid-template-columns: 1fr 320px; }
-        }
-
-        .playground-demo {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 3rem 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 280px;
-            gap: 1.5rem;
-        }
-
-        .demo-trigger {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            padding: 0.75rem 1.75rem;
-            border-radius: 100px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            font-family: var(--font-sans);
-            cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-            box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.3);
-            touch-action: manipulation;
-        }
-
-        .demo-trigger:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(var(--accent-rgb), 0.4);
-        }
-
-        .demo-trigger:active { transform: translateY(0); }
-
-        .demo-feedback {
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            color: var(--text-2);
-            min-height: 1.5em;
-        }
-
-        .demo-feedback .action { color: var(--accent); }
-
-        .playground-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-        }
-
-        .control-group {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.25rem;
-        }
-
-        .control-label {
-            font-size: 0.75rem;
-            font-family: var(--font-mono);
-            color: var(--text-3);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.75rem;
-        }
-
-        .control-row {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .slider {
-            flex: 1;
-            -webkit-appearance: none;
-            appearance: none;
-            height: 4px;
-            background: var(--border);
-            border-radius: 2px;
-            outline: none;
-        }
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            background: var(--accent);
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .slider::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
-            background: var(--accent);
-            border-radius: 50%;
-            cursor: pointer;
-            border: none;
-        }
-
-        .slider-value {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            color: var(--text-2);
-            min-width: 3ch;
-            text-align: right;
-        }
-
-        .swatches {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .swatch {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: border-color 0.15s ease, transform 0.15s ease;
-            touch-action: manipulation;
-        }
-
-        .swatch:hover { transform: scale(1.1); }
-        .swatch.active { border-color: var(--text); }
-
-        .color-input {
-            width: 36px;
-            height: 36px;
-            border: 2px solid var(--border);
-            border-radius: 50%;
-            cursor: pointer;
-            background: transparent;
-            padding: 0;
-            touch-action: manipulation;
-        }
-
-        .count-buttons {
-            display: flex;
-            gap: 0.4rem;
-        }
-
-        .count-btn {
-            background: var(--surface-2);
-            color: var(--text-2);
-            border: 1px solid var(--border);
-            padding: 0.5rem 0.85rem;
-            border-radius: 6px;
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: background 0.15s ease, color 0.15s ease;
-            touch-action: manipulation;
-        }
-
-        .count-btn:hover { background: var(--border); color: var(--text); }
-        .count-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-        .playground-code {
-            grid-column: 1 / -1;
-            background: var(--code-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.25rem;
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            line-height: 1.6;
-            color: var(--text-2);
-            overflow-x: auto;
-            white-space: pre;
-        }
-
-        .playground-code .tag { color: var(--accent-light); }
-        .playground-code .attr { color: #fbbf24; }
-        .playground-code .str { color: #86efac; }
-
-        /* --- Use cases --- */
-
-        .use-cases-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-        }
-
-        @media (min-width: 768px) {
-            .use-cases-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-
-        .use-case-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 2rem 1.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .use-case-title {
-            font-size: 0.85rem;
-            font-family: var(--font-mono);
-            color: var(--text-3);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .use-case-feedback {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            color: var(--text-2);
-            min-height: 1.5em;
-        }
-
-        .use-case-feedback .action { color: var(--accent); }
-
-        /* --- API --- */
-
-        .api-tables {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr);
-            gap: 2rem;
-        }
-
-        @media (min-width: 768px) {
-            .api-tables { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-        }
-
-        .api-tables .full-width { grid-column: 1 / -1; }
-
-        .api-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            min-width: 0;
-        }
-
-        .api-card h3 {
-            font-size: 0.85rem;
-            font-family: var(--font-mono);
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 1rem;
-        }
-
-        .api-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-        }
-
-        .api-table th {
-            text-align: left;
-            font-weight: 600;
-            color: var(--text-3);
-            padding: 0.5rem 0.75rem 0.5rem 0;
-            border-bottom: 1px solid var(--border);
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        .api-table td {
-            padding: 0.5rem 0.75rem 0.5rem 0;
-            color: var(--text-2);
-            border-bottom: 1px solid rgba(68, 64, 60, 0.4);
-            vertical-align: top;
-            overflow-wrap: break-word;
-        }
-
-        .api-table tr:last-child td { border-bottom: none; }
-
-        .api-table code {
-            font-family: var(--font-mono);
-            color: var(--accent-light);
-            font-size: 0.85em;
-            overflow-wrap: anywhere;
-        }
-
-        .api-structure {
-            background: var(--code-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.25rem;
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            line-height: 1.7;
-            color: var(--text-2);
-            overflow-x: auto;
-            white-space: pre;
-            max-width: 100%;
-        }
-
-        .api-structure .tag { color: var(--accent-light); }
-        .api-structure .attr { color: #fbbf24; }
-        .api-structure .str { color: #86efac; }
-
-        /* --- Code examples --- */
-
-        .code-blocks {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr);
-            gap: 1.5rem;
-        }
-
-        @media (min-width: 768px) {
-            .code-blocks { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-        }
-
-        .code-blocks .full-width { grid-column: 1 / -1; }
-
-        .code-card {
-            background: var(--code-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            overflow: hidden;
-        }
-
-        .code-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.75rem 1.25rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .code-header span {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-3);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .copy-btn {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-3);
-            padding: 0.4rem 0.85rem;
-            border-radius: 6px;
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: border-color 0.15s ease, color 0.15s ease;
-            touch-action: manipulation;
-        }
-
-        .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
-        .copy-btn.copied { color: #4ade80; border-color: #4ade80; }
-
-        .code-card pre {
-            padding: 1.25rem;
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            line-height: 1.7;
-            color: var(--text-2);
-            overflow-x: auto;
-            white-space: pre;
-        }
-
-        .code-card .tag { color: var(--accent-light); }
-        .code-card .attr { color: #fbbf24; }
-        .code-card .str { color: #86efac; }
-        .code-card .comment { color: var(--text-3); }
-
-        /* --- Footer --- */
-
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 2.5rem 1.5rem max(2.5rem, env(safe-area-inset-bottom));
-            text-align: center;
-            color: var(--text-3);
-            font-size: 0.85rem;
-        }
-
-        footer .accent { color: var(--accent); }
-
-        /* --- Hidden menu utility --- */
-
-        /* Progressive enhancement: hide menu items only when JS is available */
-        .js .vp-pie-menu-items { display: none; }
-
-        /* Pre-upgrade: dim component until defined */
-        .js vp-pie-menu:not(:defined) { opacity: 0.55; }
-
-        /* Overdrive section */
-        .overdrive {
-            position: relative;
-            min-height: 100vh;
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: #080706;
-            overflow: hidden;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        .overdrive-bg {
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at 30% 40%, rgba(var(--accent-rgb), 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 70% 60%, rgba(var(--accent-rgb), 0.05) 0%, transparent 50%),
-                #080706;
-            z-index: 0;
-        }
-        .overdrive-bg.displacing,
-        .overdrive-title.displacing {
-            filter: url(#displacement-filter);
-        }
-        .overdrive-filters {
-            position: absolute;
-            width: 0;
-            height: 0;
-            pointer-events: none;
-        }
-        #particle-canvas {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        .overdrive-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-        }
-        .overdrive-label {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            letter-spacing: 0.15em;
-            color: var(--accent);
-            text-transform: uppercase;
-        }
-        .overdrive-title {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 700;
-            color: var(--text);
-            margin: 0;
-        }
-        .overdrive-desc {
-            font-size: 0.9rem;
-            color: var(--text-3);
-            max-width: 400px;
-            margin: 0;
-        }
-        .overdrive-menu-wrap {
-            margin-top: 2rem;
-        }
-        .overdrive-trigger {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: transparent;
-            border: 2px solid rgba(var(--accent-rgb), 0.4);
-            color: var(--accent);
-            font-size: 0.8rem;
-            font-weight: 600;
-            font-family: var(--font-mono);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s ease;
-            touch-action: manipulation;
-        }
-        .overdrive-trigger::before {
-            content: '';
-            position: absolute;
-            inset: -8px;
-            border-radius: 50%;
-            border: 1px solid rgba(var(--accent-rgb), 0.2);
-            animation: overdrive-pulse 2s ease-in-out infinite;
-        }
-        @keyframes overdrive-pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.15); opacity: 1; }
-        }
-        .overdrive-trigger:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 30px rgba(var(--accent-rgb), 0.3);
-        }
-        #overdrive-pie {
-            --vp-panel-bg: rgba(var(--accent-rgb), 0.08);
-            --vp-panel-border: rgba(var(--accent-rgb), 0.5);
-            --vp-text: var(--accent);
-            --vp-stem-color: rgba(var(--accent-rgb), 0.3);
-            --vp-stem-active-color: rgba(var(--accent-rgb), 0.8);
-        }
-        .overdrive-feedback {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            color: var(--accent);
-            min-height: 1.2em;
-            margin: 0;
-            transition: opacity 0.3s ease;
-        }
+    /* ========================================================================
+       vp-pie-menu: Component CSS
+       Zero dependencies. Theme via CSS custom properties.
+       ======================================================================== */
+
+    /* Site chrome (skip link + back link) — this page loads no shared CSS,
+       so these are self-contained minimal equivalents of vibe.css's
+       .c-skip-link. */
+    .c-skip-link {
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+      z-index: 100;
+      padding: 0.5rem 1rem;
+      background: #160c0a;
+      color: #f97316;
+      border: 1px solid #f97316;
+      transform: translateY(calc(-100% - 1rem));
+    }
+    .c-skip-link:focus-visible { transform: none; }
+    .site-back {
+      position: fixed;
+      bottom: 1rem;
+      left: 1rem;
+      z-index: 50;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-size: 0.875rem;
+    }
+    .site-back:hover { color: #f97316; }
+
+    /* Cross-document view-transition morph target: the index exploration
+       card grows into this heading. This page loads no shared CSS, so the
+       standardized opt-in ships locally (the meta is the legacy path). */
+    @view-transition { navigation: auto; }
+    .hero-title { view-transition-name: vt-pie-menu; }
+
+    vp-pie-menu {
+      --vp-accent: #f97316;
+      --vp-accent-rgb: 249, 115, 22;
+      --vp-overlay-bg: rgba(12, 10, 9, 0.8);
+      --vp-panel-bg: rgba(28, 25, 23, 0.95);
+      --vp-panel-border: rgba(68, 64, 60, 0.6);
+      --vp-text: #fafaf9;
+      --vp-stem-color: rgba(var(--vp-accent-rgb), 0.45);
+      --vp-stem-active-color: rgba(var(--vp-accent-rgb), 0.85);
+      display: block;
+    }
+
+    /* --- Keyframes --- */
+
+    @keyframes vp-pie-pop-in {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.15) rotate(-18deg); }
+      70% { transform: translate(-50%, -50%) scale(1.1) rotate(2deg); }
+      100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+    }
+
+    @keyframes vp-pie-fade-out { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.85); } }
+
+    @keyframes vp-pie-center-glow {
+      0%, 100% {
+        box-shadow: 0 0 12px rgba(var(--vp-accent-rgb), 0.4), inset 0 0 8px rgba(var(--vp-accent-rgb), 0.3);
+        transform: translate(-50%, -50%) scale(1);
+      }
+      50% {
+        box-shadow: 0 0 24px rgba(var(--vp-accent-rgb), 0.7), inset 0 0 14px rgba(var(--vp-accent-rgb), 0.5);
+        transform: translate(-50%, -50%) scale(1.06);
+      }
+    }
+
+    @keyframes vp-pie-stem-fade-in { from { opacity: 0; } to { opacity: 0.45; } }
+
+    @keyframes vp-pie-item-selected {
+      0% { transform: translate(-50%, -50%) scale(1); }
+      40% { transform: translate(-50%, -50%) scale(1.15); border-color: var(--vp-accent); box-shadow: 0 0 20px rgba(var(--vp-accent-rgb), 0.5); }
+      100% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+    }
+
+    @keyframes vp-pie-item-collapse {
+      from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      to { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+    }
+
+    @keyframes vp-pie-center-flash {
+      0% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.3); box-shadow: 0 0 25px rgba(var(--vp-accent-rgb), 0.9); }
+      100% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+    }
+
+    /* --- Component classes --- */
+
+    .vp-pie-item-anim { animation: vp-pie-pop-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: var(--vp-pie-delay, 0ms); }
+
+    .vp-pie-overlay-close { animation: vp-pie-fade-out 0.18s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+    .vp-pie-center-anim { animation: vp-pie-center-glow 2s infinite ease-in-out; }
+
+    .vp-pie-stem-anim { opacity: 0; animation: vp-pie-stem-fade-in 0.2s ease-out forwards; }
+
+    .vp-pie-stem-active { stroke: var(--vp-stem-active-color) !important; stroke-width: 3 !important; transition: stroke 0.15s ease, stroke-width 0.15s ease; }
+
+    .vp-pie-item-selected { animation: vp-pie-item-selected 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important; }
+
+    .vp-pie-item-collapse { animation: vp-pie-item-collapse 0.18s cubic-bezier(0.4, 0, 0.2, 1) forwards !important; }
+
+    .vp-pie-center-flash { animation: vp-pie-center-flash 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important; }
+
+    .vp-panel {
+      background: var(--vp-panel-bg);
+      border: 1px solid var(--vp-panel-border);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    /* --- Reduced motion --- */
+
+    @media (prefers-reduced-motion: reduce) {
+      .vp-pie-center-anim,
+      .vp-pie-item-anim,
+      .vp-pie-overlay-close,
+      .vp-pie-stem-anim,
+      .vp-pie-item-selected,
+      .vp-pie-item-collapse,
+      .vp-pie-center-flash,
+      .hero-scroll { animation: none !important; }
+      .vp-pie-item-anim { opacity: 1 !important; }
+      .vp-pie-stem-anim { opacity: 0.45 !important; }
+    }
+
+    /* --- Focus visibility --- */
+
+    *:focus-visible { outline: 2px solid var(--vp-accent, #f97316); outline-offset: 2px; border-radius: 4px; }
+
+    /* ========================================================================
+       Showcase page styles
+       ======================================================================== */
+
+    :root {
+      --bg: #0c0a09;
+      --surface: #1c1917;
+      --surface-2: #292524;
+      --border: #44403c;
+      --text: #fafaf9;
+      --text-2: #a8a29e;
+      --text-3: #78716c;
+      --accent: #f97316;
+      --accent-rgb: 249, 115, 22;
+      --accent-light: #fb923c;
+      --code-bg: #1c1917;
+      --radius: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "SF Mono", "Cascadia Code", "Fira Code", "JetBrains Mono", Consolas, monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* --- Hero --- */
+
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--bg);
+      background-image: radial-gradient(circle, rgba(var(--accent-rgb), 0.07) 1px, transparent 1px);
+      background-size: 24px 24px;
+      overflow: hidden;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+
+    .hero-content { text-align: center; z-index: 1; pointer-events: none; padding: 0 1.5rem; }
+
+    .hero-title { font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: var(--text); }
+
+    .hero-title .accent { color: var(--accent); }
+
+    .hero-tagline { margin-top: 0.75rem; font-size: clamp(0.95rem, 2vw, 1.15rem); color: var(--text-2); font-weight: 400; }
+
+    .hero-hint { margin-top: 2rem; font-size: 0.85rem; color: var(--text-3); font-family: var(--font-mono); letter-spacing: 0.02em; }
+
+    .hero-hint::before { content: "→ "; color: var(--accent); }
+
+    .hero-toast {
+      position: absolute;
+      bottom: max(5rem, env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.6rem 1.25rem;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-family: var(--font-mono);
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .hero-toast.visible { opacity: 1; transform: translateX(-50%) translateY(-8px); }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: max(1.5rem, env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--text-3);
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      animation: hero-scroll-hint 2s ease-in-out infinite;
+    }
+
+    @keyframes hero-scroll-hint {
+      0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
+      50% { transform: translateX(-50%) translateY(6px); opacity: 1; }
+    }
+
+    /* Hero trigger: transparent, covers full viewport */
+    .hero vp-pie-menu { position: absolute; inset: 0; z-index: 2; }
+
+    .hero-trigger { position: absolute; inset: 0; background: transparent; border: none; cursor: crosshair; color: transparent; }
+
+    /* --- Section layout --- */
+
+    .section { max-width: 880px; margin: 0 auto; padding: 5rem 1.5rem; }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title { font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 0.75rem; }
+
+    .section-desc { color: var(--text-2); max-width: 60ch; margin-bottom: 2.5rem; }
+
+    /* --- Playground --- */
+
+    .playground { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+
+    @media (min-width: 768px) { .playground { grid-template-columns: 1fr 320px; } }
+
+    .playground-demo {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 3rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 280px;
+      gap: 1.5rem;
+    }
+
+    .demo-trigger {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.75rem;
+      border-radius: 100px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.3);
+      touch-action: manipulation;
+    }
+
+    .demo-trigger:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(var(--accent-rgb), 0.4); }
+
+    .demo-trigger:active { transform: translateY(0); }
+
+    .demo-feedback { font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-2); min-height: 1.5em; }
+
+    .demo-feedback .action { color: var(--accent); }
+
+    .playground-controls { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    .control-group { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+
+    .control-label {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    .control-row { display: flex; align-items: center; gap: 0.75rem; }
+
+    .slider {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      outline: none;
+    }
+
+    .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; background: var(--accent); border-radius: 50%; cursor: pointer; }
+
+    .slider::-moz-range-thumb { width: 16px; height: 16px; background: var(--accent); border-radius: 50%; cursor: pointer; border: none; }
+
+    .slider-value { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-2); min-width: 3ch; text-align: right; }
+
+    .swatches { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+    .swatch {
+      width: 36px;
+      height: 36px;
+      background: var(--swatch-color);
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+      touch-action: manipulation;
+    }
+
+    .swatch:hover { transform: scale(1.1); }
+    .swatch.active { border-color: var(--text); }
+
+    .color-input {
+      width: 36px;
+      height: 36px;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      cursor: pointer;
+      background: transparent;
+      padding: 0;
+      touch-action: manipulation;
+    }
+
+    .count-buttons { display: flex; gap: 0.4rem; }
+
+    .count-btn {
+      background: var(--surface-2);
+      color: var(--text-2);
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.85rem;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+      touch-action: manipulation;
+    }
+
+    .count-btn:hover { background: var(--border); color: var(--text); }
+    .count-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .playground-code {
+      grid-column: 1 / -1;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: var(--text-2);
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .playground-code .tag { color: var(--accent-light); }
+    .playground-code .attr { color: #fbbf24; }
+    .playground-code .str { color: #86efac; }
+
+    /* --- Use cases --- */
+
+    .use-cases-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+
+    @media (min-width: 768px) { .use-cases-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .use-case-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .use-case-title { font-size: 0.85rem; font-family: var(--font-mono); color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .use-case-feedback { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-2); min-height: 1.5em; }
+
+    .use-case-feedback .action { color: var(--accent); }
+
+    /* --- API --- */
+
+    .api-tables { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+
+    @media (min-width: 768px) { .api-tables { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+
+    .api-tables .full-width { grid-column: 1 / -1; }
+
+    .api-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; min-width: 0; }
+
+    .api-card h3 {
+      font-size: 0.85rem;
+      font-family: var(--font-mono);
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .api-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+
+    .api-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-3);
+      padding: 0.5rem 0.75rem 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .api-table td {
+      padding: 0.5rem 0.75rem 0.5rem 0;
+      color: var(--text-2);
+      border-bottom: 1px solid rgba(68, 64, 60, 0.4);
+      vertical-align: top;
+      overflow-wrap: break-word;
+    }
+
+    .api-table tr:last-child td { border-bottom: none; }
+
+    .api-table code { font-family: var(--font-mono); color: var(--accent-light); font-size: 0.85em; overflow-wrap: anywhere; }
+
+    .api-structure {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: var(--text-2);
+      overflow-x: auto;
+      white-space: pre;
+      max-width: 100%;
+    }
+
+    .api-structure .tag { color: var(--accent-light); }
+    .api-structure .attr { color: #fbbf24; }
+    .api-structure .str { color: #86efac; }
+
+    /* --- Code examples --- */
+
+    .code-blocks { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+
+    @media (min-width: 768px) { .code-blocks { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+
+    .code-blocks .full-width { grid-column: 1 / -1; }
+
+    .code-card { background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+
+    .code-header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border); }
+
+    .code-header span { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-3);
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: border-color 0.15s ease, color 0.15s ease;
+      touch-action: manipulation;
+    }
+
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .copy-btn.copied { color: #4ade80; border-color: #4ade80; }
+
+    .code-card pre {
+      padding: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: var(--text-2);
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .code-card .tag { color: var(--accent-light); }
+    .code-card .attr { color: #fbbf24; }
+    .code-card .str { color: #86efac; }
+    .code-card .comment { color: var(--text-3); }
+
+    /* --- Footer --- */
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 1.5rem max(2.5rem, env(safe-area-inset-bottom));
+      text-align: center;
+      color: var(--text-3);
+      font-size: 0.85rem;
+    }
+
+    footer .accent { color: var(--accent); }
+
+    /* --- Hidden menu utility --- */
+
+    /* Progressive enhancement: hide menu items only when JS is available */
+    .js .vp-pie-menu-items { display: none; }
+
+    /* Pre-upgrade: dim component until defined */
+    .js vp-pie-menu:not(:defined) { opacity: 0.55; }
+
+    /* Overdrive section */
+    .overdrive {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #080706;
+      overflow: hidden;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .overdrive-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(var(--accent-rgb), 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 70% 60%, rgba(var(--accent-rgb), 0.05) 0%, transparent 50%),
+        #080706;
+      z-index: 0;
+    }
+    .overdrive-bg.displacing,
+    .overdrive-title.displacing { filter: url(#displacement-filter); }
+    .overdrive-filters { position: absolute; width: 0; height: 0; pointer-events: none; }
+    #particle-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    .overdrive-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    .overdrive-label { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; }
+    .overdrive-title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; color: var(--text); margin: 0; }
+    .overdrive-desc { font-size: 0.9rem; color: var(--text-3); max-width: 400px; margin: 0; }
+    .overdrive-menu-wrap { margin-top: 2rem; }
+    .overdrive-trigger {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: transparent;
+      border: 2px solid rgba(var(--accent-rgb), 0.4);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+      touch-action: manipulation;
+    }
+    .overdrive-trigger::before {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(var(--accent-rgb), 0.2);
+      animation: overdrive-pulse 2s ease-in-out infinite;
+    }
+    @keyframes overdrive-pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.15); opacity: 1; } }
+    .overdrive-trigger:hover { border-color: var(--accent); box-shadow: 0 0 30px rgba(var(--accent-rgb), 0.3); }
+    #overdrive-pie {
+      --vp-panel-bg: rgba(var(--accent-rgb), 0.08);
+      --vp-panel-border: rgba(var(--accent-rgb), 0.5);
+      --vp-text: var(--accent);
+      --vp-stem-color: rgba(var(--accent-rgb), 0.3);
+      --vp-stem-active-color: rgba(var(--accent-rgb), 0.8);
+    }
+    .overdrive-feedback { font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); min-height: 1.2em; margin: 0; transition: opacity 0.3s ease; }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
+    <a class="c-skip-link" href="#main-content">Skip to content</a>
+    <a class="site-back" href="../index.html">&larr; Back to the collection</a>
     <!-- ================================================================
          HERO: Full viewport, click anywhere to open
          ================================================================ -->
-    <section class="hero" id="hero">
-        <div class="hero-content">
-            <h1 class="hero-title"><span class="accent">vp</span>-pie-menu</h1>
-            <p class="hero-tagline">A radial context menu web component</p>
-            <p class="hero-hint">Long-press and drag to select — or click to open</p>
-        </div>
-        <vp-pie-menu id="hero-pie" radius="110">
-            <button class="hero-trigger" aria-label="Open radial menu">Open menu</button>
-            <menu class="vp-pie-menu-items">
-                <li><button data-action="Explore" data-icon="explore">Explore</button></li>
-                <li><button data-action="Playground" data-icon="playground">Playground</button></li>
-                <li><button data-action="Use Cases" data-icon="use-cases">Use Cases</button></li>
-                <li><button data-action="API" data-icon="api">API</button></li>
-                <li><button data-action="Code" data-icon="code">Code</button></li>
-                <li><button data-action="Source" data-icon="source">Source</button></li>
-            </menu>
-        </vp-pie-menu>
-        <div class="hero-toast" id="hero-toast"></div>
-        <div class="hero-scroll">scroll ↓</div>
+    <section class="hero" id="main-content" tabindex="-1">
+      <div class="hero-content">
+        <h1 class="hero-title"><span class="accent">vp</span>-pie-menu</h1>
+        <p class="hero-tagline">A radial context menu web component</p>
+        <p class="hero-hint">Long-press and drag to select — or click to open</p>
+      </div>
+      <vp-pie-menu id="hero-pie" radius="110">
+        <button class="hero-trigger" type="button" aria-label="Open radial menu">Open menu</button>
+        <menu class="vp-pie-menu-items">
+          <li><button type="button" data-action="Explore" data-icon="explore">Explore</button></li>
+          <li><button type="button" data-action="Playground" data-icon="playground">Playground</button></li>
+          <li><button type="button" data-action="Use Cases" data-icon="use-cases">Use Cases</button></li>
+          <li><button type="button" data-action="API" data-icon="api">API</button></li>
+          <li><button type="button" data-action="Code" data-icon="code">Code</button></li>
+          <li><button type="button" data-action="Source" data-icon="source">Source</button></li>
+        </menu>
+      </vp-pie-menu>
+      <div class="hero-toast" id="hero-toast"></div>
+      <div class="hero-scroll">scroll ↓</div>
     </section>
 
     <!-- ================================================================
          PLAYGROUND: Live controls + demo
          ================================================================ -->
     <section class="section" id="playground">
-        <p class="section-label">Playground</p>
-        <h2 class="section-title">Configure it live</h2>
-        <p class="section-desc">Adjust the radius, accent color, and item count. The component updates in real time.</p>
+      <p class="section-label">Playground</p>
+      <h2 class="section-title">Configure it live</h2>
+      <p class="section-desc">Adjust the radius, accent color, and item count. The component updates in real time.</p>
 
-        <div class="playground">
-            <div class="playground-demo">
-                <vp-pie-menu id="playground-pie" radius="105">
-                    <button class="demo-trigger" type="button">Open radial menu</button>
-                    <menu class="vp-pie-menu-items" id="playground-menu">
-                        <li><button data-action="Edit" data-icon="edit">Edit</button></li>
-                        <li><button data-action="Copy" data-icon="copy">Copy</button></li>
-                        <li><button data-action="Move" data-icon="move">Move</button></li>
-                        <li><button data-action="Share" data-icon="share">Share</button></li>
-                        <li><button data-action="Delete" data-icon="delete">Delete</button></li>
-                        <li><button data-action="Info" data-icon="info">Info</button></li>
-                    </menu>
-                </vp-pie-menu>
-                <div class="demo-feedback" id="playground-feedback"></div>
-            </div>
-
-            <div class="playground-controls">
-                <div class="control-group">
-                    <div class="control-label">Radius</div>
-                    <div class="control-row">
-                        <input type="range" class="slider" id="radius-slider" min="60" max="150" value="105">
-                        <span class="slider-value" id="radius-value">105</span>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <div class="control-label">Accent</div>
-                    <div class="swatches" id="swatches">
-                        <button class="swatch active" data-color="#f97316" data-rgb="249, 115, 22" style="background:#f97316" aria-label="Orange"></button>
-                        <button class="swatch" data-color="#3b82f6" data-rgb="59, 130, 246" style="background:#3b82f6" aria-label="Blue"></button>
-                        <button class="swatch" data-color="#22c55e" data-rgb="34, 197, 94" style="background:#22c55e" aria-label="Green"></button>
-                        <button class="swatch" data-color="#ec4899" data-rgb="236, 72, 153" style="background:#ec4899" aria-label="Pink"></button>
-                        <button class="swatch" data-color="#a78bfa" data-rgb="167, 139, 250" style="background:#a78bfa" aria-label="Violet"></button>
-                        <input type="color" class="color-input" id="color-picker" value="#f97316" aria-label="Custom color">
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <div class="control-label">Items</div>
-                    <div class="count-buttons" id="count-buttons">
-                        <button class="count-btn" data-count="3">3</button>
-                        <button class="count-btn" data-count="4">4</button>
-                        <button class="count-btn" data-count="5">5</button>
-                        <button class="count-btn active" data-count="6">6</button>
-                        <button class="count-btn" data-count="8">8</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="playground-code" id="playground-code"></div>
+      <div class="playground">
+        <div class="playground-demo">
+          <vp-pie-menu id="playground-pie" radius="105">
+            <button class="demo-trigger" type="button">Open radial menu</button>
+            <menu class="vp-pie-menu-items" id="playground-menu">
+              <li><button type="button" data-action="Edit" data-icon="edit">Edit</button></li>
+              <li><button type="button" data-action="Copy" data-icon="copy">Copy</button></li>
+              <li><button type="button" data-action="Move" data-icon="move">Move</button></li>
+              <li><button type="button" data-action="Share" data-icon="share">Share</button></li>
+              <li><button type="button" data-action="Delete" data-icon="delete">Delete</button></li>
+              <li><button type="button" data-action="Info" data-icon="info">Info</button></li>
+            </menu>
+          </vp-pie-menu>
+          <div class="demo-feedback" id="playground-feedback"></div>
         </div>
+
+        <div class="playground-controls">
+          <div class="control-group">
+            <div class="control-label">Radius</div>
+            <div class="control-row">
+              <input type="range" class="slider" id="radius-slider" min="60" max="150" value="105">
+              <span class="slider-value" id="radius-value">105</span>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="control-label">Accent</div>
+            <div class="swatches" id="swatches">
+              <button class="swatch active" type="button" data-color="#f97316" data-rgb="249, 115, 22" style="--swatch-color: #f97316" aria-label="Orange">
+              </button>
+              <button class="swatch" type="button" data-color="#3b82f6" data-rgb="59, 130, 246" style="--swatch-color: #3b82f6" aria-label="Blue"></button>
+              <button class="swatch" type="button" data-color="#22c55e" data-rgb="34, 197, 94" style="--swatch-color: #22c55e" aria-label="Green"></button>
+              <button class="swatch" type="button" data-color="#ec4899" data-rgb="236, 72, 153" style="--swatch-color: #ec4899" aria-label="Pink"></button>
+              <button class="swatch" type="button" data-color="#a78bfa" data-rgb="167, 139, 250" style="--swatch-color: #a78bfa" aria-label="Violet"></button>
+              <input type="color" class="color-input" id="color-picker" value="#f97316" aria-label="Custom color">
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="control-label">Items</div>
+            <div class="count-buttons" id="count-buttons">
+              <button class="count-btn" type="button" data-count="3">3</button>
+              <button class="count-btn" type="button" data-count="4">4</button>
+              <button class="count-btn" type="button" data-count="5">5</button>
+              <button class="count-btn active" type="button" data-count="6">6</button>
+              <button class="count-btn" type="button" data-count="8">8</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="playground-code" id="playground-code"></div>
+      </div>
     </section>
 
     <!-- ================================================================
          USE CASES: 3 demo cards
          ================================================================ -->
     <section class="section" id="use-cases">
-        <p class="section-label">Use Cases</p>
-        <h2 class="section-title">Three configurations</h2>
-        <p class="section-desc">The same component adapts to different interaction contexts: file management, media playback, and navigation.</p>
+      <p class="section-label">Use Cases</p>
+      <h2 class="section-title">Three configurations</h2>
+      <p class="section-desc">
+        The same component adapts to different interaction contexts: file management, media playback, and navigation.
+      </p>
 
-        <div class="use-cases-grid">
-            <div class="use-case-card">
-                <p class="use-case-title">File Actions</p>
-                <vp-pie-menu radius="100">
-                    <button class="demo-trigger" type="button">File</button>
-                    <menu class="vp-pie-menu-items">
-                        <li><button data-action="New" data-icon="new">New</button></li>
-                        <li><button data-action="Open" data-icon="open">Open</button></li>
-                        <li><button data-action="Save" data-icon="save">Save</button></li>
-                        <li><button data-action="Export" data-icon="export">Export</button></li>
-                        <li><button data-action="Print" data-icon="print">Print</button></li>
-                        <li><button data-action="Share" data-icon="share">Share</button></li>
-                    </menu>
-                </vp-pie-menu>
-                <div class="use-case-feedback" id="uc-file"></div>
-            </div>
-
-            <div class="use-case-card">
-                <p class="use-case-title">Media Controls</p>
-                <vp-pie-menu radius="100">
-                    <button class="demo-trigger" type="button">Play</button>
-                    <menu class="vp-pie-menu-items">
-                        <li><button data-action="Play" data-icon="play">Play</button></li>
-                        <li><button data-action="Pause" data-icon="pause">Pause</button></li>
-                        <li><button data-action="Next" data-icon="next">Next</button></li>
-                        <li><button data-action="Previous" data-icon="previous">Previous</button></li>
-                        <li><button data-action="Volume" data-icon="volume">Volume</button></li>
-                        <li><button data-action="Fullscreen" data-icon="fullscreen">Fullscreen</button></li>
-                    </menu>
-                </vp-pie-menu>
-                <div class="use-case-feedback" id="uc-media"></div>
-            </div>
-
-            <div class="use-case-card">
-                <p class="use-case-title">Quick Nav</p>
-                <vp-pie-menu radius="95">
-                    <button class="demo-trigger" type="button">Navigate</button>
-                    <menu class="vp-pie-menu-items">
-                        <li><button data-action="Home" data-icon="home">Home</button></li>
-                        <li><button data-action="About" data-icon="about">About</button></li>
-                        <li><button data-action="Blog" data-icon="blog">Blog</button></li>
-                        <li><button data-action="Projects" data-icon="projects">Projects</button></li>
-                        <li><button data-action="Contact" data-icon="contact">Contact</button></li>
-                    </menu>
-                </vp-pie-menu>
-                <div class="use-case-feedback" id="uc-nav"></div>
-            </div>
+      <div class="use-cases-grid">
+        <div class="use-case-card">
+          <p class="use-case-title">File Actions</p>
+          <vp-pie-menu radius="100">
+            <button class="demo-trigger" type="button">File</button>
+            <menu class="vp-pie-menu-items">
+              <li><button type="button" data-action="New" data-icon="new">New</button></li>
+              <li><button type="button" data-action="Open" data-icon="open">Open</button></li>
+              <li><button type="button" data-action="Save" data-icon="save">Save</button></li>
+              <li><button type="button" data-action="Export" data-icon="export">Export</button></li>
+              <li><button type="button" data-action="Print" data-icon="print">Print</button></li>
+              <li><button type="button" data-action="Share" data-icon="share">Share</button></li>
+            </menu>
+          </vp-pie-menu>
+          <div class="use-case-feedback" id="uc-file"></div>
         </div>
+
+        <div class="use-case-card">
+          <p class="use-case-title">Media Controls</p>
+          <vp-pie-menu radius="100">
+            <button class="demo-trigger" type="button">Play</button>
+            <menu class="vp-pie-menu-items">
+              <li><button type="button" data-action="Play" data-icon="play">Play</button></li>
+              <li><button type="button" data-action="Pause" data-icon="pause">Pause</button></li>
+              <li><button type="button" data-action="Next" data-icon="next">Next</button></li>
+              <li><button type="button" data-action="Previous" data-icon="previous">Previous</button></li>
+              <li><button type="button" data-action="Volume" data-icon="volume">Volume</button></li>
+              <li><button type="button" data-action="Fullscreen" data-icon="fullscreen">Fullscreen</button></li>
+            </menu>
+          </vp-pie-menu>
+          <div class="use-case-feedback" id="uc-media"></div>
+        </div>
+
+        <div class="use-case-card">
+          <p class="use-case-title">Quick Nav</p>
+          <vp-pie-menu radius="95">
+            <button class="demo-trigger" type="button">Navigate</button>
+            <menu class="vp-pie-menu-items">
+              <li><button type="button" data-action="Home" data-icon="home">Home</button></li>
+              <li><button type="button" data-action="About" data-icon="about">About</button></li>
+              <li><button type="button" data-action="Blog" data-icon="blog">Blog</button></li>
+              <li><button type="button" data-action="Projects" data-icon="projects">Projects</button></li>
+              <li><button type="button" data-action="Contact" data-icon="contact">Contact</button></li>
+            </menu>
+          </vp-pie-menu>
+          <div class="use-case-feedback" id="uc-nav"></div>
+        </div>
+      </div>
     </section>
 
     <!-- ================================================================
          OVERDRIVE: Particle physics + SVG displacement demo
          ================================================================ -->
     <section class="section overdrive" id="overdrive">
-        <div class="overdrive-bg"></div>
-        <canvas id="particle-canvas" aria-hidden="true"></canvas>
-        <svg class="overdrive-filters" width="0" height="0" aria-hidden="true">
-            <defs>
-                <filter id="displacement-filter" color-interpolation-filters="sRGB">
-                    <feTurbulence id="turbulence" type="fractalNoise" baseFrequency="0.015" numOctaves="3" seed="1"/>
-                    <feDisplacementMap id="displacement" in="SourceGraphic" in2="turbulence" scale="0" xChannelSelector="R" yChannelSelector="G"/>
-                </filter>
-            </defs>
-        </svg>
-        <div class="overdrive-content">
-            <p class="overdrive-label">OVERDRIVE</p>
-            <h2 class="overdrive-title">Maximum velocity</h2>
-            <p class="overdrive-desc">Particle physics, SVG displacement filters, and spatial choreography. Click to activate.</p>
-            <div class="overdrive-menu-wrap">
-                <vp-pie-menu id="overdrive-pie" radius="120">
-                    <button class="overdrive-trigger">Activate</button>
-                    <menu class="vp-pie-menu-items">
-                        <li><button data-action="Create" data-icon="star">Create</button></li>
-                        <li><button data-action="Destroy" data-icon="delete">Destroy</button></li>
-                        <li><button data-action="Transform" data-icon="settings">Transform</button></li>
-                        <li><button data-action="Analyze" data-icon="search">Analyze</button></li>
-                        <li><button data-action="Synthesize" data-icon="share">Synthesize</button></li>
-                        <li><button data-action="Transcend" data-icon="heart">Transcend</button></li>
-                    </menu>
-                </vp-pie-menu>
-            </div>
-            <p class="overdrive-feedback" id="overdrive-feedback"></p>
+      <div class="overdrive-bg"></div>
+      <canvas id="particle-canvas" aria-hidden="true"></canvas>
+      <svg class="overdrive-filters" width="0" height="0" aria-hidden="true">
+        <defs>
+          <filter id="displacement-filter" color-interpolation-filters="sRGB">
+            <feTurbulence id="turbulence" type="fractalNoise" baseFrequency="0.015" numOctaves="3" seed="1" />
+            <feDisplacementMap id="displacement" in="SourceGraphic" in2="turbulence" scale="0" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+      </svg>
+      <div class="overdrive-content">
+        <p class="overdrive-label">OVERDRIVE</p>
+        <h2 class="overdrive-title">Maximum velocity</h2>
+        <p class="overdrive-desc">
+          Particle physics, SVG displacement filters, and spatial choreography. Click to activate.
+        </p>
+        <div class="overdrive-menu-wrap">
+          <vp-pie-menu id="overdrive-pie" radius="120">
+            <button class="overdrive-trigger" type="button">Activate</button>
+            <menu class="vp-pie-menu-items">
+              <li><button type="button" data-action="Create" data-icon="star">Create</button></li>
+              <li><button type="button" data-action="Destroy" data-icon="delete">Destroy</button></li>
+              <li><button type="button" data-action="Transform" data-icon="settings">Transform</button></li>
+              <li><button type="button" data-action="Analyze" data-icon="search">Analyze</button></li>
+              <li><button type="button" data-action="Synthesize" data-icon="share">Synthesize</button></li>
+              <li><button type="button" data-action="Transcend" data-icon="heart">Transcend</button></li>
+            </menu>
+          </vp-pie-menu>
         </div>
+        <p class="overdrive-feedback" id="overdrive-feedback"></p>
+      </div>
     </section>
 
     <!-- ================================================================
          API: Documentation tables
          ================================================================ -->
     <section class="section" id="api">
-        <p class="section-label">API</p>
-        <h2 class="section-title">Reference</h2>
-        <p class="section-desc">Attributes, events, and CSS custom properties for theming.</p>
+      <p class="section-label">API</p>
+      <h2 class="section-title">Reference</h2>
+      <p class="section-desc">Attributes, events, and CSS custom properties for theming.</p>
 
-        <div class="api-tables">
-            <div class="api-card">
-                <h3>Attributes</h3>
-                <table class="api-table">
-                    <thead><tr><th>Name</th><th>Default</th><th>Description</th></tr></thead>
-                    <tbody>
-                        <tr><td><code>radius</code></td><td><code>105</code></td><td>Distance from center to items in pixels</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="api-card">
-                <h3>Events</h3>
-                <table class="api-table">
-                    <thead><tr><th>Name</th><th>Detail</th></tr></thead>
-                    <tbody>
-                        <tr>
-                            <td><code>vp-pie-select</code></td>
-                            <td><code>{ action, icon, ...dataAttrs, element }</code><br>Bubbles. Passes through all <code>data-*</code> attributes from the source button.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="api-card full-width">
-                <h3>CSS Custom Properties</h3>
-                <table class="api-table">
-                    <thead><tr><th>Property</th><th>Default</th><th>Purpose</th></tr></thead>
-                    <tbody>
-                        <tr><td><code>--vp-accent</code></td><td><code>#f97316</code></td><td>Primary accent color (stems, center, selection flash)</td></tr>
-                        <tr><td><code>--vp-accent-rgb</code></td><td><code>249, 115, 22</code></td><td>Accent as RGB triplet for <code>rgba()</code> usage</td></tr>
-                        <tr><td><code>--vp-overlay-bg</code></td><td><code>rgba(12,10,9,0.8)</code></td><td>Overlay backdrop color</td></tr>
-                        <tr><td><code>--vp-panel-bg</code></td><td><code>rgba(28,25,23,0.95)</code></td><td>Item panel background</td></tr>
-                        <tr><td><code>--vp-panel-border</code></td><td><code>rgba(68,64,60,0.6)</code></td><td>Item panel border</td></tr>
-                        <tr><td><code>--vp-text</code></td><td><code>#fafaf9</code></td><td>Item text color</td></tr>
-                        <tr><td><code>--vp-stem-color</code></td><td><code>rgba(accent, 0.45)</code></td><td>Stem line rest state</td></tr>
-                        <tr><td><code>--vp-stem-active-color</code></td><td><code>rgba(accent, 0.85)</code></td><td>Stem line when item is focused/hovered</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="api-card full-width">
-                <h3>Light DOM Structure</h3>
-                <div class="api-structure"><span class="tag">&lt;vp-pie-menu</span> <span class="attr">radius</span>=<span class="str">"105"</span><span class="tag">&gt;</span>
-  <span class="tag">&lt;button&gt;</span>Trigger<span class="tag">&lt;/button&gt;</span>
-  <span class="tag">&lt;menu</span> <span class="attr">class</span>=<span class="str">"vp-pie-menu-items"</span><span class="tag">&gt;</span>
-    <span class="tag">&lt;li&gt;&lt;button</span> <span class="attr">data-action</span>=<span class="str">"Edit"</span> <span class="attr">data-icon</span>=<span class="str">"edit"</span><span class="tag">&gt;</span>Edit<span class="tag">&lt;/button&gt;&lt;/li&gt;</span>
-    <span class="tag">&lt;li&gt;&lt;button</span> <span class="attr">data-action</span>=<span class="str">"Delete"</span> <span class="attr">data-icon</span>=<span class="str">"delete"</span><span class="tag">&gt;</span>Delete<span class="tag">&lt;/button&gt;&lt;/li&gt;</span>
-  <span class="tag">&lt;/menu&gt;</span>
-<span class="tag">&lt;/vp-pie-menu&gt;</span></div>
-            </div>
+      <div class="api-tables">
+        <div class="api-card">
+          <h3>Attributes</h3>
+          <table class="api-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Default</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>radius</code></td>
+                <td><code>105</code></td>
+                <td>Distance from center to items in pixels</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+
+        <div class="api-card">
+          <h3>Events</h3>
+          <table class="api-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>vp-pie-select</code></td>
+                <td>
+                  <code>{ action, icon, ...dataAttrs, element }</code><br>Bubbles. Passes through all <code>data-*</code> attributes from the source button.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="api-card full-width">
+          <h3>CSS Custom Properties</h3>
+          <table class="api-table">
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Default</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>--vp-accent</code></td>
+                <td><code>#f97316</code></td>
+                <td>Primary accent color (stems, center, selection flash)</td>
+              </tr>
+              <tr>
+                <td><code>--vp-accent-rgb</code></td>
+                <td><code>249, 115, 22</code></td>
+                <td>Accent as RGB triplet for <code>rgba()</code> usage</td>
+              </tr>
+              <tr>
+                <td><code>--vp-overlay-bg</code></td>
+                <td><code>rgba(12,10,9,0.8)</code></td>
+                <td>Overlay backdrop color</td>
+              </tr>
+              <tr>
+                <td><code>--vp-panel-bg</code></td>
+                <td><code>rgba(28,25,23,0.95)</code></td>
+                <td>Item panel background</td>
+              </tr>
+              <tr>
+                <td><code>--vp-panel-border</code></td>
+                <td><code>rgba(68,64,60,0.6)</code></td>
+                <td>Item panel border</td>
+              </tr>
+              <tr>
+                <td><code>--vp-text</code></td>
+                <td><code>#fafaf9</code></td>
+                <td>Item text color</td>
+              </tr>
+              <tr>
+                <td><code>--vp-stem-color</code></td>
+                <td><code>rgba(accent, 0.45)</code></td>
+                <td>Stem line rest state</td>
+              </tr>
+              <tr>
+                <td><code>--vp-stem-active-color</code></td>
+                <td><code>rgba(accent, 0.85)</code></td>
+                <td>Stem line when item is focused/hovered</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="api-card full-width">
+          <h3>Light DOM Structure</h3>
+          <div class="api-structure">
+            <span class="tag">&lt;vp-pie-menu</span> <span class="attr">radius</span>=<span class="str">"105"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;button&gt;</span>Trigger<span class="tag">&lt;/button&gt;</span>
+            <span class="tag">&lt;menu</span> <span class="attr">class</span>=<span class="str">"vp-pie-menu-items"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;li&gt;&lt;button</span> <span class="attr">data-action</span>=<span class="str">"Edit"</span> <span class="attr"
+            >data-icon</span>=<span class="str">"edit"</span><span class="tag">&gt;</span>Edit<span class="tag">&lt;/button&gt;&lt;/li&gt;</span>
+            <span class="tag">&lt;li&gt;&lt;button</span> <span class="attr">data-action</span>=<span class="str">"Delete"</span> <span class="attr"
+            >data-icon</span>=<span class="str">"delete"</span><span class="tag">&gt;</span>Delete<span class="tag">&lt;/button&gt;&lt;/li&gt;</span>
+            <span class="tag">&lt;/menu&gt;</span>
+            <span class="tag">&lt;/vp-pie-menu&gt;</span>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ================================================================
          CODE: Copyable examples
          ================================================================ -->
     <section class="section" id="code">
-        <p class="section-label">Code</p>
-        <h2 class="section-title">Usage examples</h2>
-        <p class="section-desc">Three patterns: basic usage, event handling, and theming.</p>
+      <p class="section-label">Code</p>
+      <h2 class="section-title">Usage examples</h2>
+      <p class="section-desc">Three patterns: basic usage, event handling, and theming.</p>
 
-        <div class="code-blocks">
-            <div class="code-card">
-                <div class="code-header">
-                    <span>Basic usage</span>
-                    <button class="copy-btn" data-copy="code-basic">Copy</button>
-                </div>
-                <pre id="code-basic"><span class="tag">&lt;vp-pie-menu</span> <span class="attr">radius</span>=<span class="str">"105"</span><span class="tag">&gt;</span>
+      <div class="code-blocks">
+        <div class="code-card">
+          <div class="code-header">
+            <span>Basic usage</span>
+            <button class="copy-btn" type="button" data-copy="code-basic">Copy</button>
+          </div>
+          <pre id="code-basic"><span class="tag">&lt;vp-pie-menu</span> <span class="attr">radius</span>=<span class="str">"105"</span><span class="tag">&gt;</span>
   <span class="tag">&lt;button&gt;</span>Open menu<span class="tag">&lt;/button&gt;</span>
   <span class="tag">&lt;menu</span> <span class="attr">class</span>=<span class="str">"vp-pie-menu-items"</span><span class="tag">&gt;</span>
     <span class="tag">&lt;li&gt;&lt;button</span> <span class="attr">data-action</span>=<span class="str">"Edit"</span> <span class="attr">data-icon</span>=<span class="str">"edit"</span><span class="tag">&gt;</span>Edit<span class="tag">&lt;/button&gt;&lt;/li&gt;</span>
     <span class="tag">&lt;li&gt;&lt;button</span> <span class="attr">data-action</span>=<span class="str">"Share"</span> <span class="attr">data-icon</span>=<span class="str">"share"</span><span class="tag">&gt;</span>Share<span class="tag">&lt;/button&gt;&lt;/li&gt;</span>
   <span class="tag">&lt;/menu&gt;</span>
 <span class="tag">&lt;/vp-pie-menu&gt;</span></pre>
-            </div>
+        </div>
 
-            <div class="code-card">
-                <div class="code-header">
-                    <span>Event handling</span>
-                    <button class="copy-btn" data-copy="code-event">Copy</button>
-                </div>
-                <pre id="code-event"><span class="comment">// Listen for selections</span>
+        <div class="code-card">
+          <div class="code-header">
+            <span>Event handling</span>
+            <button class="copy-btn" type="button" data-copy="code-event">Copy</button>
+          </div>
+          <pre id="code-event"><span class="comment">// Listen for selections</span>
 document.querySelector(<span class="str">'vp-pie-menu'</span>)
   .addEventListener(<span class="str">'vp-pie-select'</span>, (e) => {
     console.log(e.detail.action);  <span class="comment">// "Edit"</span>
@@ -1113,14 +990,14 @@ document.querySelector(<span class="str">'vp-pie-menu'</span>)
     <span class="comment">// All data-* attrs pass through:</span>
     <span class="comment">// e.detail.dataId, e.detail.dataUrl, etc.</span>
   });</pre>
-            </div>
+        </div>
 
-            <div class="code-card full-width">
-                <div class="code-header">
-                    <span>Theming</span>
-                    <button class="copy-btn" data-copy="code-theme">Copy</button>
-                </div>
-                <pre id="code-theme"><span class="comment">/* Override accent and colors via CSS custom properties */</span>
+        <div class="code-card full-width">
+          <div class="code-header">
+            <span>Theming</span>
+            <button class="copy-btn" type="button" data-copy="code-theme">Copy</button>
+          </div>
+          <pre id="code-theme"><span class="comment">/* Override accent and colors via CSS custom properties */</span>
 <span class="tag">vp-pie-menu</span> {
   <span class="attr">--vp-accent</span>: <span class="str">#3b82f6</span>;
   <span class="attr">--vp-accent-rgb</span>: <span class="str">59, 130, 246</span>;
@@ -1128,16 +1005,16 @@ document.querySelector(<span class="str">'vp-pie-menu'</span>)
   <span class="attr">--vp-panel-border</span>: <span class="str">rgba(59, 130, 246, 0.4)</span>;
   <span class="attr">--vp-text</span>: <span class="str">#f1f5f9</span>;
 }</pre>
-            </div>
         </div>
+      </div>
     </section>
 
     <footer>
-        <p><span class="accent">vp-pie-menu</span> · HTML Web Component · Zero dependencies</p>
+      <p><span class="accent">vp-pie-menu</span> · HTML Web Component · Zero dependencies</p>
     </footer>
 
     <script>
-        /**
+    /**
          * vp-pie-menu: A radial context menu web component.
          *
          * THESIS: A radial context menu that demonstrates spatial interaction.
@@ -1311,7 +1188,7 @@ document.querySelector(<span class="str">'vp-pie-menu'</span>)
                         pressStartY = e.clientY;
                         dragMode = false;
                         activePointerId = e.pointerId;
-                        try { this.triggerBtn.setPointerCapture(e.pointerId); } catch(_) {}
+                        try { this.triggerBtn.setPointerCapture(e.pointerId); } catch (err) { console.warn('vp-pie-menu: setPointerCapture failed for pointer', e.pointerId, err); }
                         pressTimer = setTimeout(() => {
                             if (!dragMode) enterDragMode(e);
                         }, LONG_PRESS_MS);
@@ -1337,7 +1214,7 @@ document.querySelector(<span class="str">'vp-pie-menu'</span>)
                     this.triggerBtn.addEventListener('pointerup', (e) => {
                         if (e.pointerId !== activePointerId) return;
                         if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
-                        try { this.triggerBtn.releasePointerCapture(e.pointerId); } catch(_) {}
+                        try { this.triggerBtn.releasePointerCapture(e.pointerId); } catch (err) { console.warn('vp-pie-menu: releasePointerCapture failed for pointer', e.pointerId, err); }
                         if (dragMode) {
                             e.preventDefault();
                             if (highlightedIdx >= 0 && dragItems[highlightedIdx]) {
@@ -1501,6 +1378,7 @@ document.querySelector(<span class="str">'vp-pie-menu'</span>)
 
                     // Radial item button
                     const itemBtn = document.createElement('button');
+                    itemBtn.type = 'button';
                     itemBtn.style.cssText = `position:absolute;transform:translate(-50%,-50%);left:${x}px;top:${y}px;padding:0.6rem 1rem;border-radius:12px;background:${panelBg};border:1px solid ${panelBorder};color:${textColor};font-size:0.8rem;font-weight:500;font-family:inherit;display:flex;align-items:center;gap:0.5rem;white-space:nowrap;opacity:0;cursor:pointer;user-select:none;-webkit-user-select:none;box-shadow:0 8px 25px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.05);transition:transform 0.2s ease,border-color 0.2s ease,background 0.2s ease;`;;;
                     itemBtn.classList.add('vp-pie-item-anim');
                     itemBtn.style.setProperty('--vp-pie-delay', `${index * 45}ms`);
@@ -1665,6 +1543,7 @@ document.querySelector(<span class="str">'vp-pie-menu'</span>)
                     const item = demoItems[i];
                     const li = document.createElement('li');
                     const btn = document.createElement('button');
+                    btn.type = 'button';
                     btn.setAttribute('data-action', item.action);
                     btn.setAttribute('data-icon', item.icon);
                     btn.textContent = item.action;
@@ -1999,5 +1878,5 @@ document.querySelector(<span class="str">'vp-pie-menu'</span>)
             })();
         });
     </script>
-</body>
+  </body>
 </html>

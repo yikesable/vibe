@@ -1,7 +1,7 @@
 {
   "name": "@yikesable/vibe",
   "version": "0.0.0",
-  "description": "A demo site",
+  "description": "A joyful collection of experiments with AI",
   "private": true,
   "homepage": "http://github.com/yikesable/vibe",
   "repository": {
@@ -12,17 +12,50 @@
   "author": "Pelle Wessman <pelle@kodfabrik.se> (https://kodfabrik.se/)",
   "license": "MIT",
   "engines": {
-    "node": ">=22.0.0"
+    "node": "^22.22.0 || >=24.8.0"
   },
   "type": "module",
   "scripts": {
-    "dev": "browser-sync"
+    "audit:fonts": "npm run fonts && git diff --exit-code -- assets/fonts/ && test -z \"$(git status --porcelain -- assets/fonts/)\"",
+    "build:vendor": "node scripts/build-vendor.mjs",
+    "check": "npm run check:vendor && run-p check:fmt check:css check:html check:js check:test check:types",
+    "check:css": "npm run lint:css",
+    "check:fmt": "dprint check",
+    "check:html": "npm run lint:html",
+    "check:js": "npm run lint:js",
+    "check:test": "npm test",
+    "check:types": "tsc --noEmit",
+    "check:vendor": "npm run build:vendor && git diff --exit-code vendor/",
+    "dev": "browser-sync",
+    "fmt": "dprint fmt",
+    "fmt:check": "dprint check",
+    "fonts": "node scripts/download-fonts.mjs",
+    "lint:css": "stylelint 'styles/**/*.css'",
+    "lint:css:fix": "stylelint 'styles/**/*.css' --fix",
+    "lint:html": "html-validate --max-warnings 0 \"404.html\" \"index.html\" \"stories/*.html\" \"codepen-converter/**/*.html\" \"component-explorations/*.html\"",
+    "lint:js": "eslint . --max-warnings 0",
+    "test": "node --test",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
-    "@voxpelli/eslint-config": "^23.0.0",
-    "@voxpelli/tsconfig": "^15.1.2",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^22.20.1",
+    "@voxpelli/eslint-config": "^25.1.0",
+    "@voxpelli/tsconfig": "^16.2.1",
     "browser-sync": "^3.0.4",
-    "eslint": "^9.29.0",
-    "typescript": "~5.8.3"
+    "dprint": "^0.56.1",
+    "esbuild": "^0.28.2",
+    "eslint": "^9.39.5",
+    "html-validate": "^11.10.0",
+    "npm-run-all2": "^9.0.3",
+    "stylelint": "^17.14.1",
+    "stylelint-config-standard": "^40.0.0",
+    "subset-font": "^2.6.0",
+    "typescript": "~6.0.3"
+  },
+  "dependencies": {
+    "highlight.js": "^11.12.0",
+    "prismjs": "^1.30.0",
+    "three": "^0.185.1"
   }
 }

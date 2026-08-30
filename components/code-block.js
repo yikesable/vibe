@@ -1,29 +1,39 @@
-import hljs from 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/es/highlight.min.js';
+import hljs from '../vendor/highlight.bundle.js';
 
 class CodeBlock extends HTMLElement {
-    constructor() { super(); this.attachShadow({ mode: 'open' }); }
-    reIndent(codeString) {
-        if (!codeString) return '';
-        const lines = codeString.split('\n');
-        if (lines.length <= 1) return codeString.trim();
-        const firstLineWithContent = lines.find(line => line.trim() !== '');
-        if (!firstLineWithContent) return '';
-        const minIndent = firstLineWithContent.match(/^\s*/)[0].length;
-        return lines.map(line => line.length >= minIndent ? line.substring(minIndent) : line).join('\n').trim();
+  constructor () { super(); this.shadow = this.attachShadow({ mode: 'open' }); }
+
+  /**
+   * Strip the common indentation of a code string.
+   *
+   * @param {string} codeString — raw template or pre content.
+   * @returns {string}
+   */
+  reIndent (codeString) {
+    if (!codeString) return '';
+    const lines = codeString.split('\n');
+    if (lines.length <= 1) return codeString.trim();
+    const firstLineWithContent = lines.find(line => line.trim() !== '');
+    if (!firstLineWithContent) return '';
+    const indentMatch = firstLineWithContent.match(/^\s*/);
+    if (indentMatch === null) return '';
+    const minIndent = indentMatch[0].length;
+    return lines.map(line => line.length >= minIndent ? line.slice(Math.max(0, minIndent)) : line).join('\n').trim();
+  }
+
+  connectedCallback () {
+    const template = this.querySelector('script[type="text/template"]');
+    let code;
+    if (template) {
+      code = this.reIndent(template.innerHTML);
+    } else {
+      const preElement = this.querySelector('pre');
+      if (!preElement) return;
+      code = this.reIndent(preElement.textContent ?? '');
     }
-    connectedCallback() {
-        const template = this.querySelector('script[type="text/template"]');
-        let code;
-        if (template) {
-            code = this.reIndent(template.innerHTML);
-        } else {
-            const preElement = this.querySelector('pre');
-            if (!preElement) return;
-            code = this.reIndent(preElement.textContent);
-        }
-        if (!code) return;
-        
-        this.shadowRoot.innerHTML = `
+    if (!code) return;
+
+    this.shadow.innerHTML = `
             <style>
                 :host { display: block; position: relative; }
                 .code-block { font-family: 'Inter', monospace; background-color: #160f29; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); overflow: auto; }
@@ -34,26 +44,44 @@ class CodeBlock extends HTMLElement {
                 :host(:hover) .copy-btn { opacity: 1; }
                 .copy-btn:hover { background-color: rgba(0,0,0,0.4); }
                 .copy-btn.copied { background-color: #16a34a; color: white; opacity: 1; }
+                .copy-btn.failed { background-color: #b91c1c; color: white; opacity: 1; }
             </style>
             <div class="code-block">
                 <pre><code class="language-${this.getAttribute('language') || 'plaintext'}"></code></pre>
             </div>
-            <button class="copy-btn">Copy</button>
+            <button class="copy-btn" aria-live="polite">Copy</button>
         `;
-        const codeContainer = this.shadowRoot.querySelector('code');
-        codeContainer.textContent = code;
-        hljs.highlightElement(codeContainer);
-
-        const btn = this.shadowRoot.querySelector('.copy-btn');
-        btn?.addEventListener('click', () => {
-            navigator.clipboard.writeText(code).then(() => {
-                const originalText = btn.textContent;
-                btn.textContent = 'Copied!';
-                btn.classList.add('copied');
-                console.log('w00t', btn);
-                setTimeout(() => { btn.textContent = originalText; btn.classList.remove('copied'); }, 2000);
-            }).catch(err => console.error('Failed to copy text: ', err));
-        });
+    const codeContainer = this.shadow.querySelector('code');
+    if (codeContainer === null) {
+      return;
     }
+    codeContainer.textContent = code;
+    hljs.highlightElement(codeContainer);
+
+    const btn = this.shadow.querySelector('.copy-btn');
+    if (btn === null) {
+      return;
+    }
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(code);
+        const originalText = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = originalText; btn.classList.remove('copied'); }, 2000);
+      } catch (err) {
+        // The clipboard can be absent (non-secure context) or denied — the
+        // failure must appear on the button (aria-live announces it), not
+        // vanish into a console line the user never sees.
+        // The console line is the durable trail (the button state is the
+        // user-facing half) — deliberately NOT silent.
+        // eslint-disable-next-line no-console -- the failure needs a console trail alongside the visible button state
+        console.error('Failed to copy text:', err);
+        btn.textContent = 'Copy failed';
+        btn.classList.add('failed');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('failed'); }, 2000);
+      }
+    });
+  }
 }
 customElements.define('code-block', CodeBlock);
